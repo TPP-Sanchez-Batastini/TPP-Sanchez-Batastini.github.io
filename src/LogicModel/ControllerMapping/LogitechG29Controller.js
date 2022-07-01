@@ -47,16 +47,26 @@ class LogitechG29Controller{
         this.valueDpadRIGHT = -0.4285714030265808;
     }
 
-    checkEvents(){
+    checkGamepadChanges(){
         const gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads() : []);
-        this.gamepad = null;
         for (let i = 0; i < gamepads.length; i++) {
-          if (gamepads[i]) {
-            if (gamepads[i].id.startsWith('G29 Driving Force Racing Wheel')) {
-              this.gamepad = gamepads[i];
+            if (gamepads[i]) {
+              if (gamepads[i].id.startsWith('G29 Driving Force Racing Wheel')) {
+                this.gamepad = gamepads[i];
+              }
             }
-          }
         }
+    }
+
+    checkEvents(){
+        this.gamepad = null;
+        this.checkGamepadChanges();
+        if(this.gamepad != null){
+            this.doActionByMapping();
+        }
+    }
+
+    doActionByMapping(){
         if(this.gamepad.axes[this.accelerator] !== 1.0){
             console.log("accel: " + this.gamepad.axes[this.accelerator]);
         }

@@ -1,70 +1,67 @@
 import React, {Component} from 'react';
 import * as THREE from 'three';
-import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
+import Camera from '../Camera/Camera';
+import CarModel from '../3DModels/CarModel';
 import LogitechG29ControllerSingleton from '../LogicModel/ControllerMapping/LogitechG29Controller';
 
 export default class ThreeScene extends Component{
-    componentDidMount(){
+    
+    async componentDidMount(){
+        //Generate elements needed to render the scene
+        this.objectsToAnimate = [];
         this.scene = new THREE.Scene();
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize( window.innerWidth, window.innerHeight );
+        this.camera = new Camera(0, 1, 10);
 
-        this.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-        this.camera.position.z = 10;
+        //Add elements to the scene
+        this.ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+        this.scene.add(this.ambientLight);
 
-        this.light = new THREE.DirectionalLight(0xffffff, 1);
-        this.scene.add(this.light);
-        this.light2 = new THREE.DirectionalLight(0xffffff, 1);
-        this.scene.add(this.light2);
+        const floorGeometry = new THREE.PlaneGeometry( 50, 50 );
+        const floorMaterial = new THREE.MeshBasicMaterial( {color: 0xff0000, side: THREE.DoubleSide} );
+        this.floor = new THREE.Mesh( floorGeometry, floorMaterial );
+        this.floor.position.x = 0;
+        this.floor.position.y = 0;
+        this.floor.position.z = 0;
+        this.floor.rotateOnAxis(new THREE.Vector3(1,0,0), Math.PI/2);
+        this.scene.add(this.floor);
+        let carModel = new CarModel();
+        this.objectsToAnimate.push(await carModel.addCarRenderToScene(this.scene));
 
-        this.initializeCar = this.initializeCar.bind(this);
+        //Bind this to methods of the class
         this.animation = this.animation.bind(this);
         this.handleWindowResize = this.handleWindowResize.bind(this);
+        this.generateEvents = this.generateEvents.bind(this);
+        
+        //Handle resize and gamepad connection on window.
+        this.generateEvents();
+
+        //Append canvas to DOM in HTML and start animating
         this.mount.appendChild(this.renderer.domElement);
+        this.animation();
+    }
+
+    generateEvents(){
         window.addEventListener("resize", this.handleWindowResize);
-        this.initializeCar();
         window.addEventListener("gamepaddisconnected", function(e){
             LogitechG29ControllerSingleton.removeInstance();  
         });
     }
 
-    initializeCar(){
-        this.fbxLoader = new FBXLoader();
-        let functionToDo = function ( carObject ) {
-            this.carObject = carObject;
-            this.light2.target = this.carObject;
-            this.carObject.position.x = 0;
-            this.carObject.position.y = 0;
-            this.carObject.position.z = 0;
-            this.carObject.scale.x = 0.01;
-            this.carObject.scale.y = 0.01;
-            this.carObject.scale.z = 0.01;
-            this.scene.add(carObject);
-            this.animation();
-        };
-        functionToDo = functionToDo.bind(this);
-
-        this.fbxLoader.load( 
-            'res/models/source/carModel.fbx', 
-            functionToDo
-        );
-    }
-
     handleWindowResize(){
-        this.camera.aspect = window.innerWidth/window.innerHeight;
-        this.camera.updateProjectionMatrix();
+        this.camera.handleResize();
         this.renderer.setSize(window.innerWidth, window.innerHeight);
-        this.renderer.render( this.scene, this.camera );
+        this.renderer.render( this.scene, this.camera.getCameraInstance() );
     }
 
     animation(){
         requestAnimationFrame(this.animation);
+        this.objectsToAnimate.forEach(function(object){
+            object.animate();
+        })
         LogitechG29ControllerSingleton.getInstance().checkEvents();
-        if(this.carObject){
-            this.carObject.rotation.x += 0.01;
-            this.carObject.rotation.y += 0.01;
-        }
-        this.renderer.render( this.scene, this.camera );
+        this.renderer.render( this.scene, this.camera.getCameraInstance() );
     }
 
     render(){
