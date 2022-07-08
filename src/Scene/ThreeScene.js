@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import Camera from '../Camera/Camera';
 import CarModel from '../3DModels/CarModel';
 import LogitechG29ControllerSingleton from '../LogicModel/ControllerMapping/LogitechG29Controller';
+import XboxControllerSingleton from '../LogicModel/ControllerMapping/XboxController';
 
 export default class ThreeScene extends Component{
     
@@ -56,11 +57,17 @@ export default class ThreeScene extends Component{
     }
 
     animation(){
+        window.addEventListener("gamepadconnected", function(e) {
+            console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.",
+              e.gamepad.index, e.gamepad.id,
+              e.gamepad.buttons.length, e.gamepad.axes.length);
+          });
         requestAnimationFrame(this.animation);
         this.objectsToAnimate.forEach(function(object){
             object.animate();
         })
         LogitechG29ControllerSingleton.getInstance().checkEvents();
+        XboxControllerSingleton.getInstance().checkEvents();
         this.renderer.render( this.scene, this.camera.getCameraInstance() );
     }
 
