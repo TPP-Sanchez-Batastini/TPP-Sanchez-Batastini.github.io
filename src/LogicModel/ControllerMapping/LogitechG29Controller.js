@@ -1,3 +1,5 @@
+const { default: GlobalControllerHandling } = require("./GlobalControllerHandling");
+
 const DPAD_NOT_PRESSED = 1.2857143878936768;
 const DPAD_UP = -1;
 const DPAD_UP_PRESSED = 0;
@@ -54,7 +56,7 @@ class LogitechG29Controller{
         this.wheelAxes = 0;
         this.clutch = 1;
         this.accelerator = 2;
-        this.break = 5;
+        this.brake = 5;
         this.DPad = 9;
 
         //This is conveniently defined by using distances if needed, it is not exact.
@@ -67,6 +69,8 @@ class LogitechG29Controller{
         for(let i=0; i <= 3; i++){
             this.dpadPressed.push(false);
         }
+        
+        this.globalControllerHandler = new GlobalControllerHandling();
     }
 
     checkGamepadChanges(){
@@ -90,13 +94,11 @@ class LogitechG29Controller{
 
     doActionsPedals(){
         if(this.gamepad.axes[this.accelerator] !== 1.0){
-            console.log("accel: " + this.gamepad.axes[this.accelerator]);
+            this.globalControllerHandler.handleAccelerate(this.gamepad.axes[this.clutch], this.gamepad.axes[this.accelerator]);
+
         }
-        if(this.gamepad.axes[this.clutch] !== 1.0){
-            console.log("clutch: " + this.gamepad.axes[this.clutch]);
-        }
-        if(this.gamepad.axes[this.break] !== 1.0){
-            console.log("break: " + this.gamepad.axes[this.break]);
+        if(this.gamepad.axes[this.brake] !== 1.0){
+            this.globalControllerHandler.handleBrake(this.gamepad.axes[this.clutch], this.gamepad.axes[this.brake]);
         }
     }
 
@@ -218,7 +220,7 @@ class LogitechG29Controller{
 
 
         if (this.gamepad.buttons[this.buttonR2].pressed && !this.buttonsPressed[this.buttonR2]) {
-            console.log("BOTON R2");
+            this.globalControllerHandler.turnOnCar();
             this.buttonsPressed[this.buttonR2] = true;
         }else if(!this.gamepad.buttons[this.buttonR2].pressed){
             this.buttonsPressed[this.buttonR2] = false;
@@ -289,62 +291,52 @@ class LogitechG29Controller{
 
     doActionsShifter(){
         if (this.gamepad.buttons[this.firstShift].pressed && !this.buttonsPressed[this.firstShift]) {
-            console.log("MARCHA 1");
+            this.globalControllerHandler.changeShift(this.gamepad.axes[this.clutch], 1);
             this.buttonsPressed[this.firstShift] = true;
         }else if(!this.gamepad.buttons[this.firstShift].pressed && this.buttonsPressed[this.firstShift]){
-            console.log("SAQUE MARCHA 1");
+            this.globalControllerHandler.changeShift(this.gamepad.axes[this.clutch], 0);
             this.buttonsPressed[this.firstShift] = false;
         }
-
-
         if (this.gamepad.buttons[this.secondShift].pressed && !this.buttonsPressed[this.secondShift]) {
-            console.log("MARCHA 2");
+            this.globalControllerHandler.changeShift(this.gamepad.axes[this.clutch], 2);
             this.buttonsPressed[this.secondShift] = true;
         }else if(!this.gamepad.buttons[this.secondShift].pressed && this.buttonsPressed[this.secondShift]){
-            console.log("SAQUE MARCHA 2");
+            this.globalControllerHandler.changeShift(this.gamepad.axes[this.clutch], 0);
             this.buttonsPressed[this.secondShift] = false;
         }
-
-
         if (this.gamepad.buttons[this.thirdShift].pressed && !this.buttonsPressed[this.thirdShift]) {
-            console.log("MARCHA 3");
+            this.globalControllerHandler.changeShift(this.gamepad.axes[this.clutch], 3);
             this.buttonsPressed[this.thirdShift] = true;
         }else if(!this.gamepad.buttons[this.thirdShift].pressed && this.buttonsPressed[this.thirdShift]){
-            console.log("SAQUE MARCHA 3");
+            this.globalControllerHandler.changeShift(this.gamepad.axes[this.clutch], 0);
             this.buttonsPressed[this.thirdShift] = false;
         }
-
-
         if (this.gamepad.buttons[this.fourthShift].pressed && !this.buttonsPressed[this.fourthShift]) {
-            console.log("MARCHA 4");
+            this.globalControllerHandler.changeShift(this.gamepad.axes[this.clutch], 4);
             this.buttonsPressed[this.fourthShift] = true;
         }else if(!this.gamepad.buttons[this.fourthShift].pressed && this.buttonsPressed[this.fourthShift]){
-            console.log("SAQUE MARCHA 4");
+            this.globalControllerHandler.changeShift(this.gamepad.axes[this.clutch], 0);
             this.buttonsPressed[this.fourthShift] = false;
         }
-
-
         if (this.gamepad.buttons[this.fifthShift].pressed && !this.buttonsPressed[this.fifthShift]) {
-            console.log("MARCHA 5");
+            this.globalControllerHandler.changeShift(this.gamepad.axes[this.clutch], 5);
             this.buttonsPressed[this.fifthShift] = true;
         }else if(!this.gamepad.buttons[this.fifthShift].pressed && this.buttonsPressed[this.fifthShift]){
-            console.log("SAQUE MARCHA 5");
+            this.globalControllerHandler.changeShift(this.gamepad.axes[this.clutch], 0);
             this.buttonsPressed[this.fifthShift] = false;
         }
-        
-
         if (this.gamepad.buttons[this.sixthShift].pressed && !this.buttonsPressed[this.sixthShift]) {
-            console.log("MARCHA 6");
+            this.globalControllerHandler.changeShift(this.gamepad.axes[this.clutch], 6);
             this.buttonsPressed[this.sixthShift] = true;
         }else if(!this.gamepad.buttons[this.sixthShift].pressed && this.buttonsPressed[this.sixthShift]){
-            console.log("SAQUE MARCHA 6");
+            this.globalControllerHandler.changeShift(this.gamepad.axes[this.clutch], 0);
             this.buttonsPressed[this.sixthShift] = false;
         }
         if (this.gamepad.buttons[this.reverseShift].pressed && !this.buttonsPressed[this.reverseShift]) {
-            console.log("MARCHA REVERSA");
+            this.globalControllerHandler.changeShift(this.gamepad.axes[this.clutch], -1);
             this.buttonsPressed[this.reverseShift] = true;
         }else if(!this.gamepad.buttons[this.reverseShift].pressed && this.buttonsPressed[this.reverseShift]){
-            console.log("SAQUE MARCHA REVERSA");
+            this.globalControllerHandler.changeShift(this.gamepad.axes[this.clutch], 0);
             this.buttonsPressed[this.reverseShift] = false;
         }
     }
