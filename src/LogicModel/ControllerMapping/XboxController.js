@@ -1,7 +1,7 @@
 const STICK_LIMIT = 0.07;
 
 class XboxController{
-    constructor( auto){
+    constructor(auto){
         const gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads() : []);
         this.gamepad = null;
         for (let i = 0; i < gamepads.length; i++) {
@@ -33,7 +33,7 @@ class XboxController{
             this.buttonPressed.push(false);
         }
         
-        this.auto =auto;
+        this.auto = auto;
         this.xLeftAxe = 0;
         this.yLeftAxe = 1;
         this.xRightAxe = 2;

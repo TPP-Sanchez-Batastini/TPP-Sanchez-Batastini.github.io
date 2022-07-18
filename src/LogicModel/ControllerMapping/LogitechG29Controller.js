@@ -12,7 +12,7 @@ const DPAD_RIGHT_PRESSED = 3;
 
 
 class LogitechG29Controller{
-    constructor(){
+    constructor(carLogic){
         const gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads() : []);
         this.gamepad = null;
         for (let i = 0; i < gamepads.length; i++) {
@@ -70,7 +70,7 @@ class LogitechG29Controller{
             this.dpadPressed.push(false);
         }
         
-        this.globalControllerHandler = new GlobalControllerHandling();
+        this.globalControllerHandler = new GlobalControllerHandling(carLogic);
     }
 
     checkGamepadChanges(){
@@ -103,9 +103,9 @@ class LogitechG29Controller{
     }
 
     doActionsWheel(){
-        if(this.gamepad.axes[this.wheelAxes] <= -0.05 || this.gamepad.axes[this.wheelAxes] >= 0.05){
-            console.log("giro volante: " + this.gamepad.axes[this.wheelAxes]);
-        }
+        //if(this.gamepad.axes[this.wheelAxes] <= -0.05 || this.gamepad.axes[this.wheelAxes] >= 0.05){
+            this.globalControllerHandler.turnDirection(this.gamepad.axes[this.wheelAxes]);
+        //}
     }
 
     doActionsDPad(){
@@ -358,9 +358,9 @@ class LogitechG29ControllerSingleton{
         throw new Error('Can not construct singleton. Call get instance instead.');
     }
 
-    static getInstance() {
+    static getInstance(carLogic) {
         if (!LogitechG29ControllerSingleton.instance) {
-            LogitechG29ControllerSingleton.instance = new LogitechG29Controller();
+            LogitechG29ControllerSingleton.instance = new LogitechG29Controller(carLogic);
         }
         return LogitechG29ControllerSingleton.instance;
     }

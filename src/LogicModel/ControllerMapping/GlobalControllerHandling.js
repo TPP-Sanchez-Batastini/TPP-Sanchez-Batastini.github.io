@@ -11,8 +11,8 @@ const REVERSE_SHIFT = -1;
 
 export default class GlobalControllerHandling{
 
-    constructor(){
-        this.car = new Car();
+    constructor(car){
+        this.car = car;
     }
 
     handleAccelerate(valueClutch, valueAccelerator){
@@ -25,6 +25,10 @@ export default class GlobalControllerHandling{
 
     changeShift(valueClutch, valueShift){
         this.car.changeShift(valueClutch, valueShift);
+    }
+
+    turnDirection(wheelAxesValue){
+        this.car.turnDirection(wheelAxesValue);
     }
 
     turnOnCar(){

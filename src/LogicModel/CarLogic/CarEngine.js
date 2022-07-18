@@ -37,7 +37,7 @@ export default class CarEngine{
     }
 
     isInConditionToAccelerate(valueClutch){
-        return (this.currentRPM >= MIN_RPM_TO_AVOID_SHUTDOWN && !this.clutchIsPressed(valueClutch));
+        return ((this.currentRPM >= MIN_RPM_TO_AVOID_SHUTDOWN && !this.clutchIsPressed(valueClutch)) || this.clutchIsPressed(valueClutch));
     }
 
     accelerate(valueClutch, valueAccelerator){
