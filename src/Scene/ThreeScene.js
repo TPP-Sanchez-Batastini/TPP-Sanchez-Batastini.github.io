@@ -10,9 +10,9 @@ export default class ThreeScene extends Component{
     
     async componentDidMount(){
         //Generate elements needed to render the scene
-        this.carLogic = new Car();
         this.objectsToAnimate = [];
         this.scene = new THREE.Scene();
+        this.camera = new Camera();
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize( window.innerWidth, window.innerHeight );
 
@@ -20,6 +20,7 @@ export default class ThreeScene extends Component{
         this.ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
         this.scene.add(this.ambientLight);
 
+        //FLOOR
         const floorGeometry = new THREE.PlaneGeometry( 50000, 50000 );
         const floorMaterial = new THREE.MeshBasicMaterial( {color: 0xff0000, side: THREE.DoubleSide} );
         this.floor = new THREE.Mesh( floorGeometry, floorMaterial );
@@ -28,10 +29,14 @@ export default class ThreeScene extends Component{
         this.floor.position.z = 0;
         this.floor.rotateOnAxis(new THREE.Vector3(1,0,0), Math.PI/2);
         this.scene.add(this.floor);
+
+        //Add driver's car to scene
+        this.carLogic = new Car();
         let carModel = new CarModel();
-        carModel.setCarLogic(this.carLogic);
-        this.objectsToAnimate.push(await carModel.addCarRenderToScene(this.scene));
-        this.camera = new Camera(carModel);
+        this.carLogic.attachObserver(carModel);
+        this.carLogic.attachObserver(this.camera);
+        this.objectsToAnimate.push(await carModel.addToScene(this.scene));
+        
 
         //Bind this to methods of the class
         this.animation = this.animation.bind(this);
@@ -60,11 +65,6 @@ export default class ThreeScene extends Component{
     }
 
     animation(){
-        window.addEventListener("gamepadconnected", function(e) {
-            console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.",
-              e.gamepad.index, e.gamepad.id,
-              e.gamepad.buttons.length, e.gamepad.axes.length);
-          });
         requestAnimationFrame(this.animation);
         this.objectsToAnimate.forEach(function(object){
             object.animate();
