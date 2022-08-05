@@ -1,0 +1,40 @@
+File Info:
+
+- The file is compatible with 3Ds Max 2017 and above, V-Ray 3.5 and above.
+- You can find the FBX files with V-Ray Materials, if you need Standard Materials
+you will need to convert them manually.
+- The textures are NOT baked so you can swap textures if you like to.
+- The UV Coordinates "doesn't overlap" inside de UV Editor, You can scale them if
+you want to bake the textures.
+- The geometry has Smoothing Groups, if you want to add any smoothness with a 
+modifier, you need to SEPARATE them by SMOOTHING GROUPS in order to maintain the 
+shape.
+- The elements are ready to be animated.
+
+Elements:
+- Steering Wheel
+- Steering Column
+
+Topology: 99% quad 
+
+LowPoly:
+Polys: 8,575
+Verts: 4,733
+
+Highpoly(Turbo smooth):
+Polys: 34,3363
+Verts: 18,005
+
+Textures:
+- DirtMap-Dirt	 	> Reflect Glossiness
+- DirtMap-Dust Wipes 	> Reflect Glossiness
+- DirtMap-Scratch 	> Reflect Glossiness
+- Grain 		> Normal
+- Grain		 	> Reflect Glossiness
+- Perforated Leather 	> Normal
+- Perforated Leather	> Reflect Glossiness
+- Symbols		> Diffuse & Opacity
+
+File extensions:
+- 3Ds Max 
+- Autodesk FBX

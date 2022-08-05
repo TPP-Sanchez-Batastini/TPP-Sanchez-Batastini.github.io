@@ -13,16 +13,27 @@ export default class ThreeScene extends Component{
         this.objectsToAnimate = [];
         this.scene = new THREE.Scene();
         this.camera = new Camera();
-        this.renderer = new THREE.WebGLRenderer();
+        this.renderer = new THREE.WebGLRenderer({ alpha: true });
         this.renderer.setSize( window.innerWidth, window.innerHeight );
+        this.renderer.setClearColor( 0x87cefa, 1 );
+        this.renderer.outputEncoding = THREE.sRGBEncoding;
+
 
         //Add elements to the scene
-        this.ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+        this.ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
         this.scene.add(this.ambientLight);
+        this.sunLight = new THREE.DirectionalLight( 0xffffff, 1.0 );
+        this.sunLight.position.set( 0, 100, 0 );
+        this.scene.add( this.sunLight );
 
         //FLOOR
-        const floorGeometry = new THREE.PlaneGeometry( 50000, 50000 );
-        const floorMaterial = new THREE.MeshBasicMaterial( {color: 0xff0000, side: THREE.DoubleSide} );
+        const floorGeometry = new THREE.PlaneGeometry( 5000, 5000 );
+        const texture = new THREE.TextureLoader().load( 'textures/Piso.png' );
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
+        
+        texture.repeat.set( 10, 10 );
+        const floorMaterial = new THREE.MeshBasicMaterial( {map: texture,  side: THREE.DoubleSide} );
         this.floor = new THREE.Mesh( floorGeometry, floorMaterial );
         this.floor.position.x = 0;
         this.floor.position.y = 0;
@@ -37,7 +48,6 @@ export default class ThreeScene extends Component{
         this.carLogic.attachObserver(this.camera);
         this.objectsToAnimate.push(await carModel.addToScene(this.scene));
         
-
         //Bind this to methods of the class
         this.animation = this.animation.bind(this);
         this.handleWindowResize = this.handleWindowResize.bind(this);

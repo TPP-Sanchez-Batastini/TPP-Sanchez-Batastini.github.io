@@ -2,9 +2,9 @@ import * as THREE from 'three';
 import { Vector3 } from 'three';
 import Observer from '../ObserverPattern/Observer';
 
-const Y_DISTANCE = 3.0;
-const Z_DISTANCE = -5.0;
-const X_DISTANCE = 0.0;
+const Y_DISTANCE = 0.75;
+const Z_DISTANCE = 0;
+const X_DISTANCE = 0.5;
 export default class Camera extends Observer{
 
     constructor(){
@@ -21,7 +21,10 @@ export default class Camera extends Observer{
         const cameraOffset = new Vector3(X_DISTANCE, Y_DISTANCE, Z_DISTANCE);
         if(this.observedState != null){
             this.camera.position.copy(this.observedState.position).add(cameraOffset);
-            this.camera.lookAt(this.observedState.position);
+            //this.getCameraInstance.matrixWorld = [                ]
+            let positionToLookAt = new Vector3(this.observedState.position.x, this.observedState.position.y, this.observedState.position.z);
+            positionToLookAt.z += 5;
+            this.camera.lookAt(positionToLookAt);
         }else{
             this.camera.lookAt(new Vector3(0,0,0));
             this.camera.position.copy(cameraOffset);
