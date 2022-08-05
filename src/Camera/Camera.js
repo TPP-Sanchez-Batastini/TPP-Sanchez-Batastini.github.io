@@ -20,10 +20,15 @@ export default class Camera extends Observer{
     setPositionRelativeToObject(){
         const cameraOffset = new Vector3(X_DISTANCE, Y_DISTANCE, Z_DISTANCE);
         if(this.observedState != null){
-            this.camera.position.copy(this.observedState.position).add(cameraOffset);
+            let cameraOffsetRotated = cameraOffset.applyAxisAngle(new Vector3(0,1,0), this.observedState.direction);
+            this.camera.position.copy(this.observedState.position).add(cameraOffsetRotated);
             //this.getCameraInstance.matrixWorld = [                ]
             let positionToLookAt = new Vector3(this.observedState.position.x, this.observedState.position.y, this.observedState.position.z);
-            positionToLookAt.z += 5;
+            let offsetVector = new Vector3(0,0,5);
+            offsetVector.applyAxisAngle(new Vector3(0,1,0), this.observedState.direction);
+            positionToLookAt.x += offsetVector.x;
+            positionToLookAt.y += offsetVector.y;
+            positionToLookAt.z += offsetVector.z;
             this.camera.lookAt(positionToLookAt);
         }else{
             this.camera.lookAt(new Vector3(0,0,0));
