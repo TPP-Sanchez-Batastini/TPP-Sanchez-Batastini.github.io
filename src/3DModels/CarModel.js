@@ -1,4 +1,4 @@
-import { Vector2, Vector3 } from 'three';
+import { Vector3 } from 'three';
 import VisualEntity from './VisualEntity';
 
 const SCALE = [1.5, 1.5, 1.5];
@@ -6,16 +6,18 @@ const POSITION = [0,0,0];
 const MAX_TIRE_TURN_IN_RADS = 1.4;
 const FACTOR_KMH_TO_MS = 1/3600;
 const VELOCITY_TO_ANGULAR_VEL = 1/0.25; //Velocity/Radius
+const STEERING_WHEEL_INITIAL_ROTATION_ON_X = -0.35;
 
 export default class CarModel extends VisualEntity{
     
     constructor(){
-        super('res/models/source/AutoConAsientos.gltf');
+        super('res/models/source/AutoConInterior.gltf');
         this.carModel = null;
         this.carLogic = null;
         this.lastValueRotation = 0;
         this.currentSpeedRotation = 0;
         this.currentWheelRotation = 0;
+        this.lastSteeringRotation = 0;
     }
 
     async addToScene(scene){
@@ -36,7 +38,16 @@ export default class CarModel extends VisualEntity{
             this.threeDModel.rotateY(this.observedState["direction"]);
             this.lastValueRotation = this.observedState["direction"];
             this.rotateWheels();
+            this.rotateSteeringWheel();
         }
+    }
+
+    rotateSteeringWheel(){
+        let steeringWheel = this.threeDModel.children.find(o => o.name === 'Steering_Wheel');
+        let vectorRotation = new Vector3(0,0,1).applyAxisAngle(new Vector3(1,0,0), STEERING_WHEEL_INITIAL_ROTATION_ON_X);
+        steeringWheel.rotateOnAxis(vectorRotation, -this.lastSteeringRotation);
+        steeringWheel.rotateOnAxis(vectorRotation, -this.observedState['lastRotationWheel']*540/360*Math.PI*2);
+        this.lastSteeringRotation = -this.observedState['lastRotationWheel']*540/360*Math.PI*2;
     }
 
     rotateWheels(){

@@ -47,6 +47,7 @@ export default class ThreeScene extends Component{
         this.carLogic.attachObserver(carModel);
         this.carLogic.attachObserver(this.camera);
         this.objectsToAnimate.push(await carModel.addToScene(this.scene));
+        this.carLogic.notifyObservers();
         
         //Bind this to methods of the class
         this.animation = this.animation.bind(this);
