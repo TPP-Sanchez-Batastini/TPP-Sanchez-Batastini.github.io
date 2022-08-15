@@ -10,6 +10,7 @@ import Car from '../LogicModel/CarLogic/Car';
 import AmmoInstance from '../LogicModel/Physics/AmmoInstance';
 import BoxPhysics from '../LogicModel/Physics/PhysicsTypes/BoxPhysics';
 import { Vector3 } from 'three';
+import TrafficCone from '../3DModels/TrafficCone';
 
 export default class ThreeScene extends Component{
     
@@ -94,6 +95,10 @@ export default class ThreeScene extends Component{
         this.ramp = new THREE.Mesh( rampa, floorMaterial );
         this.ramp.position.set (10,0,10);
         this.scene.add(this.ramp);
+
+
+        this.cone = new TrafficCone("textures/coneTexture.jpg");
+        this.cone.addToScene(this.scene, "trafficCone", [0,0,0], [1,1,1]);
 
         //Add driver's car to scene
         this.carLogic = new Car(this.physicsWorld);
