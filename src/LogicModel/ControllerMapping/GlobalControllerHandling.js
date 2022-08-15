@@ -34,4 +34,8 @@ export default class GlobalControllerHandling{
     turnOnCar(){
         this.car.turnOnCar();
     }
+
+    updateCar(){
+        this.car.update();
+    }
 }

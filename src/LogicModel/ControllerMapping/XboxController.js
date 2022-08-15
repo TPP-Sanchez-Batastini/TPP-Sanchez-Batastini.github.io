@@ -61,6 +61,7 @@ class XboxController{
         this.checkGamepadChanges();
         if(this.gamepad != null){
             this.doActionByMapping();
+            //this.globalControllerHandler.updateCar();
         }
     }
 
@@ -244,13 +245,9 @@ class XboxController{
     }
 
     doActionByMapping(){
-        
         this.doActionsAxes();
         this.doActionsTriggers();
         this.doActionsButtons();
-        
-
-        
     }
 }
 

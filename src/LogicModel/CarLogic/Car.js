@@ -1,21 +1,30 @@
-import { Vector3 } from 'three';
+import { Vector3, Vector4 } from 'three';
 import Observable from '../../ObserverPattern/Observable';
+import BoxPhysics from '../Physics/PhysicsTypes/BoxPhysics';
 import CarEngine from './CarEngine';
 
 const FRICTION_FACTOR = -0.1;
 const MAX_TIRE_TURN_IN_RADS = 0.7;
 const ROTATION_FACTOR_TO_VELOCITY = 0.0007;
 const FACTOR_KMH_TO_MS = 1/3600;
-const POSITION = [0,4,0];
+const POSITION = [0,40,0];
 export default class Car extends Observable{
 
-    constructor(){
+    constructor(physicsWorld){
         super();
         this.carEngine = new CarEngine();
         this.currentVelocity = 0;
         this.currentDirectionTurn = 0; //in rads
         this.currentTireRotation = 0;
         this.position = new Vector3(POSITION[0], POSITION[1], POSITION[2]);
+        this.rotationQuaternion = new Vector4(0,0,0,1);
+        this.inertia = 1;
+        this.mass = 1000;
+        this.physicsShape = new Vector3(1,0,0);
+        this.rotation = new Vector4(0,0,0,1);
+
+        this.boxPhysics = new BoxPhysics(this.position, this.rotationQuaternion, this.inertia, this.mass, this.physicsShape, physicsWorld);
+        
     }
 
     accelerate(valueClutch, valueAccelerator){
@@ -55,13 +64,7 @@ export default class Car extends Observable{
     }
 
     turnDirection(wheelAxesValue){
-
-        //if(this.currentTireRotation > 0.2 || this.currentTireRotation < -0.2)
-           // return;
         this.currentTireRotation = wheelAxesValue;
-
-        //Defines Max Tire Turn based on wheel axes value. Approximatedly 40°.
-
 
         let internalCarRotation = -this.currentTireRotation * MAX_TIRE_TURN_IN_RADS;
         this.currentDirectionTurn += internalCarRotation * this.currentVelocity * ROTATION_FACTOR_TO_VELOCITY;
@@ -75,6 +78,14 @@ export default class Car extends Observable{
         this.position.x += velocityVector.x;
         this.position.y += velocityVector.y;
         this.position.z += velocityVector.z;
+        super.notifyObservers(this.getDataToAnimate());
+    }
+
+    update(){
+        let positionAndRotation = this.boxPhysics.updatePhysics();
+        this.position = positionAndRotation["position"];
+        this.rotation = positionAndRotation["rotation"];
+        super.notifyObservers(this.getDataToAnimate());
     }
 
     getLastRotation(){
@@ -86,7 +97,8 @@ export default class Car extends Observable{
             "direction": this.currentDirectionTurn, 
             "velocity": this.currentVelocity, 
             "lastRotationWheel": this.currentTireRotation,
-            "position": this.position
+            "position": this.position,
+            "rotation": this.rotation
         };
     }
 }

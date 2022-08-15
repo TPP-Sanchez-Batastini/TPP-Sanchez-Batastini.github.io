@@ -89,6 +89,7 @@ class LogitechG29Controller{
         this.checkGamepadChanges();
         if(this.gamepad != null){
             this.doActionByMapping();
+            this.globalControllerHandler.updateCar();
         }
     }
 
@@ -348,6 +349,8 @@ class LogitechG29Controller{
         this.doActionsButtons();
         this.doActionsShifter();
     }
+
+
 }
 
 class LogitechG29ControllerSingleton{
