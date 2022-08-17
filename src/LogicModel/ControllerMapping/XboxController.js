@@ -45,6 +45,7 @@ class XboxController{
         this.globalControllerHandler = new GlobalControllerHandling(auto);
     }
 
+
     checkGamepadChanges(){
         const gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads() : []);
         for (let i = 0; i < gamepads.length; i++) {
@@ -56,6 +57,7 @@ class XboxController{
         }
     }
 
+
     checkEvents(){
         this.gamepad = null;
         this.checkGamepadChanges();
@@ -64,6 +66,7 @@ class XboxController{
             //this.globalControllerHandler.updateCar();
         }
     }
+
 
     doActionsAxes(){
         if(Math.abs(this.gamepad.axes[this.yLeftAxe]) >= STICK_LIMIT){
@@ -82,6 +85,7 @@ class XboxController{
         }
     }
 
+
     doActionsTriggers(){
         if (this.gamepad.buttons[this.buttonR2].pressed) {
             //console.log(this.gamepad.buttons[this.buttonR2]);
@@ -95,7 +99,6 @@ class XboxController{
             //console.log("Break: " + this.gamepad.buttons[this.buttonL2].value);
         }
     }
-
 
 
     doActionsButtons(){
@@ -244,6 +247,7 @@ class XboxController{
         }
     }
 
+
     doActionByMapping(){
         this.doActionsAxes();
         this.doActionsTriggers();
@@ -255,10 +259,12 @@ class XboxControllerSingleton{
 
     static instance;
 
+
     constructor() {
         throw new Error('Can not construct singleton. Call get instance instead.');
     }
 
+    
     static getInstance() {
         if (!XboxControllerSingleton.instance) {
             XboxControllerSingleton.instance = new XboxController();

@@ -1,7 +1,7 @@
 import { Vector3 } from 'three';
 import VisualEntity from './VisualEntity';
 
-const SCALE = [1.5, 1.5, 1.5];
+const SCALE = [1.0, 1.0, 1.0];
 const POSITION = [0,0,0];
 const MAX_TIRE_TURN_IN_RADS = 1.4;
 const FACTOR_KMH_TO_MS = 1/3600;
@@ -9,6 +9,7 @@ const VELOCITY_TO_ANGULAR_VEL = 1/0.25; //Velocity/Radius
 const STEERING_WHEEL_INITIAL_ROTATION_ON_X = -0.35;
 
 export default class CarModel extends VisualEntity{
+    
     
     constructor(){
         super('res/models/source/AutoConInterior.gltf');
@@ -20,27 +21,38 @@ export default class CarModel extends VisualEntity{
         this.lastSteeringRotation = 0;
     }
 
+
     async addToScene(scene){
         await super.addToScene(scene, "driverCar", POSITION, SCALE);
         return this;
     }
 
+
     animate(){
         this.moveCar();
     }
 
+
     moveCar(){
         if(this.observedState != null){
-            this.threeDModel.position.x = this.observedState["position"].x;
-            this.threeDModel.position.y = this.observedState["position"].y;
-            this.threeDModel.position.z = this.observedState["position"].z;
-            this.threeDModel.rotateY(-this.lastValueRotation);
-            this.threeDModel.rotateY(this.observedState["direction"]);
+            this.threeDModel.userData.physicsBody = this.observedState["physicsBody"];
+            this.threeDModel.position.set(
+                this.observedState["position"].x, 
+                this.observedState["position"].y, 
+                this.observedState["position"].z
+            );
+            this.threeDModel.quaternion.set(
+                this.observedState["rotation"].x, 
+                this.observedState["rotation"].y, 
+                this.observedState["rotation"].z, 
+                this.observedState["rotation"].w
+            );
             this.lastValueRotation = this.observedState["direction"];
             this.rotateWheels();
             this.rotateSteeringWheel();
         }
     }
+
 
     rotateSteeringWheel(){
         let steeringWheel = this.threeDModel.children.find(o => o.name === 'Steering_Wheel');
@@ -49,6 +61,7 @@ export default class CarModel extends VisualEntity{
         steeringWheel.rotateOnAxis(vectorRotation, -this.observedState['lastRotationWheel']*540/360*Math.PI*2);
         this.lastSteeringRotation = -this.observedState['lastRotationWheel']*540/360*Math.PI*2;
     }
+
 
     rotateWheels(){
         let wheelOne = this.threeDModel.children.find(o => o.name === 'wheel');

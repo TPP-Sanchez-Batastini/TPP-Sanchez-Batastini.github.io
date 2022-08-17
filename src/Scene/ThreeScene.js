@@ -7,8 +7,10 @@ import XboxControllerSingleton from '../LogicModel/ControllerMapping/XboxControl
 import Car from '../LogicModel/CarLogic/Car';
 import AmmoInstance from '../LogicModel/Physics/AmmoInstance';
 import BoxPhysics from '../LogicModel/Physics/PhysicsTypes/BoxPhysics';
+import Ammo from 'ammo.js';
 
 export default class ThreeScene extends Component{
+    
     
     async componentDidMount(){
         //Generate elements needed to render the scene
@@ -22,7 +24,7 @@ export default class ThreeScene extends Component{
         this.clock = new THREE.Clock();
 
         //Ammo.js
-        this.createAmmo();
+        await this.createAmmo();
 
         //Add elements to the scene
         this.ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
@@ -32,20 +34,30 @@ export default class ThreeScene extends Component{
         this.scene.add( this.sunLight );
 
         //FLOOR
-        const floorGeometry = new THREE.PlaneGeometry( 5000, 5000 );
+        const floorGeometry = new THREE.BoxGeometry( 5000, 10, 5000);
         const texture = new THREE.TextureLoader().load( 'textures/Piso.png' );
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
 
-        new BoxPhysics(new THREE.Vector3(0,0,0),new THREE.Vector4(0,0,0,1) , 0, 0,new THREE.Vector3(1,0,0), this.physicsWorld);
+        const quaternion = new THREE.Quaternion();
+        quaternion.setFromAxisAngle( new THREE.Vector3( 1, 0, 0 ), 0);
+        let Ammo = await AmmoInstance.getInstance() ;
+        this.floorPhysics = new BoxPhysics(
+            new THREE.Vector3(0,0,0), //Position
+            quaternion ,  //Quaternion
+            new Ammo.btVector3(0,0,0), //Inertia
+            0, //Mass
+            new THREE.Vector3(5000, 10, 5000), //Shape
+            this.physicsWorld, //Physics World
+            1 // friction
+        ); 
+
+        await this.floorPhysics.buildAmmoPhysics();
         
         texture.repeat.set( 10, 10 );
         const floorMaterial = new THREE.MeshBasicMaterial( {map: texture,  side: THREE.DoubleSide} );
         this.floor = new THREE.Mesh( floorGeometry, floorMaterial );
-        this.floor.position.x = 0;
-        this.floor.position.y = 0;
-        this.floor.position.z = 0;
-        this.floor.rotateOnAxis(new THREE.Vector3(1,0,0), Math.PI/2);
+        this.floor.position.set (0,0,0);
         this.scene.add(this.floor);
 
         //Add driver's car to scene
@@ -71,6 +83,7 @@ export default class ThreeScene extends Component{
         
     }
 
+
     generateEvents(){
         window.addEventListener("resize", this.handleWindowResize);
         window.addEventListener("gamepaddisconnected", function(e){
@@ -89,14 +102,15 @@ export default class ThreeScene extends Component{
 
         this.physicsWorld = new Ammo.btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguratation);
         this.physicsWorld.setGravity(new Ammo.btVector3(0,-9.8,0));
-        console.log("Cargo las fisicas del mundo")
     }
+
 
     handleWindowResize(){
         this.camera.handleResize();
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.render( this.scene, this.camera.getCameraInstance() );
     }
+
 
     animation(){
         let deltaTime = this.clock.getDelta();
@@ -105,6 +119,9 @@ export default class ThreeScene extends Component{
         this.objectsToAnimate.forEach(function(object){
             object.animate();
         });
+        let floorData = this.floorPhysics.updatePhysics();
+        this.floor.position.set(floorData['position'].x,floorData['position'].y, floorData['position'].z);
+        this.floor.quaternion.set(floorData['rotation'].x, floorData['rotation'].y, floorData['rotation'].z, floorData['rotation'].w);
         this.camera.setPositionRelativeToObject();
         LogitechG29ControllerSingleton.getInstance(this.carLogic).checkEvents();
         XboxControllerSingleton.getInstance(this.carLogic).checkEvents();

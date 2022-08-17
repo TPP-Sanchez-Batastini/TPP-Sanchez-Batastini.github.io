@@ -13,9 +13,10 @@ export class AbstractEngineState{
             sumToValueInCurve = (valueAccelerator - 1) * BRAKE_COEF;
         }
         currentXInRPMCurve = currentXInRPMCurve + sumToValueInCurve;
-
-        //X's value is not able to have negative value in our calculation.
-        if(currentXInRPMCurve < 0){
+        if (currentXInRPMCurve > 3 * EXPONENTIAL_COEF_TO_RPM){
+            currentXInRPMCurve = 3 * EXPONENTIAL_COEF_TO_RPM;
+        }
+        else if(currentXInRPMCurve < 0){ //X's value is not able to have negative value in our calculation.
             currentXInRPMCurve = 0;
         }
         //We'll simulate the RPM's in an equation similar to capacitors in order to not make it linear and make it independent of everything.

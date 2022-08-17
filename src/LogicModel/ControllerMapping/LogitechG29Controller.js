@@ -73,6 +73,7 @@ class LogitechG29Controller{
         this.globalControllerHandler = new GlobalControllerHandling(carLogic);
     }
 
+    
     checkGamepadChanges(){
         const gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads() : []);
         for (let i = 0; i < gamepads.length; i++) {
@@ -84,6 +85,7 @@ class LogitechG29Controller{
         }
     }
 
+
     checkEvents(){
         this.gamepad = null;
         this.checkGamepadChanges();
@@ -92,6 +94,7 @@ class LogitechG29Controller{
             this.globalControllerHandler.updateCar();
         }
     }
+
 
     doActionsPedals(){
         if(this.gamepad.axes[this.accelerator] !== 1.0){
@@ -103,11 +106,13 @@ class LogitechG29Controller{
         }
     }
 
+
     doActionsWheel(){
         //if(this.gamepad.axes[this.wheelAxes] <= -0.05 || this.gamepad.axes[this.wheelAxes] >= 0.05){
             this.globalControllerHandler.turnDirection(this.gamepad.axes[this.wheelAxes]);
         //}
     }
+
 
     doActionsDPad(){
         if(this.gamepad.axes[this.DPad] !== DPAD_NOT_PRESSED){
@@ -145,6 +150,7 @@ class LogitechG29Controller{
             }
         }
     }
+
 
     doActionsButtons(){
 
@@ -290,6 +296,7 @@ class LogitechG29Controller{
         }
     }
 
+
     doActionsShifter(){
         if (this.gamepad.buttons[this.firstShift].pressed && !this.buttonsPressed[this.firstShift]) {
             this.globalControllerHandler.changeShift(this.gamepad.axes[this.clutch], 1);
@@ -342,6 +349,7 @@ class LogitechG29Controller{
         }
     }
 
+
     doActionByMapping(){
         this.doActionsPedals();
         this.doActionsWheel();
@@ -352,6 +360,7 @@ class LogitechG29Controller{
 
 
 }
+
 
 class LogitechG29ControllerSingleton{
 
