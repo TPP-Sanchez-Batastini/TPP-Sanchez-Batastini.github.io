@@ -6,6 +6,9 @@ const FRONT_RIGHT = 1;
 const BACK_LEFT = 2;
 const BACK_RIGHT = 3;
 
+const SIDE_RIGHT =-1;
+const SIDE_LEFT = 1;
+
 const DISABLE_DEACTIVATION = 4;
 export default class CarPhysics{
 
@@ -38,7 +41,7 @@ export default class CarPhysics{
 
         ///
         let shape = new Ammo.btBoxShape(new Ammo.btVector3(this.shape.x, this.shape.y, this.shape.z));
-        shape.setMargin(0.05);
+        //shape.setMargin(0.05);
         shape.calculateLocalInertia(this.mass, this.inertia);
 
         let rigidBodyInfo = new Ammo.btRigidBodyConstructionInfo(this.mass, motionState, shape, this.inertia);
@@ -56,23 +59,25 @@ export default class CarPhysics{
         this.vehicle.setCoordinateSystem(0, 1, 2);
         this.physicsWorld.addAction(this.vehicle);
 
-        var wheelAxisPositionBack = 5;
-        var wheelRadiusBack = 1.5;
-        var wheelWidthBack = 0.4;
-        var wheelHalfTrackBack = 1;
-        var wheelAxisHeightBack = 0.3;
+        let radio_rueda = 0.35; 
+        let disti_center = 0.85; //antes 0.95
+        var wheelAxisPositionBack = -1.45; //Posicion en Z
+        var wheelRadiusBack = radio_rueda;
+        var wheelWidthBack = 0.35;
+        var wheelHalfTrackBack = -disti_center;
+        var wheelAxisHeightBack = 0.2;
 
-        var wheelAxisFrontPosition = 0;
-        var wheelHalfTrackFront = 1;
-        var wheelAxisHeightFront = 0.3;
-        var wheelRadiusFront = 1.5;
-        var wheelWidthFront = 0.4;
+        var wheelAxisFrontPosition = 1.65; //Posicion en Z
+        var wheelHalfTrackFront = disti_center; // distancia del centro 
+        var wheelAxisHeightFront = 0.2;
+        var wheelRadiusFront = radio_rueda; //Radio rueda
+        var wheelWidthFront = 0.35; //Espesor Rueda
 
 
-        this.addWheel(true, new this.Ammo.btVector3(wheelHalfTrackFront, wheelAxisHeightFront, wheelAxisFrontPosition), wheelRadiusFront, wheelWidthFront, FRONT_LEFT);
-        this.addWheel(true, new this.Ammo.btVector3(-wheelHalfTrackFront, wheelAxisHeightFront, wheelAxisFrontPosition), wheelRadiusFront, wheelWidthFront, FRONT_RIGHT);
-        this.addWheel(false, new this.Ammo.btVector3(-wheelHalfTrackBack, wheelAxisHeightBack, wheelAxisPositionBack), wheelRadiusBack, wheelWidthBack, BACK_LEFT);
-        this.addWheel(false, new this.Ammo.btVector3(wheelHalfTrackBack, wheelAxisHeightBack, wheelAxisPositionBack), wheelRadiusBack, wheelWidthBack, BACK_RIGHT);
+        this.addWheel(true, new this.Ammo.btVector3(wheelHalfTrackFront, wheelAxisHeightFront, wheelAxisFrontPosition), wheelRadiusFront, wheelWidthFront, FRONT_LEFT,SIDE_LEFT);
+        this.addWheel(true, new this.Ammo.btVector3(-wheelHalfTrackFront, wheelAxisHeightFront, wheelAxisFrontPosition), wheelRadiusFront, wheelWidthFront, FRONT_RIGHT,SIDE_RIGHT);
+        this.addWheel(false, new this.Ammo.btVector3(-wheelHalfTrackBack, wheelAxisHeightBack, wheelAxisPositionBack), wheelRadiusBack, wheelWidthBack, BACK_LEFT,SIDE_LEFT);
+        this.addWheel(false, new this.Ammo.btVector3(wheelHalfTrackBack, wheelAxisHeightBack, wheelAxisPositionBack), wheelRadiusBack, wheelWidthBack, BACK_RIGHT,SIDE_RIGHT);
 
         if( this.mass > 0 ){
             this.rigidBody.setActivationState(DISABLE_DEACTIVATION);
@@ -80,7 +85,7 @@ export default class CarPhysics{
     }
 
 
-    addWheel(isFront, pos, radius, width, index) {
+    addWheel(isFront, pos, radius, width, index, side) {
         var wheelDirectionCS0 = new this.Ammo.btVector3(0, -1, 0);
         var wheelAxleCS = new this.Ammo.btVector3(-1, 0, 0);
         var suspensionStiffness = 2.0;

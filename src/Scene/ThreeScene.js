@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import * as THREE from 'three';
 import Camera from '../Camera/Camera';
+import OrbitalCamera from '../Camera/OribtalCamera';
 import CarModel from '../3DModels/CarModel';
 import LogitechG29ControllerSingleton from '../LogicModel/ControllerMapping/LogitechG29Controller';
 import XboxControllerSingleton from '../LogicModel/ControllerMapping/XboxController';
@@ -16,11 +17,12 @@ export default class ThreeScene extends Component{
         //Generate elements needed to render the scene
         this.objectsToAnimate = [];
         this.scene = new THREE.Scene();
-        this.camera = new Camera();
+        //this.camera = new Camera();
         this.renderer = new THREE.WebGLRenderer({ alpha: true });
         this.renderer.setSize( window.innerWidth, window.innerHeight );
         this.renderer.setClearColor( 0x87cefa, 1 );
         this.renderer.outputEncoding = THREE.sRGBEncoding;
+        this.camera = new OrbitalCamera(this.renderer);
         this.clock = new THREE.Clock();
 
         //Ammo.js
@@ -40,16 +42,16 @@ export default class ThreeScene extends Component{
         texture.wrapT = THREE.RepeatWrapping;
 
         const quaternion = new THREE.Quaternion();
-        quaternion.setFromAxisAngle( new THREE.Vector3( 1, 0, 0 ), 0);
+        quaternion.setFromAxisAngle( new THREE.Vector3( 0, 0, 0 ), 0);
         let Ammo = await AmmoInstance.getInstance() ;
         this.floorPhysics = new BoxPhysics(
-            new THREE.Vector3(0,0,0), //Position
+            new THREE.Vector3(0,-5,0), //Position
             quaternion ,  //Quaternion
             new Ammo.btVector3(0,0,0), //Inertia
             0, //Mass
             new THREE.Vector3(5000, 10, 5000), //Shape
             this.physicsWorld, //Physics World
-            1 // friction
+            10000 // friction
         ); 
 
         await this.floorPhysics.buildAmmoPhysics();
@@ -59,6 +61,31 @@ export default class ThreeScene extends Component{
         this.floor = new THREE.Mesh( floorGeometry, floorMaterial );
         this.floor.position.set (0,0,0);
         this.scene.add(this.floor);
+
+        // Rampa 
+        
+        // const rampa = new THREE.BoxGeometry( 100, 2, 10);
+
+        //     rampa.rotation.x = Math.PI / 4;
+        // const quaternionRamp = new THREE.Quaternion();
+        // quaternion.setFromAxisAngle( new THREE.Vector3( 1, 0, 0 ), Math.PI / 4);
+
+        // this.ramp = new BoxPhysics(
+        //     new THREE.Vector3(0,0,0), //Position
+        //     quaternionRamp ,  //Quaternion
+        //     new Ammo.btVector3(0,0,0), //Inertia
+        //     0, //Mass
+        //     new THREE.Vector3(100, 2, 10), //Shape
+        //     this.physicsWorld, //Physics World
+        //     1 // friction
+        // ); 
+        
+        // await this.ramp.buildAmmoPhysics();
+        
+
+        // this.ramp = new THREE.Mesh( rampa, floorMaterial );
+        // this.ramp.position.set (10,0,10);
+        // this.scene.add(this.ramp);
 
         //Add driver's car to scene
         this.carLogic = new Car(this.physicsWorld);
@@ -120,7 +147,7 @@ export default class ThreeScene extends Component{
             object.animate();
         });
         let floorData = this.floorPhysics.updatePhysics();
-        this.floor.position.set(floorData['position'].x,floorData['position'].y, floorData['position'].z);
+        this.floor.position.set(floorData['position'].x,floorData['position'].y+5, floorData['position'].z);
         this.floor.quaternion.set(floorData['rotation'].x, floorData['rotation'].y, floorData['rotation'].z, floorData['rotation'].w);
         this.camera.setPositionRelativeToObject();
         LogitechG29ControllerSingleton.getInstance(this.carLogic).checkEvents();

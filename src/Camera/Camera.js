@@ -4,7 +4,7 @@ import Observer from '../ObserverPattern/Observer';
 
 const Y_DISTANCE = 0.6;
 const Z_DISTANCE = -0.1;
-const X_DISTANCE = 0.35;
+const X_DISTANCE = -0.35;
 export default class Camera extends Observer{
 
 
@@ -26,11 +26,11 @@ export default class Camera extends Observer{
             let cameraOffsetRotated = cameraOffset.applyQuaternion(this.observedState.rotation);
             this.camera.position.copy(this.observedState.position).add(cameraOffsetRotated);
             let positionToLookAt = new Vector3(this.observedState.position.x, this.observedState.position.y, this.observedState.position.z);
-            let offsetVector = new Vector3(0,0,5);
+            /*let offsetVector = new Vector3(0,0,5);
             offsetVector.applyQuaternion(this.observedState.rotation);
             positionToLookAt.x += offsetVector.x;
             positionToLookAt.y += offsetVector.y;
-            positionToLookAt.z += offsetVector.z;
+            positionToLookAt.z += offsetVector.z;*/
             this.camera.lookAt(positionToLookAt);
         }else{
             this.camera.lookAt(new Vector3(0,0,0));

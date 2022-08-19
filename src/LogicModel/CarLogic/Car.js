@@ -18,7 +18,7 @@ export default class Car extends Observable{
         this.position = new Vector3(POSITION[0], POSITION[1], POSITION[2]);
         this.rotationQuaternion = new Vector4(0,0,0,1);
         this.mass = 1000;
-        this.physicsShape = new Vector3(2,1.32,5);
+        this.physicsShape = new Vector3(2,1.3,5);
         this.rotation = new Vector4(0,0,0,1);
         this.inertia = new Vector3(0,0,10);
 
@@ -72,6 +72,7 @@ export default class Car extends Observable{
         let positionAndRotation = this.boxPhysics.updatePhysics();
         this.position = positionAndRotation["chassis"]["position"];
         this.rotation = positionAndRotation["chassis"]["rotation"];
+        this.wheelsData = positionAndRotation["wheels"];
         super.notifyObservers(this.getDataToAnimate());
     }
 
@@ -88,7 +89,8 @@ export default class Car extends Observable{
             "lastRotationWheel": this.currentTireRotation,
             "position": this.position,
             "rotation": this.rotation,
-            "physicsBody": this.boxPhysics
+            "physicsBody": this.boxPhysics,
+            "wheelsData": this.wheelsData
         };
     }
 }
