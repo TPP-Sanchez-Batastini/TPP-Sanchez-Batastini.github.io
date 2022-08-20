@@ -6,7 +6,7 @@ import CarEngine from './CarEngine';
 
 
 const POSITION = [0,40,0];
-const FACTOR_BRAKE_TO_FORCE = 150;
+const FACTOR_BRAKE_TO_FORCE = 300;
 export default class Car extends Observable{
 
     constructor(physicsWorld){
@@ -85,7 +85,7 @@ export default class Car extends Observable{
     getDataToAnimate(){
         return {
             "direction": this.currentDirectionTurn, 
-            "velocity": this.currentVelocity, 
+            "velocity": this.boxPhysics.getVelocity(), 
             "lastRotationWheel": this.currentTireRotation,
             "position": this.position,
             "rotation": this.rotation,

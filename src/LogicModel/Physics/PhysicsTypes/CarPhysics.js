@@ -8,6 +8,10 @@ const BACK_RIGHT = 3;
 
 const SIDE_RIGHT =-1;
 const SIDE_LEFT = 1;
+const MAX_STEER = -0.5;
+
+const MAX_RPM = 6000;
+const MAX_BREAKING_FORCE = 300;
 
 const DISABLE_DEACTIVATION = 4;
 export default class CarPhysics{
@@ -40,7 +44,7 @@ export default class CarPhysics{
 
 
         ///
-        let shape = new Ammo.btBoxShape(new Ammo.btVector3(this.shape.x, this.shape.y, this.shape.z));
+        let shape = new Ammo.btBoxShape(new Ammo.btVector3(this.shape.x/2, this.shape.y/2, this.shape.z/2));
         //shape.setMargin(0.05);
         shape.calculateLocalInertia(this.mass, this.inertia);
 
@@ -149,23 +153,37 @@ export default class CarPhysics{
 
     
     setEngineForce( value_RPM ){
-        this.vehicle.applyEngineForce( value_RPM, BACK_LEFT );
-        this.vehicle.applyEngineForce( value_RPM, BACK_RIGHT );
+        if(this.vehicle.getCurrentSpeedKmHour() < -1){
+            this.vehicle.setBrake(150, FRONT_LEFT);
+            this.vehicle.setBrake(150, FRONT_RIGHT);
+            this.vehicle.setBrake(300, BACK_LEFT);
+            this.vehicle.setBrake(300, BACK_RIGHT);
+        }else{
+            this.vehicle.applyEngineForce( value_RPM, BACK_LEFT );
+            this.vehicle.applyEngineForce( value_RPM, BACK_RIGHT );
+        }
     }
 
 
     brake(valueBrake){
-        if(this.vehicle.getCurrentSpeedKmHour() > 0.5){
+        if(this.vehicle.getCurrentSpeedKmHour() > 1){
             this.vehicle.setBrake(valueBrake/2, FRONT_LEFT);
             this.vehicle.setBrake(valueBrake/2, FRONT_RIGHT);
             this.vehicle.setBrake(valueBrake, BACK_LEFT);
             this.vehicle.setBrake(valueBrake, BACK_RIGHT);
+        }else{
+            this.vehicle.applyEngineFroce(-MAX_RPM/2);
         }
     }
 
 
     setSteeringRotation( rotation ){
-        this.vehicle.setSteeringValue(rotation, FRONT_LEFT);
-        this.vehicle.setSteeringValue(rotation, FRONT_RIGHT);
+        this.vehicle.setSteeringValue(rotation * MAX_STEER, FRONT_LEFT);
+        this.vehicle.setSteeringValue(rotation * MAX_STEER, FRONT_RIGHT);
+    }
+
+
+    getVelocity(){
+        return this.vehicle.getCurrentSpeedKmHour();
     }
 }

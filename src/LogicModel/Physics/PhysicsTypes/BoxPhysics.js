@@ -29,7 +29,7 @@ export default class BoxPhysics{
 
         let motionState = new Ammo.btDefaultMotionState(transform);
 
-        let shape = new Ammo.btBoxShape(new Ammo.btVector3(this.shape.x, this.shape.y, this.shape.z));
+        let shape = new Ammo.btBoxShape(new Ammo.btVector3(this.shape.x/2, this.shape.y/2, this.shape.z/2));
         shape.setMargin(0.05);
         shape.calculateLocalInertia(this.mass, this.inertia);
 

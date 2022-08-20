@@ -30,9 +30,20 @@ export default class CarModel extends VisualEntity{
 
     async addToScene(scene){
         await super.addToScene(scene, "driverCar", POSITION, SCALE);
+        //this.addPhysicsView(scene)
         
 
-        //FLETAR ESTO
+        return this;
+    }
+
+
+    animate(){
+        this.moveCar();
+        //this.watchPhysicsColliders();
+    }
+
+
+    addPhysicsView(scene){
         this.physicsShape = new Vector3(2,1.35,5);
         
         const Geometry = new THREE.BoxGeometry( this.physicsShape.x, this.physicsShape.y, this.physicsShape.z);
@@ -59,16 +70,9 @@ export default class CarModel extends VisualEntity{
         this.wheelMesh4 =  new THREE.Mesh( GeometryRueda, textureRueda );
         this.wheelMesh4.position.set (0,4,0);
         scene.add(this.wheelMesh4);
-
-        return this;
     }
 
-
-    animate(){
-        this.moveCar();
-        this.watchPhysicsColliders();
-    }
-
+    //Only for debug purpose2
     watchPhysicsColliders(){
         
         if(this.observedState != null){
@@ -172,26 +176,26 @@ export default class CarModel extends VisualEntity{
         let wheelBackRight = this.threeDModel.children.find(o => o.name === 'wheel003');
         let wheelBackLeft = this.threeDModel.children.find(o => o.name === 'wheel001');
 
-        let wheelArray = [wheelFrontLeft, wheelFrontRight, wheelBackLeft, wheelBackRight];
+        /*let wheelArray = [wheelFrontLeft, wheelFrontRight, wheelBackLeft, wheelBackRight];
 
         console.log(this.observedState.wheelsData);
 
         for(let i=0; i<wheelArray.length; i++){
             console.log(this.observedState.wheelsData[i].position);
-            /*wheelArray[i].position.set(
+            wheelArray[i].position.set(
                 this.observedState.wheelsData[i].position.x,
                 this.observedState.wheelsData[i].position.y,
                 this.observedState.wheelsData[i].position.z
-            );*/
+            );
             wheelArray[i].quaternion.set(
                 this.observedState.wheelsData[i].rotation.x,
                 this.observedState.wheelsData[i].rotation.y,
                 this.observedState.wheelsData[i].rotation.z,
                 this.observedState.wheelsData[i].rotation.w,
             );
-        }
+        }*/
 
-        /*let rotationYVectorTwo = new Vector3(0,1,0).applyAxisAngle(
+        let rotationYVectorTwo = new Vector3(0,1,0).applyAxisAngle(
             new Vector3(1,0,0), 
             this.currentSpeedRotation
         );
@@ -227,6 +231,6 @@ export default class CarModel extends VisualEntity{
         this.currentSpeedRotation += this.observedState['velocity'] * FACTOR_KMH_TO_MS * VELOCITY_TO_ANGULAR_VEL;
         if(this.currentSpeedRotation >= Math.PI*2){
             this.currentSpeedRotation -= Math.PI*2;
-        }*/
+        }
     }
 }

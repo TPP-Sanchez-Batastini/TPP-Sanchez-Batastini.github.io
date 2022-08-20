@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import * as THREE from 'three';
 import Camera from '../Camera/Camera';
+import SideCamera from '../Camera/CarSideCamera';
 import OrbitalCamera from '../Camera/OribtalCamera';
 import CarModel from '../3DModels/CarModel';
 import LogitechG29ControllerSingleton from '../LogicModel/ControllerMapping/LogitechG29Controller';
@@ -23,6 +24,29 @@ export default class ThreeScene extends Component{
         this.renderer.setClearColor( 0x87cefa, 1 );
         this.renderer.outputEncoding = THREE.sRGBEncoding;
         this.camera = new OrbitalCamera(this.renderer);
+
+        document.addEventListener('keydown', (event) => {
+            var numCamera = event.key;
+            console.log(this.camera);
+            //this.carLogic.removeObserver(this.camera);
+            switch(numCamera){
+                case "1":
+                    this.camera = new Camera();
+                    break;
+                case "2":
+                    this.camera = new OrbitalCamera(this.renderer);
+                    break;
+                case "3":
+                    this.camera = new SideCamera();
+                    break;
+                default:
+                    this.camera = this.camera;
+            }
+            this.carLogic.attachObserver(this.camera);
+            this.carLogic.notifyObservers();
+
+          }, false);
+
         this.clock = new THREE.Clock();
 
         //Ammo.js
@@ -147,11 +171,12 @@ export default class ThreeScene extends Component{
             object.animate();
         });
         let floorData = this.floorPhysics.updatePhysics();
-        this.floor.position.set(floorData['position'].x,floorData['position'].y+5, floorData['position'].z);
+        this.floor.position.set(floorData['position'].x,floorData['position'].y, floorData['position'].z);
         this.floor.quaternion.set(floorData['rotation'].x, floorData['rotation'].y, floorData['rotation'].z, floorData['rotation'].w);
         this.camera.setPositionRelativeToObject();
         LogitechG29ControllerSingleton.getInstance(this.carLogic).checkEvents();
         XboxControllerSingleton.getInstance(this.carLogic).checkEvents();
+        
         this.renderer.render( this.scene, this.camera.getCameraInstance());
     }
 
