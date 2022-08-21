@@ -1,12 +1,10 @@
 import TurnedOffEngine from './CarEngineStates/TurnedOffEngine';
 import TurnedOnEngine from './CarEngineStates/TurnedOnEngine';
-import {MAX_RPM} from './CarEngineStates/AbstractEngineState';
 
 const MIN_RPM_TO_AVOID_SHUTDOWN = 1000;
 const MIN_VALUE_CLUTCH_TO_AVOID_SHUTDOWN = 0.25;
 const NEUTRAL = 0;
 const REVERSE = -1;
-const RPM_TO_ACCELERATION_FACTOR = 4/(MAX_RPM - MIN_RPM_TO_AVOID_SHUTDOWN);
 
 export default class CarEngine{
 
@@ -46,17 +44,16 @@ export default class CarEngine{
     }
 
 
+    engineCanApplyForce(valueClutch){
+        return (this.currentRPM >= MIN_RPM_TO_AVOID_SHUTDOWN && !this.clutchIsPressed(valueClutch));
+    }
+
+
     accelerate(valueClutch, valueAccelerator){
         let rpmReturn = this.engineState.accelerate(valueAccelerator, this.currentRPM, this.currentXInRPMCurve);
         this.currentRPM = rpmReturn[0];
         this.currentXInRPMCurve = rpmReturn[1];
-        let accel = 0;
-        if(this.isInConditionToAccelerate(valueClutch)){
-            accel = (this.currentRPM - MIN_RPM_TO_AVOID_SHUTDOWN) * RPM_TO_ACCELERATION_FACTOR;
-            this.currentShift === REVERSE ? accel = -accel : accel = accel;
-        }else{
-            this.handleEngineShutdown(valueClutch);
-        }
+        this.handleEngineShutdown(valueClutch);
     }
 
 
@@ -79,5 +76,10 @@ export default class CarEngine{
 
     getCurrentRPM(){
         return this.currentRPM;
+    }
+
+
+    isInReverse(){
+        return this.currentShift === REVERSE;
     }
 }

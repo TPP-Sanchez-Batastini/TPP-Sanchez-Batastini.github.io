@@ -11,6 +11,7 @@ export default class BoxPhysics{
         this.mass = mass;
         this.shape = shape;
         this.physicsWorld = physicsWorld;
+        if(!friction) friction = 1;
         this.friction = friction;
     }
 

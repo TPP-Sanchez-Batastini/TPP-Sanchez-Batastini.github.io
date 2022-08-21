@@ -2,6 +2,7 @@ export const MAX_RPM = 6000;
 const ACCEL_COEF = 1;
 const BRAKE_COEF = 2;
 const EXPONENTIAL_COEF_TO_RPM = 200;
+const COEF_TO_DESCEND_RPM = 5;
 
 export class AbstractEngineState{
     changeValueInRPMCurve(valueAccelerator, accelerating, currentRPM, currentXInRPMCurve){
@@ -9,6 +10,9 @@ export class AbstractEngineState{
         let sumToValueInCurve;
         if(accelerating){
             sumToValueInCurve = (valueAccelerator * -1 + 0.8) * ACCEL_COEF;
+            if(sumToValueInCurve < 0){
+                sumToValueInCurve *= COEF_TO_DESCEND_RPM;
+            }
         }else{
             sumToValueInCurve = (valueAccelerator - 1) * BRAKE_COEF;
         }

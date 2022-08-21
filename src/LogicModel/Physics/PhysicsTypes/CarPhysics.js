@@ -10,9 +10,6 @@ const SIDE_RIGHT =-1;
 const SIDE_LEFT = 1;
 const MAX_STEER = -0.5;
 
-const MAX_RPM = 6000;
-const MAX_BREAKING_FORCE = 300;
-
 const DISABLE_DEACTIVATION = 4;
 export default class CarPhysics{
 
@@ -42,10 +39,7 @@ export default class CarPhysics{
 
         let motionState = new Ammo.btDefaultMotionState(transform);
 
-
-        ///
         let shape = new Ammo.btBoxShape(new Ammo.btVector3(this.shape.x/2, this.shape.y/2, this.shape.z/2));
-        //shape.setMargin(0.05);
         shape.calculateLocalInertia(this.mass, this.inertia);
 
         let rigidBodyInfo = new Ammo.btRigidBodyConstructionInfo(this.mass, motionState, shape, this.inertia);
@@ -55,8 +49,6 @@ export default class CarPhysics{
 
         this.physicsWorld.addRigidBody(this.rigidBody);
 
-        //////hasta igual 
-
         this.tuning = new this.Ammo.btVehicleTuning();
         var rayCaster = new this.Ammo.btDefaultVehicleRaycaster(this.physicsWorld);
         this.vehicle = new this.Ammo.btRaycastVehicle(this.tuning, this.rigidBody, rayCaster);
@@ -64,18 +56,18 @@ export default class CarPhysics{
         this.physicsWorld.addAction(this.vehicle);
 
         let radio_rueda = 0.35; 
-        let disti_center = 0.85; //antes 0.95
-        var wheelAxisPositionBack = -1.45; //Posicion en Z
+        let disti_center = 0.85;
+        var wheelAxisPositionBack = -1.45;
         var wheelRadiusBack = radio_rueda;
         var wheelWidthBack = 0.35;
         var wheelHalfTrackBack = -disti_center;
         var wheelAxisHeightBack = 0.2;
 
-        var wheelAxisFrontPosition = 1.65; //Posicion en Z
-        var wheelHalfTrackFront = disti_center; // distancia del centro 
+        var wheelAxisFrontPosition = 1.65;
+        var wheelHalfTrackFront = disti_center;
         var wheelAxisHeightFront = 0.2;
-        var wheelRadiusFront = radio_rueda; //Radio rueda
-        var wheelWidthFront = 0.35; //Espesor Rueda
+        var wheelRadiusFront = radio_rueda;
+        var wheelWidthFront = 0.35;
 
 
         this.addWheel(true, new this.Ammo.btVector3(wheelHalfTrackFront, wheelAxisHeightFront, wheelAxisFrontPosition), wheelRadiusFront, wheelWidthFront, FRONT_LEFT,SIDE_LEFT);
@@ -153,27 +145,18 @@ export default class CarPhysics{
 
     
     setEngineForce( value_RPM ){
-        if(this.vehicle.getCurrentSpeedKmHour() < -1){
-            this.vehicle.setBrake(150, FRONT_LEFT);
-            this.vehicle.setBrake(150, FRONT_RIGHT);
-            this.vehicle.setBrake(300, BACK_LEFT);
-            this.vehicle.setBrake(300, BACK_RIGHT);
-        }else{
-            this.vehicle.applyEngineForce( value_RPM, BACK_LEFT );
-            this.vehicle.applyEngineForce( value_RPM, BACK_RIGHT );
-        }
+        console.log("Cambio setEngineForce: " + value_RPM);
+        this.vehicle.applyEngineForce( value_RPM, BACK_LEFT );
+        this.vehicle.applyEngineForce( value_RPM, BACK_RIGHT );
     }
 
 
     brake(valueBrake){
-        if(this.vehicle.getCurrentSpeedKmHour() > 1){
-            this.vehicle.setBrake(valueBrake/2, FRONT_LEFT);
-            this.vehicle.setBrake(valueBrake/2, FRONT_RIGHT);
-            this.vehicle.setBrake(valueBrake, BACK_LEFT);
-            this.vehicle.setBrake(valueBrake, BACK_RIGHT);
-        }else{
-            this.vehicle.applyEngineFroce(-MAX_RPM/2);
-        }
+        console.log("valBrake: " + valueBrake);
+        this.vehicle.setBrake(valueBrake/2, FRONT_LEFT);
+        this.vehicle.setBrake(valueBrake/2, FRONT_RIGHT);
+        this.vehicle.setBrake(valueBrake, BACK_LEFT);
+        this.vehicle.setBrake(valueBrake, BACK_RIGHT);
     }
 
 

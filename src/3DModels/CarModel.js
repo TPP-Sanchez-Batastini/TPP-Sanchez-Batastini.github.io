@@ -4,15 +4,10 @@ import VisualEntity from './VisualEntity';
 
 const SCALE = [1.0, 1.0, 1.0];
 const POSITION = [0,0,0];
-const MAX_TIRE_TURN_IN_RADS = 1.4;
+const MAX_TIRE_TURN_IN_RADS = 0.75;
 const FACTOR_KMH_TO_MS = 1/3600;
 const VELOCITY_TO_ANGULAR_VEL = 1/0.25; //Velocity/Radius
 const STEERING_WHEEL_INITIAL_ROTATION_ON_X = -0.35;
-
-const FRONT_LEFT = 0;
-const FRONT_RIGHT = 1;
-const BACK_LEFT = 2;
-const BACK_RIGHT = 3;
 
 export default class CarModel extends VisualEntity{
     
@@ -171,29 +166,10 @@ export default class CarModel extends VisualEntity{
 
 
     rotateWheels(){
-        let wheelFrontLeft = this.threeDModel.children.find(o => o.name === 'wheel002');
-        let wheelFrontRight = this.threeDModel.children.find(o => o.name === 'wheel');
+        let wheelFrontRight = this.threeDModel.children.find(o => o.name === 'wheel002');
+        let wheelFrontLeft = this.threeDModel.children.find(o => o.name === 'wheel');
         let wheelBackRight = this.threeDModel.children.find(o => o.name === 'wheel003');
         let wheelBackLeft = this.threeDModel.children.find(o => o.name === 'wheel001');
-
-        /*let wheelArray = [wheelFrontLeft, wheelFrontRight, wheelBackLeft, wheelBackRight];
-
-        console.log(this.observedState.wheelsData);
-
-        for(let i=0; i<wheelArray.length; i++){
-            console.log(this.observedState.wheelsData[i].position);
-            wheelArray[i].position.set(
-                this.observedState.wheelsData[i].position.x,
-                this.observedState.wheelsData[i].position.y,
-                this.observedState.wheelsData[i].position.z
-            );
-            wheelArray[i].quaternion.set(
-                this.observedState.wheelsData[i].rotation.x,
-                this.observedState.wheelsData[i].rotation.y,
-                this.observedState.wheelsData[i].rotation.z,
-                this.observedState.wheelsData[i].rotation.w,
-            );
-        }*/
 
         let rotationYVectorTwo = new Vector3(0,1,0).applyAxisAngle(
             new Vector3(1,0,0), 

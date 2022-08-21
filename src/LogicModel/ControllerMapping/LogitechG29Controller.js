@@ -97,20 +97,13 @@ class LogitechG29Controller{
 
 
     doActionsPedals(){
-        if(this.gamepad.axes[this.accelerator] !== 1.0){
-            this.globalControllerHandler.handleAccelerate(this.gamepad.axes[this.clutch], this.gamepad.axes[this.accelerator]);
-
-        }
-        if(this.gamepad.axes[this.brake] !== 1.0){
-            this.globalControllerHandler.handleBrake(this.gamepad.axes[this.clutch], this.gamepad.axes[this.brake]);
-        }
+        this.globalControllerHandler.handleAccelerate(this.gamepad.axes[this.clutch], this.gamepad.axes[this.accelerator]);
+        this.globalControllerHandler.handleBrake(this.gamepad.axes[this.clutch], this.gamepad.axes[this.brake]);
     }
 
 
     doActionsWheel(){
-        //if(this.gamepad.axes[this.wheelAxes] <= -0.05 || this.gamepad.axes[this.wheelAxes] >= 0.05){
-            this.globalControllerHandler.turnDirection(this.gamepad.axes[this.wheelAxes]);
-        //}
+        this.globalControllerHandler.turnDirection(this.gamepad.axes[this.wheelAxes]);
     }
 
 
