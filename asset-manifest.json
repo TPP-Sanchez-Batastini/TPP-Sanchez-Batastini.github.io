@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/tpp-driving-simulator/static/css/main.e6c13ad2.css",
+    "main.js": "/tpp-driving-simulator/static/js/main.5d1a7383.js",
+    "static/js/787.55f86c64.chunk.js": "/tpp-driving-simulator/static/js/787.55f86c64.chunk.js",
+    "index.html": "/tpp-driving-simulator/index.html",
+    "main.e6c13ad2.css.map": "/tpp-driving-simulator/static/css/main.e6c13ad2.css.map",
+    "main.5d1a7383.js.map": "/tpp-driving-simulator/static/js/main.5d1a7383.js.map",
+    "787.55f86c64.chunk.js.map": "/tpp-driving-simulator/static/js/787.55f86c64.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e6c13ad2.css",
+    "static/js/main.5d1a7383.js"
+  ]
+}
