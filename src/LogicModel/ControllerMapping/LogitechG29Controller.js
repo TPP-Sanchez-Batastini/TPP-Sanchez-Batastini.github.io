@@ -355,7 +355,7 @@ class LogitechG29Controller{
 }
 
 
-class LogitechG29ControllerSingleton{
+export default class LogitechG29ControllerSingleton{
 
     static instance;
 
@@ -372,4 +372,4 @@ class LogitechG29ControllerSingleton{
 }
 
 
-module.exports = LogitechG29ControllerSingleton;
+//module.exports = LogitechG29ControllerSingleton;
