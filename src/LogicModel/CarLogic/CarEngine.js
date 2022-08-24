@@ -1,7 +1,7 @@
 import TurnedOffEngine from './CarEngineStates/TurnedOffEngine';
 import TurnedOnEngine from './CarEngineStates/TurnedOnEngine';
 
-const MIN_RPM_TO_AVOID_SHUTDOWN = 1000;
+const MIN_RPM_TO_AVOID_SHUTDOWN = 0;//1000
 const MIN_VALUE_CLUTCH_TO_AVOID_SHUTDOWN = 0.25;
 const NEUTRAL = 0;
 const REVERSE = -1;
