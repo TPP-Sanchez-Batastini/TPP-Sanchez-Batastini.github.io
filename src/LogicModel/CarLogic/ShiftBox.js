@@ -68,7 +68,7 @@ export default class ShiftBox{
             normalFactor = 0;
         }
 
-        let sign = this.currentShift === REVERSE ? -1 : 1;
+        let sign = this.currentShift === this.REVERSE ? -1 : 1;
         return sign * currentRPM * normalFactor;
     }
 
