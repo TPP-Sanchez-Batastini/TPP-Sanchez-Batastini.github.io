@@ -45,7 +45,9 @@ export default class ShiftBox{
         return valueClutch <= MIN_VALUE_CLUTCH_TO_AVOID_SHUTDOWN
     }
 
-
+    shutDownEngine(){
+        return false;
+    }
     //CONSIDERAR EL VALUE DEL ACCELERATOR DE FORMA SIMILAR A COMO SE CONSIDERA EN ABSTRACT ENGINE STATE PARA QUE SI ES NEGATIVO DECREMENTE LA VELOCIDAD Y NO AUMENTE
     getEngineForce(currentVelocity){
         currentVelocity = Math.abs(currentVelocity);

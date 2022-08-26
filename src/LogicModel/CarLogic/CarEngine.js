@@ -24,8 +24,9 @@ export default class CarEngine{
     }
 
 
-    handleEngineShutdown(valueClutch){
-        if(!this.clutchIsPressed(valueClutch) && this.currentRPM < MIN_RPM_TO_AVOID_SHUTDOWN){
+    handleEngineShutdown(valueClutch,shiftBox){
+        //!this.clutchIsPressed(valueClutch) && this.currentRPM < MIN_RPM_TO_AVOID_SHUTDOWN
+        if(shiftBox.shutDownEngine(valueClutch,this.currentRPM)){
             if(this.engineState instanceof TurnedOnEngine){
                 this.engineState = new TurnedOffEngine();
             }
@@ -44,19 +45,19 @@ export default class CarEngine{
     }
 
 
-    accelerate(valueClutch, valueAccelerator){
+    accelerate(valueClutch, valueAccelerator, shiftBox){
         let rpmReturn = this.engineState.accelerate(valueAccelerator, this.currentRPM, this.currentXInRPMCurve);
         this.currentRPM = rpmReturn[0];
         this.currentXInRPMCurve = rpmReturn[1];
-        this.handleEngineShutdown(valueClutch);
+        this.handleEngineShutdown(valueClutch,shiftBox);
     }
 
 
-    brake(valueClutch, valueBrake){
+    brake(valueClutch, valueBrake,shiftBox){
         let rpmReturn = this.engineState.brake(valueBrake, this.currentRPM, this.currentXInRPMCurve);
         this.currentRPM = rpmReturn[0];
         this.currentXInRPMCurve = rpmReturn[1];
-        this.handleEngineShutdown(valueClutch);
+        this.handleEngineShutdown(valueClutch,shiftBox);
     }
 
 
