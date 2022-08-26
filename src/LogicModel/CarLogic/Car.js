@@ -2,6 +2,8 @@ import { Vector3, Vector4 } from 'three';
 import Observable from '../../ObserverPattern/Observable';
 import CarPhysics from '../Physics/PhysicsTypes/CarPhysics';
 import CarEngine from './CarEngine';
+import ShiftBox from './ShiftBox';
+import ManualBox from './ShiftBoxTypes/ManualBox';
 
 
 const POSITION = [0,0,0];
@@ -11,6 +13,7 @@ export default class Car extends Observable{
     constructor(physicsWorld){
         super();
         this.carEngine = new CarEngine();
+        this.shiftBox = new ManualBox(this.carEngine);
         this.currentDirectionTurn = 0; //in rads
         this.currentTireRotation = 0;
         this.position = new Vector3(POSITION[0], POSITION[1], POSITION[2]);
@@ -29,7 +32,7 @@ export default class Car extends Observable{
     accelerate(valueClutch, valueAccelerator){
         this.carEngine.accelerate(valueClutch, valueAccelerator);
         if(valueAccelerator < 0.8 && this.carEngine.engineCanApplyForce(valueClutch)){
-            this.carPhysics.setEngineForce( this.carEngine.isInReverse() ? -this.carEngine.getCurrentRPM() : this.carEngine.getCurrentRPM() );
+            this.carPhysics.setEngineForce( this.shiftBox.getEngineForce(this.carPhysics.getVelocity()) );
         }else{
             this.carPhysics.setEngineForce( 0 );
         }
@@ -44,7 +47,7 @@ export default class Car extends Observable{
 
 
     changeShift(valueClutch, newShift){
-        this.carEngine.changeShift(valueClutch, newShift);
+        this.shiftBox.changeShift(valueClutch, newShift, this.carPhysics.getVelocity());
     }
 
 

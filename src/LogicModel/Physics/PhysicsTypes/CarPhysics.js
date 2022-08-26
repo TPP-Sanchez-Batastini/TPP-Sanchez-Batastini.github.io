@@ -144,15 +144,13 @@ export default class CarPhysics{
     }
 
     
-    setEngineForce( value_RPM ){
-        console.log("Cambio setEngineForce: " + value_RPM);
-        this.vehicle.applyEngineForce( value_RPM, BACK_LEFT );
-        this.vehicle.applyEngineForce( value_RPM, BACK_RIGHT );
+    setEngineForce( engineForce ){
+        this.vehicle.applyEngineForce( engineForce, BACK_LEFT );
+        this.vehicle.applyEngineForce( engineForce, BACK_RIGHT );
     }
 
 
     brake(valueBrake){
-        console.log("valBrake: " + valueBrake);
         this.vehicle.setBrake(valueBrake/2, FRONT_LEFT);
         this.vehicle.setBrake(valueBrake/2, FRONT_RIGHT);
         this.vehicle.setBrake(valueBrake, BACK_LEFT);

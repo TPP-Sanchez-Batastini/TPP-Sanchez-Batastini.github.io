@@ -1,18 +1,17 @@
-export const MAX_RPM = 6000;
-const ACCEL_COEF = 1;
-const BRAKE_COEF = 2;
+export const MAX_RPM = 8000;
+const ACCEL_COEF = 2;
+const BRAKE_COEF = 1.5;
 const EXPONENTIAL_COEF_TO_RPM = 200;
-const COEF_TO_DESCEND_RPM = 5;
 
 export class AbstractEngineState{
     changeValueInRPMCurve(valueAccelerator, accelerating, currentRPM, currentXInRPMCurve){
 
         let sumToValueInCurve;
+        let previousRPM = currentRPM;
         if(accelerating){
-            sumToValueInCurve = (valueAccelerator * -1 + 0.8) * ACCEL_COEF;
-            if(sumToValueInCurve < 0){
-                sumToValueInCurve *= COEF_TO_DESCEND_RPM;
-            }
+            let normalizedAccelerator = (1 - (valueAccelerator + 1) / 2);
+            let normalizedRPM = previousRPM/MAX_RPM;
+            sumToValueInCurve = (normalizedAccelerator - normalizedRPM) * ACCEL_COEF;
         }else{
             sumToValueInCurve = (valueAccelerator - 1) * BRAKE_COEF;
         }
@@ -23,6 +22,7 @@ export class AbstractEngineState{
         else if(currentXInRPMCurve < 0){ //X's value is not able to have negative value in our calculation.
             currentXInRPMCurve = 0;
         }
+
         //We'll simulate the RPM's in an equation similar to capacitors in order to not make it linear and make it independent of everything.
         currentRPM = MAX_RPM * (1 - Math.exp(-currentXInRPMCurve/EXPONENTIAL_COEF_TO_RPM));
 

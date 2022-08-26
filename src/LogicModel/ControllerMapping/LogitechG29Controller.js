@@ -97,8 +97,11 @@ class LogitechG29Controller{
 
 
     doActionsPedals(){
-        this.globalControllerHandler.handleAccelerate(this.gamepad.axes[this.clutch], this.gamepad.axes[this.accelerator]);
-        this.globalControllerHandler.handleBrake(this.gamepad.axes[this.clutch], this.gamepad.axes[this.brake]);
+        let clutch = ((this.gamepad.axes[this.clutch] )**3)
+        let brake = ((this.gamepad.axes[this.brake] )**3)
+        let accelerator = ((this.gamepad.axes[this.accelerator] )**3)
+        this.globalControllerHandler.handleAccelerate(clutch, accelerator);
+        this.globalControllerHandler.handleBrake(clutch, brake);
     }
 
 
