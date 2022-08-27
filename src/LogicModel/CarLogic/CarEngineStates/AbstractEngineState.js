@@ -1,7 +1,7 @@
 export const MAX_RPM = 8000;
 const ACCEL_COEF = 2;
 const BRAKE_COEF = 1.5;
-const EXPONENTIAL_COEF_TO_RPM = 200;
+export const EXPONENTIAL_COEF_TO_RPM = 200;
 
 export class AbstractEngineState{
     changeValueInRPMCurve(valueAccelerator, accelerating, currentRPM, currentXInRPMCurve){

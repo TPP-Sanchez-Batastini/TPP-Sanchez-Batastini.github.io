@@ -1,3 +1,4 @@
+import { MAX_RPM } from "./CarEngineStates/AbstractEngineState";
 
 
 const QUANTITY_SHIFTS = 6;
@@ -30,14 +31,26 @@ export default class ShiftBox{
     }
     
     getValueForNewRPM(newShift, oldVelocity){
+        if(newShift === this.NEUTRAL){
+            return this.carEngine.getCurrentRPM();
+        }
         let differenceInVelocityAndIdeal =  this.idealVelocityOnShift[newShift] - oldVelocity;
         let newRPM;
+
         if(differenceInVelocityAndIdeal > 0){
-            newRPM = this.carEngine.getCurrentRPM() - differenceInVelocityAndIdeal**2
+            newRPM = this.carEngine.getCurrentRPM() - (differenceInVelocityAndIdeal)**2;
         }else{
-            newRPM = this.carEngine.getCurrentRPM() + differenceInVelocityAndIdeal**2
+            newRPM = this.carEngine.getCurrentRPM() + (differenceInVelocityAndIdeal)**2;
         }
-        return newRPM;
+
+        if(newRPM < 0){
+            return 0;
+        }
+        else if(newRPM > MAX_RPM){
+            return MAX_RPM
+        }else{
+            return newRPM;
+        }
     }
     
 
