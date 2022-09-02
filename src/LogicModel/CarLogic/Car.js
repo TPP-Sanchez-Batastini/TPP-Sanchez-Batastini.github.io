@@ -32,8 +32,8 @@ export default class Car extends Observable{
 
     accelerate(valueClutch, valueAccelerator){
         this.carEngine.accelerate(valueClutch, valueAccelerator,this.shiftBox);
-        if(valueAccelerator < 0.8 && this.carEngine.engineCanApplyForce(valueClutch)){
-            this.carPhysics.setEngineForce( this.shiftBox.getEngineForce(this.carPhysics.getVelocity()) );
+        if(valueAccelerator > 0.1 && this.carEngine.engineCanApplyForce(valueClutch)){
+            this.carPhysics.setEngineForce( this.shiftBox.getEngineForce(this.carPhysics.getVelocity(), valueClutch) );
         }else{
             this.carPhysics.setEngineForce( 0 );
         }
@@ -43,7 +43,7 @@ export default class Car extends Observable{
     brake(valueClutch, valueBrake){
         this.carEngine.brake(valueClutch, valueBrake,this.shiftBox);
         //Mapping [-1;1] to [0;1]
-        this.carPhysics.brake((1-(valueBrake+1)/2)*FACTOR_BRAKE_TO_FORCE);
+        this.carPhysics.brake(valueBrake*FACTOR_BRAKE_TO_FORCE);
     }
 
 
@@ -108,11 +108,15 @@ export default class Car extends Observable{
     }
 
     changeShiftBox(mode){
-        if(mode ==  "semi-auto"){
+        if(mode ===  "semi-auto"){
             this.shiftBox = new SemiAutomaticBox(this.carEngine);
-        }else if(mode == "manual"){
+        }else if(mode === "manual"){
             //TODO: asignar boton en volante
             this.shiftBox = new ManualBox(this.carEngine);
         }
+    }
+
+    getCurrentShift(){
+        return this.shiftBox.getCurrentShift();
     }
 }

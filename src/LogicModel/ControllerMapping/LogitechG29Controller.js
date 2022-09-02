@@ -13,6 +13,7 @@ const DPAD_RIGHT_PRESSED = 3;
 
 class LogitechG29Controller{
     constructor(carLogic){
+        this.carLogic = carLogic;
         const gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads() : []);
         this.gamepad = null;
         for (let i = 0; i < gamepads.length; i++) {
@@ -97,9 +98,11 @@ class LogitechG29Controller{
 
 
     doActionsPedals(){
-        let clutch = ((this.gamepad.axes[this.clutch] )**3)
-        let brake = ((this.gamepad.axes[this.brake] )**3)
-        let accelerator = ((this.gamepad.axes[this.accelerator] )**3)
+        let clutch = ((this.gamepad.axes[this.clutch] )**3);
+        let brake = ((this.gamepad.axes[this.brake] )**3);
+        brake = (1 - (brake + 1) / 2);
+        let accelerator = ((this.gamepad.axes[this.accelerator] )**3);
+        accelerator = (1 - (accelerator + 1) / 2);
         this.globalControllerHandler.handleAccelerate(clutch, accelerator);
         this.globalControllerHandler.handleBrake(clutch, brake);
     }
@@ -183,7 +186,7 @@ class LogitechG29Controller{
 
 
         if (this.gamepad.buttons[this.psButton].pressed && !this.buttonsPressed[this.psButton]) {
-            console.log("BOTON PS");
+            this.carLogic.changeShiftBox("manual");
             this.buttonsPressed[this.psButton] = true;
         }else if(!this.gamepad.buttons[this.psButton].pressed){
             this.buttonsPressed[this.psButton] = false;

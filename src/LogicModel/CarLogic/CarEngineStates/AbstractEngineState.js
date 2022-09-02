@@ -4,16 +4,17 @@ const BRAKE_COEF = 1.5;
 export const EXPONENTIAL_COEF_TO_RPM = 200;
 
 export class AbstractEngineState{
-    changeValueInRPMCurve(valueAccelerator, accelerating, currentRPM, currentXInRPMCurve){
+    changeValueInRPMCurve(valuePedal, accelerating, currentRPM, currentXInRPMCurve){
 
         let sumToValueInCurve;
         let previousRPM = currentRPM;
         if(accelerating){
-            let normalizedAccelerator = (1 - (valueAccelerator + 1) / 2);
+            let normalizedAccelerator = valuePedal;
+            //let normalizedAccelerator = (1 - (valuePedal + 1) / 2);
             let normalizedRPM = previousRPM/MAX_RPM;
             sumToValueInCurve = (normalizedAccelerator - normalizedRPM) * ACCEL_COEF;
         }else{
-            sumToValueInCurve = (valueAccelerator - 1) * BRAKE_COEF;
+            sumToValueInCurve = -valuePedal * BRAKE_COEF;
         }
         currentXInRPMCurve = currentXInRPMCurve + sumToValueInCurve;
         if (currentXInRPMCurve > 3 * EXPONENTIAL_COEF_TO_RPM){

@@ -1,6 +1,6 @@
 import {AbstractEngineState} from "./AbstractEngineState";
 
-const ACCEL_NOT_PRESSED = 1.0;
+const ACCEL_NOT_PRESSED = 0;
 
 export default class TurnedOffEngine extends AbstractEngineState{
 

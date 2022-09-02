@@ -18,7 +18,8 @@ export default class ThreeScene extends Component{
         super();
         this.state = {
             "currentRPM": 0,
-            "velocity": 0
+            "velocity": 0,
+            "currentShift": 0,
         };
     }
 
@@ -76,9 +77,9 @@ export default class ThreeScene extends Component{
         // Rampa 
         
         const rampa = new THREE.BoxGeometry( 100, 2, 10);
-        rampa.rotateX(-Math.PI/8);
+        rampa.rotateX(-Math.PI/4);
         const quaternionRamp = new THREE.Quaternion();
-        quaternionRamp.setFromAxisAngle( new THREE.Vector3( 1, 0, 0 ), -Math.PI / 8);
+        quaternionRamp.setFromAxisAngle( new THREE.Vector3( 1, 0, 0 ), -Math.PI / 4);
 
         this.ramp = new BoxPhysics(
             new THREE.Vector3(10,0,10), //Position
@@ -87,7 +88,7 @@ export default class ThreeScene extends Component{
             0, //Mass
             new THREE.Vector3(100, 2, 10), //Shape
             this.physicsWorld, //Physics World
-            5 // friction
+            1000 // friction
         ); 
         await this.ramp.buildAmmoPhysics();
         this.ramp = new THREE.Mesh( rampa, floorMaterial );
@@ -116,9 +117,6 @@ export default class ThreeScene extends Component{
 
         
     }
-
-
-
 
 
     generateEvents(){
@@ -188,8 +186,8 @@ export default class ThreeScene extends Component{
         this.floor.quaternion.set(floorData['rotation'].x, floorData['rotation'].y, floorData['rotation'].z, floorData['rotation'].w);
         this.camera.setPositionRelativeToObject();
         LogitechG29ControllerSingleton.getInstance(this.carLogic).checkEvents();
-        XboxControllerSingleton.getInstance(this.carLogic).checkEvents();
-        this.setState({"velocity": this.carLogic.getSpeed(), "currentRPM": this.carLogic.getCurrentRPM()});
+        //XboxControllerSingleton.getInstance(this.carLogic).checkEvents();
+        this.setState({"velocity": this.carLogic.getSpeed(), "currentRPM": this.carLogic.getCurrentRPM(), "currentShift": this.carLogic.getCurrentShift()});
         this.renderer.render( this.scene, this.camera.getCameraInstance());
     }
 
@@ -201,7 +199,10 @@ export default class ThreeScene extends Component{
                         Velocidad: {parseInt(this.state.velocity)} km/h
                     </p>
                     <p style={{ zIndex: 20, display: 'float', fontWeight: "bold"}} >
-                         RPM: {parseInt(this.state.currentRPM)}
+                        RPM: {parseInt(this.state.currentRPM)}
+                    </p>
+                    <p style={{ zIndex: 20, display: 'float', fontWeight: "bold"}} >
+                        Cambio Actual: {parseInt(this.state.currentShift)}
                     </p>
                 </div>
                 <div ref={mount => {this.mount = mount;}}></div>

@@ -63,17 +63,15 @@ export default class CarEngine{
 
 
     changeRPM(RPMModification){
-        console.log(RPMModification);
         this.currentRPM = RPMModification;
-        console.log(this.currentRPM);
-        console.log(this.currentXInRPMCurve);
         if( (-this.currentRPM/MAX_RPM + 1) > 0 ){
             this.currentXInRPMCurve = -Math.log( -this.currentRPM/MAX_RPM + 1) * EXPONENTIAL_COEF_TO_RPM;
             if(this.currentXInRPMCurve < 0){
                 this.currentXInRPMCurve = 0;
             }
+        }else if(this.currentRPM === MAX_RPM){
+            this.currentXInRPMCurve = EXPONENTIAL_COEF_TO_RPM * 3;
         }
-        console.log("nuevo X: "+ this.currentXInRPMCurve);
     }
 
 

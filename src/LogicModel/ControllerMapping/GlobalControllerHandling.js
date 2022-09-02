@@ -45,6 +45,8 @@ export default class GlobalControllerHandling{
     updateCar(){
         this.car.update();
     }
+
+
     changeShiftBox(mode){
         this.car.changeShiftBox(mode);
     }

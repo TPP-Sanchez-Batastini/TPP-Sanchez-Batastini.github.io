@@ -1,8 +1,8 @@
-import { MAX_RPM } from "./CarEngineStates/AbstractEngineState";
+import { EXPONENTIAL_COEF_TO_RPM, MAX_RPM } from "./CarEngineStates/AbstractEngineState";
 
 
 const QUANTITY_SHIFTS = 6;
-const MIN_VALUE_CLUTCH_TO_AVOID_SHUTDOWN = 0.25;
+const MIN_VALUE_CLUTCH_TO_AVOID_SHUTDOWN = -0.75;
 
 export default class ShiftBox{
 
@@ -19,7 +19,10 @@ export default class ShiftBox{
 
         this.currentShift = this.NEUTRAL;
         this.carEngine = carEngine;
-        this.idealVelocityOnShift = [0, 13, 30, 60, 90, 120, 130];
+
+        this.minimumVelocityOnShift = [0, 10, 20, 35, 60, 90];
+        this.maximumVelocityOnShift = [40, 60, 80, 110, 140, 200];
+
     }
 
     isValidShift(shift){
@@ -30,26 +33,29 @@ export default class ShiftBox{
         }
     }
     
+
+    calculateNormalFactorRPM(newShift,oldVelocity){
+        return ((oldVelocity - this.minimumVelocityOnShift[Math.abs(newShift) - 1]) / 
+            (this.maximumVelocityOnShift[Math.abs(newShift) - 1] - this.minimumVelocityOnShift[Math.abs(newShift) - 1]));
+    }
+    
+
     getValueForNewRPM(newShift, oldVelocity){
-        if(newShift === this.NEUTRAL){
+        if(newShift === this.NEUTRAL || (Math.abs(newShift) === this.FIRST && Math.abs(oldVelocity) < 5)){
             return this.carEngine.getCurrentRPM();
         }
-        let differenceInVelocityAndIdeal =  this.idealVelocityOnShift[newShift] - oldVelocity;
-        let newRPM;
-
-        if(differenceInVelocityAndIdeal > 0){
-            newRPM = this.carEngine.getCurrentRPM() - (differenceInVelocityAndIdeal)**2;
-        }else{
-            newRPM = this.carEngine.getCurrentRPM() + (differenceInVelocityAndIdeal)**2;
-        }
-
-        if(newRPM < 0){
+        if(newShift === this.REVERSE && oldVelocity > 0){
             return 0;
         }
-        else if(newRPM > MAX_RPM){
-            return MAX_RPM
+        if(newShift > 0 && oldVelocity < 0){
+            return 0;
+        }
+        let normalFactorRPM = this.calculateNormalFactorRPM(newShift, oldVelocity);
+        if ( normalFactorRPM > 1 ){
+            return MAX_RPM;
         }else{
-            return newRPM;
+            let XValue = normalFactorRPM * EXPONENTIAL_COEF_TO_RPM;
+            return (MAX_RPM * (1 - Math.exp(-XValue/EXPONENTIAL_COEF_TO_RPM)));
         }
     }
     
@@ -58,23 +64,27 @@ export default class ShiftBox{
         return valueClutch <= MIN_VALUE_CLUTCH_TO_AVOID_SHUTDOWN
     }
 
+
     shutDownEngine(){
         return false;
     }
+
     //CONSIDERAR EL VALUE DEL ACCELERATOR DE FORMA SIMILAR A COMO SE CONSIDERA EN ABSTRACT ENGINE STATE PARA QUE SI ES NEGATIVO DECREMENTE LA VELOCIDAD Y NO AUMENTE
-    getEngineForce(currentVelocity){
+    getEngineForce(currentVelocity, valueClutch){
         currentVelocity = Math.abs(currentVelocity);
         let currentRPM = this.carEngine.getCurrentRPM();
 
         if(this.currentShift === this.NEUTRAL){
             return 0;
         }
+
+        let valueClutchNormalized = (valueClutch + 1)/2;
+        let minVelocityBasedOnClutch = this.minimumVelocityOnShift[Math.abs(this.currentShift) - 1] * (1 - Math.exp(-valueClutchNormalized*3));
         //If there is a next shift and it has ideal velocity we can calculate the Normalized Engine Force based on velocity range
-        let idealVelocityOnShift = this.idealVelocityOnShift[Math.abs(this.currentShift) - 1];
-        let idealVelocityOnNextShift = this.idealVelocityOnShift[Math.abs(this.currentShift)];
-        let rangeOfVelocities = idealVelocityOnNextShift * 2 - idealVelocityOnShift;
-        let normalFactorToDecrement = (currentVelocity - idealVelocityOnShift) / rangeOfVelocities;
-        if(normalFactorToDecrement < 0){
+
+        let rangeOfVelocities = this.maximumVelocityOnShift[Math.abs(this.currentShift) - 1] - minVelocityBasedOnClutch;
+        let normalFactorToDecrement = (currentVelocity - minVelocityBasedOnClutch) / rangeOfVelocities;
+        if(currentVelocity < minVelocityBasedOnClutch){
             //Debería dar trompicones
         }
         let normalFactor = (1 - normalFactorToDecrement)**2;
@@ -83,12 +93,19 @@ export default class ShiftBox{
             normalFactor = 0;
         }
 
-        let sign = this.currentShift === this.REVERSE ? -1 : 1;
-        return sign * currentRPM * normalFactor;
+        let powerFactor = (QUANTITY_SHIFTS / this.currentShift);
+        let finalEngineForce =  powerFactor * currentRPM * normalFactor;
+        return finalEngineForce
+
     }
 
     changeShift(){
         //METHOD TO OVERRIDE
+    }
+
+
+    getCurrentShift(){
+        return this.currentShift;
     }
 
 }

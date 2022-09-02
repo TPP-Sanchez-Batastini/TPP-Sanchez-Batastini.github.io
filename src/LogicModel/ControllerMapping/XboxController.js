@@ -99,8 +99,8 @@ class XboxController{
     }
 
     doActionHotKeys(){
-        this.globalControllerHandler.handleAccelerate(CLUTCH_NOT_PRESED,1- this.gamepad.buttons[this.buttonR2].value);
-        this.globalControllerHandler.handleBrake(CLUTCH_PRESED, 1 - this.gamepad.buttons[this.buttonL2].value);
+        this.globalControllerHandler.handleAccelerate(CLUTCH_NOT_PRESED, this.gamepad.buttons[this.buttonR2].value);
+        this.globalControllerHandler.handleBrake(CLUTCH_PRESED, this.gamepad.buttons[this.buttonL2].value);
     }
 
     doActionsTriggers(){
@@ -288,10 +288,6 @@ class XboxControllerSingleton{
     }
 
     static getInstance(auto) {
-        // if(!isConected()){
-        //     console.log("No esta conectado")
-        //     return null;
-        // }
         if (!XboxControllerSingleton.instance) {
             XboxControllerSingleton.instance = new XboxController(auto);
         }
