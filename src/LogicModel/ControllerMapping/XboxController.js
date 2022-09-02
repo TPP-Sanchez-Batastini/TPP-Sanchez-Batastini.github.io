@@ -279,7 +279,7 @@ class XboxController{
     }
 }
 
-class XboxControllerSingleton{
+export default class XboxControllerSingleton{
 
     static instance;
 
@@ -294,6 +294,3 @@ class XboxControllerSingleton{
         return XboxControllerSingleton.instance;
     }
 }
-
-
-module.exports = XboxControllerSingleton;

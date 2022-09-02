@@ -185,8 +185,8 @@ export default class ThreeScene extends Component{
         this.floor.position.set(floorData['position'].x,floorData['position'].y, floorData['position'].z);
         this.floor.quaternion.set(floorData['rotation'].x, floorData['rotation'].y, floorData['rotation'].z, floorData['rotation'].w);
         this.camera.setPositionRelativeToObject();
-        LogitechG29ControllerSingleton.getInstance(this.carLogic).checkEvents();
-        //XboxControllerSingleton.getInstance(this.carLogic).checkEvents();
+        //LogitechG29ControllerSingleton.getInstance(this.carLogic).checkEvents();
+        XboxControllerSingleton.getInstance(this.carLogic).checkEvents();
         this.setState({"velocity": this.carLogic.getSpeed(), "currentRPM": this.carLogic.getCurrentRPM(), "currentShift": this.carLogic.getCurrentShift()});
         this.renderer.render( this.scene, this.camera.getCameraInstance());
     }
