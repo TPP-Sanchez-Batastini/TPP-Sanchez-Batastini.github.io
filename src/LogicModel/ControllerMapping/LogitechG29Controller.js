@@ -13,6 +13,7 @@ const DPAD_RIGHT_PRESSED = 3;
 
 class LogitechG29Controller{
     constructor(carLogic){
+        this.carLogic = carLogic;
         const gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads() : []);
         this.gamepad = null;
         for (let i = 0; i < gamepads.length; i++) {
@@ -73,6 +74,7 @@ class LogitechG29Controller{
         this.globalControllerHandler = new GlobalControllerHandling(carLogic);
     }
 
+    
     checkGamepadChanges(){
         const gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads() : []);
         for (let i = 0; i < gamepads.length; i++) {
@@ -84,29 +86,32 @@ class LogitechG29Controller{
         }
     }
 
+
     checkEvents(){
         this.gamepad = null;
         this.checkGamepadChanges();
         if(this.gamepad != null){
             this.doActionByMapping();
+            this.globalControllerHandler.updateCar();
         }
     }
+
 
     doActionsPedals(){
-        if(this.gamepad.axes[this.accelerator] !== 1.0){
-            this.globalControllerHandler.handleAccelerate(this.gamepad.axes[this.clutch], this.gamepad.axes[this.accelerator]);
-
-        }
-        if(this.gamepad.axes[this.brake] !== 1.0){
-            this.globalControllerHandler.handleBrake(this.gamepad.axes[this.clutch], this.gamepad.axes[this.brake]);
-        }
+        let clutch = ((this.gamepad.axes[this.clutch] )**3);
+        let brake = ((this.gamepad.axes[this.brake] )**3);
+        brake = (1 - (brake + 1) / 2);
+        let accelerator = ((this.gamepad.axes[this.accelerator] )**3);
+        accelerator = (1 - (accelerator + 1) / 2);
+        this.globalControllerHandler.handleAccelerate(clutch, accelerator);
+        this.globalControllerHandler.handleBrake(clutch, brake);
     }
+
 
     doActionsWheel(){
-        //if(this.gamepad.axes[this.wheelAxes] <= -0.05 || this.gamepad.axes[this.wheelAxes] >= 0.05){
-            this.globalControllerHandler.turnDirection(this.gamepad.axes[this.wheelAxes]);
-        //}
+        this.globalControllerHandler.turnDirection(this.gamepad.axes[this.wheelAxes]);
     }
+
 
     doActionsDPad(){
         if(this.gamepad.axes[this.DPad] !== DPAD_NOT_PRESSED){
@@ -145,6 +150,7 @@ class LogitechG29Controller{
         }
     }
 
+
     doActionsButtons(){
 
         if (this.gamepad.buttons[this.buttonX].pressed && !this.buttonsPressed[this.buttonX]) {
@@ -180,7 +186,7 @@ class LogitechG29Controller{
 
 
         if (this.gamepad.buttons[this.psButton].pressed && !this.buttonsPressed[this.psButton]) {
-            console.log("BOTON PS");
+            this.carLogic.changeShiftBox("manual");
             this.buttonsPressed[this.psButton] = true;
         }else if(!this.gamepad.buttons[this.psButton].pressed){
             this.buttonsPressed[this.psButton] = false;
@@ -289,6 +295,7 @@ class LogitechG29Controller{
         }
     }
 
+
     doActionsShifter(){
         if (this.gamepad.buttons[this.firstShift].pressed && !this.buttonsPressed[this.firstShift]) {
             this.globalControllerHandler.changeShift(this.gamepad.axes[this.clutch], 1);
@@ -341,6 +348,7 @@ class LogitechG29Controller{
         }
     }
 
+
     doActionByMapping(){
         this.doActionsPedals();
         this.doActionsWheel();
@@ -348,9 +356,12 @@ class LogitechG29Controller{
         this.doActionsButtons();
         this.doActionsShifter();
     }
+
+
 }
 
-class LogitechG29ControllerSingleton{
+
+export default class LogitechG29ControllerSingleton{
 
     static instance;
 
@@ -367,4 +378,4 @@ class LogitechG29ControllerSingleton{
 }
 
 
-module.exports = LogitechG29ControllerSingleton;
+//module.exports = LogitechG29ControllerSingleton;

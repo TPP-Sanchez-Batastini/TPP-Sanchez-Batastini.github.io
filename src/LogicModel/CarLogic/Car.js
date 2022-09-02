@@ -1,92 +1,122 @@
-import { Vector3 } from 'three';
+import { Vector3, Vector4 } from 'three';
 import Observable from '../../ObserverPattern/Observable';
+import CarPhysics from '../Physics/PhysicsTypes/CarPhysics';
 import CarEngine from './CarEngine';
+import ShiftBox from './ShiftBox';
+import ManualBox from './ShiftBoxTypes/ManualBox';
+import SemiAutomaticBox from './ShiftBoxTypes/SemiAutomaticBox';
 
-const FRICTION_FACTOR = -0.1;
-const MAX_TIRE_TURN_IN_RADS = 0.7;
-const ROTATION_FACTOR_TO_VELOCITY = 0.0007;
-const FACTOR_KMH_TO_MS = 1/3600;
-const POSITION = [0,4,0];
+
+const POSITION = [0,0,0];
+const FACTOR_BRAKE_TO_FORCE = 300;
 export default class Car extends Observable{
 
-    constructor(){
+    constructor(physicsWorld){
         super();
         this.carEngine = new CarEngine();
-        this.currentVelocity = 0;
+        this.shiftBox = new ManualBox(this.carEngine);
         this.currentDirectionTurn = 0; //in rads
         this.currentTireRotation = 0;
         this.position = new Vector3(POSITION[0], POSITION[1], POSITION[2]);
+        this.rotationQuaternion = new Vector4(0,0,0,1);
+        this.mass = 1000;
+        this.physicsShape = new Vector3(2,1.3,5);
+        this.rotation = new Vector4(0,0,0,1);
+        this.inertia = new Vector3(1,0,1);
+
+        this.carPhysics = new CarPhysics(this.position, this.rotationQuaternion, this.inertia, this.mass, this.physicsShape, physicsWorld, 0);
+        this.carPhysics.buildAmmoPhysics();
+        
     }
+
 
     accelerate(valueClutch, valueAccelerator){
-        let engineAcceleration = this.carEngine.accelerate(valueClutch, valueAccelerator);
-        let frictionAcceleration = this.currentVelocity * FRICTION_FACTOR;
-        this.currentVelocity += engineAcceleration + frictionAcceleration;
-        this.movePosition();
-        super.notifyObservers(this.getDataToAnimate());
+        this.carEngine.accelerate(valueClutch, valueAccelerator,this.shiftBox);
+        if(valueAccelerator > 0.1 && this.carEngine.engineCanApplyForce(valueClutch)){
+            this.carPhysics.setEngineForce( this.shiftBox.getEngineForce(this.carPhysics.getVelocity(), valueClutch) );
+        }else{
+            this.carPhysics.setEngineForce( 0 );
+        }
     }
+
 
     brake(valueClutch, valueBrake){
-        let engineAcceleration = this.carEngine.brake(valueClutch, valueBrake);
-        let frictionAcceleration = this.currentVelocity * FRICTION_FACTOR;
-        this.currentVelocity += engineAcceleration + frictionAcceleration;
-        this.movePosition();
-        super.notifyObservers(this.getDataToAnimate());
+        this.carEngine.brake(valueClutch, valueBrake,this.shiftBox);
+        //Mapping [-1;1] to [0;1]
+        this.carPhysics.brake(valueBrake*FACTOR_BRAKE_TO_FORCE);
     }
 
+
     changeShift(valueClutch, newShift){
-        this.carEngine.changeShift(valueClutch, newShift);
-        super.notifyObservers(this.getDataToAnimate());
+        this.shiftBox.changeShift(valueClutch, newShift, this.carPhysics.getVelocity());
     }
+
 
     turnOnRightLight(){
         //PRENDER EL INTERMITENTE DERECHO
-        super.notifyObservers(this.getDataToAnimate());
     }
+
 
     turnOnLeftLight(){
         //PRENDER EL INTERMITENTE DERECHO
-        super.notifyObservers(this.getDataToAnimate());
     }
 
+    
     turnOnCar(){
         this.carEngine.turnOn();
-        super.notifyObservers(this.getDataToAnimate());
     }
 
+    
     turnDirection(wheelAxesValue){
-
-        //if(this.currentTireRotation > 0.2 || this.currentTireRotation < -0.2)
-           // return;
         this.currentTireRotation = wheelAxesValue;
+        this.carPhysics.setSteeringRotation( wheelAxesValue );
+    }
 
-        //Defines Max Tire Turn based on wheel axes value. Approximatedly 40°.
 
-
-        let internalCarRotation = -this.currentTireRotation * MAX_TIRE_TURN_IN_RADS;
-        this.currentDirectionTurn += internalCarRotation * this.currentVelocity * ROTATION_FACTOR_TO_VELOCITY;
+    update(){
+        let positionAndRotation = this.carPhysics.updatePhysics();
+        this.position = positionAndRotation["chassis"]["position"];
+        this.rotation = positionAndRotation["chassis"]["rotation"];
+        this.wheelsData = positionAndRotation["wheels"];
         super.notifyObservers(this.getDataToAnimate());
     }
 
-    movePosition(){
-        let velocityVector = new Vector3(0,0,1);
-        let YAxis = new Vector3(0,1,0);
-        velocityVector.applyAxisAngle(YAxis, this.currentDirectionTurn);
-        this.position.x += velocityVector.x;
-        this.position.y += velocityVector.y;
-        this.position.z += velocityVector.z;
-    }
 
     getLastRotation(){
         return this.currentTireRotation;
     }
 
+    
     getDataToAnimate(){
         return {
             "direction": this.currentDirectionTurn, 
-            "velocity": this.currentVelocity, 
+            "velocity": this.carPhysics.getVelocity(), 
             "lastRotationWheel": this.currentTireRotation,
-            "position": this.position
+            "position": this.position,
+            "rotation": this.rotation,
+            "physicsBody": this.carPhysics,
+            "wheelsData": this.wheelsData
         };
+    }
+
+    getSpeed(){
+        return this.carPhysics.getVelocity();
+    }
+
+    getCurrentRPM(){
+        return this.carEngine.getCurrentRPM();
+    }
+
+    changeShiftBox(mode){
+        if(mode ===  "semi-auto"){
+            this.shiftBox = new SemiAutomaticBox(this.carEngine);
+        }else if(mode === "manual"){
+            //TODO: asignar boton en volante
+            this.shiftBox = new ManualBox(this.carEngine);
+        }
+    }
+
+    getCurrentShift(){
+        return this.shiftBox.getCurrentShift();
     }
 }

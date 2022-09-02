@@ -1,6 +1,7 @@
 {
   "name": "tpp-driving-simulator",
   "version": "0.1.0",
+  "homepage": "https://TPP-Sanchez-Batastini.github.io",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.4",
@@ -8,6 +9,7 @@
     "@testing-library/user-event": "^13.5.0",
     "ammo.js": "github:kripken/ammo.js",
     "fs": "^0.0.1-security",
+    "gh-pages": "^4.0.0",
     "path": "^0.12.7",
     "path-browserify": "^1.0.1",
     "react": "^18.2.0",
@@ -15,9 +17,12 @@
     "react-scripts": "5.0.1",
     "three": "^0.141.0",
     "three-fbx-loader": "^1.0.3",
+    "three-orbitcontrols": "^2.110.3",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

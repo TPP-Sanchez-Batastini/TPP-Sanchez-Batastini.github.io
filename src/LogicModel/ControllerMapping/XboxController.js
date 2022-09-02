@@ -1,7 +1,22 @@
+
 const { default: GlobalControllerHandling } = require("./GlobalControllerHandling");
-const STICK_LIMIT = 0.07;
-const CLUTCH_PRESED = 1;
+
+const STICK_LIMIT = 0.1;
+const CLUTCH_PRESED = 0;
 const CLUTCH_NOT_PRESED = 1;
+
+function isConected(){
+    let value = false;
+    let gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads() : []);
+    for (let i = 0; i < gamepads.length; i++) {
+        if (gamepads[i]) {
+          if (gamepads[i].id.startsWith('Xbox')) {
+            value = true;
+          }
+        }
+      }
+    return value;
+}
 
 class XboxController{
     constructor(auto){
@@ -37,7 +52,6 @@ class XboxController{
             this.buttonPressed.push(false);
         }
         
-        this.auto = auto;
         this.xLeftAxe = 0;
         this.yLeftAxe = 1;
         this.xRightAxe = 2;
@@ -61,36 +75,44 @@ class XboxController{
         this.checkGamepadChanges();
         if(this.gamepad != null){
             this.doActionByMapping();
+            this.globalControllerHandler.updateCar();
         }
     }
 
     doActionsAxes(){
-        if(Math.abs(this.gamepad.axes[this.yLeftAxe]) >= STICK_LIMIT){
-
-            this.globalControllerHandler.handleBrake(this.gamepad.buttons[this.buttonL2].value, this.gamepad.buttons[this.buttonR2].value);
-            console.log("Adelante/Abajo Joy Izq: " + this.gamepad.axes[this.yLeftAxe]);
+        if(Math.abs(this.gamepad.axes[this.yLeftAxe]) >= STICK_LIMIT){    
+           // console.log("Adelante/Abajo Joy Izq: " + this.gamepad.axes[this.yLeftAxe]);
         }
         if(Math.abs(this.gamepad.axes[this.xLeftAxe]) >= STICK_LIMIT){
-            console.log("Izq/Der Joy Izq: " + this.gamepad.axes[this.xLeftAxe]);
+            let axe = ((this.gamepad.axes[this.xLeftAxe] )**3)
+            this.globalControllerHandler.turnDirection(axe);
+            //console.log("Izq/Der Joy Izq: " + this.gamepad.axes[this.xLeftAxe]);
+        }else{
+            this.globalControllerHandler.turnDirection(0);
         }
         if(Math.abs(this.gamepad.axes[this.yRightAxe]) >= STICK_LIMIT){
-            console.log("Adelante/Abajo Joy Der: " + this.gamepad.axes[this.yRightAxe]);
+           // console.log("Adelante/Abajo Joy Der: " + this.gamepad.axes[this.yRightAxe]);
         }
         if(Math.abs(this.gamepad.axes[this.xRightAxe]) >= STICK_LIMIT){
-            console.log("Izq/Der Joy Der: " + this.gamepad.axes[this.xRightAxe]);
+           // console.log("Izq/Der Joy Der: " + this.gamepad.axes[this.xRightAxe]);
         }
+    }
+
+    doActionHotKeys(){
+        this.globalControllerHandler.handleAccelerate(CLUTCH_NOT_PRESED, this.gamepad.buttons[this.buttonR2].value);
+        this.globalControllerHandler.handleBrake(CLUTCH_PRESED, this.gamepad.buttons[this.buttonL2].value);
     }
 
     doActionsTriggers(){
         if (this.gamepad.buttons[this.buttonR2].pressed) {
             //console.log(this.gamepad.buttons[this.buttonR2]);
-            this.globalControllerHandler.handleAccelerate(CLUTCH_NOT_PRESED, this.gamepad.buttons[this.buttonR2].value);
-            //console.log("accelerator: " + this.gamepad.buttons[this.buttonR2].value);
+            //this.globalControllerHandler.handleAccelerate(CLUTCH_NOT_PRESED, this.gamepad.buttons[this.buttonR2].value);
+            console.log("accelerator: " + this.gamepad.buttons[this.buttonR2].value);
             //this.auto.acelerar();
         }
 
         if (this.gamepad.buttons[this.buttonL2].pressed) {
-            this.globalControllerHandler.handleBrake(CLUTCH_PRESED, this.gamepad.buttons[this.buttonL2].value);
+            //this.globalControllerHandler.handleBrake(CLUTCH_PRESED, this.gamepad.buttons[this.buttonL2].value);
             //console.log("Break: " + this.gamepad.buttons[this.buttonL2].value);
         }
     }
@@ -100,9 +122,10 @@ class XboxController{
     doActionsButtons(){
         
         if (this.gamepad.buttons[this.buttonR1].pressed && !this.buttonPressed[this.buttonR1]) {
-            console.log("Aumento de marcha (R1)");
-            if(this.actualShift < 5){
-                this.actualShift += this.actualShift;
+            //console.log("Aumento de marcha (R1)");
+            if(this.actualShift <= 5){
+                this.actualShift += 1;
+                console.log("Marcha Actual: " + this.actualShift)
                 this.globalControllerHandler.changeShift(CLUTCH_PRESED, this.actualShift);
             }
             this.buttonPressed[this.buttonR1] = true;
@@ -112,9 +135,10 @@ class XboxController{
         }
 
         if (this.gamepad.buttons[this.buttonL1].pressed && !this.buttonPressed[this.buttonL1]) {
-            console.log("reduccion de marcha (L1)");
-            if(this.actualShift > 0){
-                this.actualShift -= this.actualShift;
+            //console.log("reduccion de marcha (L1)");
+            if(this.actualShift >= 0){
+                this.actualShift -= 1;
+                console.log("Marcha Actual: " + this.actualShift)
                 this.globalControllerHandler.changeShift(CLUTCH_PRESED, this.actualShift);
             }
             this.buttonPressed[this.buttonL1] = true;
@@ -229,14 +253,15 @@ class XboxController{
         }
         
         if (this.gamepad.buttons[this.buttomHome].pressed && !this.buttonPressed[this.buttomHome]) {
-            this.globalControllerHandler.turnOnCar();
+            console.log("Menu");
+            this.globalControllerHandler.changeShiftBox("semi-auto");
             this.buttonPressed[this.buttomHome] = true;
         }else if(!this.gamepad.buttons[this.buttomHome].pressed){
             this.buttonPressed[this.buttomHome] = false;
         }
         
         if (this.gamepad.buttons[this.optionButton].pressed && !this.buttonPressed[this.optionButton]) {
-            console.log("optionButton");
+            this.globalControllerHandler.turnOnCar();
             this.buttonPressed[this.optionButton] = true;
         }else if(!this.gamepad.buttons[this.optionButton].pressed){
             this.buttonPressed[this.optionButton] = false;
@@ -244,7 +269,7 @@ class XboxController{
     }
 
     doActionByMapping(){
-        
+        this.doActionHotKeys();
         this.doActionsAxes();
         this.doActionsTriggers();
         this.doActionsButtons();
@@ -254,7 +279,7 @@ class XboxController{
     }
 }
 
-class XboxControllerSingleton{
+export default class XboxControllerSingleton{
 
     static instance;
 
@@ -262,13 +287,10 @@ class XboxControllerSingleton{
         throw new Error('Can not construct singleton. Call get instance instead.');
     }
 
-    static getInstance() {
+    static getInstance(auto) {
         if (!XboxControllerSingleton.instance) {
-            XboxControllerSingleton.instance = new XboxController();
+            XboxControllerSingleton.instance = new XboxController(auto);
         }
         return XboxControllerSingleton.instance;
     }
 }
-
-
-module.exports = XboxControllerSingleton;

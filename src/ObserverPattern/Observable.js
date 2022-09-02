@@ -1,5 +1,3 @@
-import Observer from "./Observer"
-
 export default class Observable{
 
     constructor(){
@@ -11,7 +9,10 @@ export default class Observable{
     }
 
     removeObserver(observer){
-        this.observers.remove(observer);
+        let index = this.observers.indexOf(observer);
+        if(index > -1){
+            this.observers.splice(index, 1);
+        }
     }
 
     notifyObservers(stateToSend){
