@@ -9,6 +9,7 @@ import XboxControllerSingleton from '../LogicModel/ControllerMapping/XboxControl
 import Car from '../LogicModel/CarLogic/Car';
 import AmmoInstance from '../LogicModel/Physics/AmmoInstance';
 import BoxPhysics from '../LogicModel/Physics/PhysicsTypes/BoxPhysics';
+import CylinderPhysics from '../LogicModel/Physics/PhysicsTypes/CylinderPhysics';
 import { Vector3 } from 'three';
 import TrafficCone from '../3DModels/TrafficCone';
 
@@ -22,6 +23,7 @@ export default class ThreeScene extends Component{
             "velocity": 0,
             "currentShift": 0,
         };
+        this.physicsToUpdate = [];
     }
 
 
@@ -34,6 +36,7 @@ export default class ThreeScene extends Component{
         this.renderer.setClearColor( 0x87cefa, 1 );
         this.renderer.outputEncoding = THREE.sRGBEncoding;
         this.camera = new Camera();
+        
         
 
         this.clock = new THREE.Clock();
@@ -64,11 +67,10 @@ export default class ThreeScene extends Component{
             0, //Mass
             new THREE.Vector3(5000, 10, 5000), //Shape
             this.physicsWorld, //Physics World
-            5 // friction
+            100 // friction
         ); 
 
         await this.floorPhysics.buildAmmoPhysics();
-        
         texture.repeat.set( 10, 10 );
         const floorMaterial = new THREE.MeshBasicMaterial( {map: texture,  side: THREE.DoubleSide} );
         this.floor = new THREE.Mesh( floorGeometry, floorMaterial );
@@ -82,7 +84,7 @@ export default class ThreeScene extends Component{
         const quaternionRamp = new THREE.Quaternion();
         quaternionRamp.setFromAxisAngle( new THREE.Vector3( 1, 0, 0 ), -Math.PI / 4);
 
-        this.ramp = new BoxPhysics(
+        this.rampPhysics = new BoxPhysics(
             new THREE.Vector3(10,0,10), //Position
             quaternionRamp ,  //Quaternion
             new Ammo.btVector3(0,0,0), //Inertia
@@ -91,14 +93,28 @@ export default class ThreeScene extends Component{
             this.physicsWorld, //Physics World
             1000 // friction
         ); 
-        await this.ramp.buildAmmoPhysics();
+        await this.rampPhysics.buildAmmoPhysics();
+        this.physicsToUpdate.push(this.rampPhysics);
         this.ramp = new THREE.Mesh( rampa, floorMaterial );
         this.ramp.position.set (10,0,10);
         this.scene.add(this.ramp);
 
 
         this.cone = new TrafficCone("textures/coneTexture.jpg");
-        this.cone.addToScene(this.scene, "trafficCone", [0,0,0], [1,1,1]);
+        this.cone.addToScene(this.scene, "trafficCone", [10,0,0], [1,1,1]);
+        this.conePhysics = new CylinderPhysics(
+            new THREE.Vector3(10,0,0), 
+            new THREE.Quaternion().setFromAxisAngle( new THREE.Vector3( 1, 0, 0 ), 0), 
+            new Ammo.btVector3(0,0,0), 
+            10, 
+            new THREE.Vector3(this.cone.RADIUS_BOTTOM, this.cone.HEIGHT/2, this.cone.RADIUS_BOTTOM), 
+            this.physicsWorld,
+            1000
+        );
+        await this.conePhysics.buildAmmoPhysics();
+        this.physicsToUpdate.push(this.conePhysics);
+        this.conePhysics.attachObserver(this.cone);
+        this.objectsToAnimate.push(this.cone);
 
         //Add driver's car to scene
         this.carLogic = new Car(this.physicsWorld);
@@ -182,10 +198,13 @@ export default class ThreeScene extends Component{
     animation(){
         let deltaTime = this.clock.getDelta();
         requestAnimationFrame(this.animation);
-        this.physicsWorld.stepSimulation(deltaTime, 10)
+        this.physicsWorld.stepSimulation(deltaTime, 10);
         this.objectsToAnimate.forEach(function(object){
             object.animate();
         });
+        this.physicsToUpdate.forEach(function(phys){
+            phys.updatePhysics();
+        })
         let floorData = this.floorPhysics.updatePhysics();
         this.floor.position.set(floorData['position'].x,floorData['position'].y, floorData['position'].z);
         this.floor.quaternion.set(floorData['rotation'].x, floorData['rotation'].y, floorData['rotation'].z, floorData['rotation'].w);
