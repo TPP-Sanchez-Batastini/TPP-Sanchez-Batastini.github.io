@@ -12,6 +12,7 @@ import BoxPhysics from '../LogicModel/Physics/PhysicsTypes/BoxPhysics';
 import CylinderPhysics from '../LogicModel/Physics/PhysicsTypes/CylinderPhysics';
 import { Vector3 } from 'three';
 import TrafficCone from '../3DModels/TrafficCone';
+import LevelFactory from '../Levels/LevelsFactory';
 
 export default class ThreeScene extends Component{
     
@@ -52,7 +53,7 @@ export default class ThreeScene extends Component{
         this.scene.add( this.sunLight );
 
         //FLOOR
-        const floorGeometry = new THREE.BoxGeometry( 5000, 10, 5000);
+        const floorGeometry = new THREE.BoxGeometry( 1000, 10, 1000);
         const texture = new THREE.TextureLoader().load( 'textures/Piso.png' );
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
@@ -67,7 +68,7 @@ export default class ThreeScene extends Component{
             0, //Mass
             new THREE.Vector3(5000, 10, 5000), //Shape
             this.physicsWorld, //Physics World
-            100 // friction
+            100000 // friction
         ); 
 
         await this.floorPhysics.buildAmmoPhysics();
@@ -77,27 +78,30 @@ export default class ThreeScene extends Component{
         this.floor.position.set (0,0,0);
         this.scene.add(this.floor);
 
+        this.level = new LevelFactory(0,this.scene, this.physicsWorld);
+        this.physicsToUpdate.push(this.level);
+        this.objectsToAnimate.push(this.level);
         // Rampa 
-        
-        const rampa = new THREE.BoxGeometry( 100, 2, 10);
-        rampa.rotateX(-Math.PI/4);
-        const quaternionRamp = new THREE.Quaternion();
-        quaternionRamp.setFromAxisAngle( new THREE.Vector3( 1, 0, 0 ), -Math.PI / 4);
 
-        this.rampPhysics = new BoxPhysics(
-            new THREE.Vector3(10,0,10), //Position
-            quaternionRamp ,  //Quaternion
-            new Ammo.btVector3(0,0,0), //Inertia
-            0, //Mass
-            new THREE.Vector3(100, 2, 10), //Shape
-            this.physicsWorld, //Physics World
-            1000 // friction
-        ); 
-        await this.rampPhysics.buildAmmoPhysics();
-        this.physicsToUpdate.push(this.rampPhysics);
-        this.ramp = new THREE.Mesh( rampa, floorMaterial );
-        this.ramp.position.set (10,0,10);
-        this.scene.add(this.ramp);
+        // const rampa = new THREE.BoxGeometry( 100, 2, 10);
+        // rampa.rotateX(-Math.PI/4);
+        // const quaternionRamp = new THREE.Quaternion();
+        // quaternionRamp.setFromAxisAngle( new THREE.Vector3( 1, 0, 0 ), -Math.PI / 4);
+
+        // this.rampPhysics = new BoxPhysics(
+        //     new THREE.Vector3(10,0,10), //Position
+        //     quaternionRamp ,  //Quaternion
+        //     new Ammo.btVector3(0,0,0), //Inertia
+        //     0, //Mass
+        //     new THREE.Vector3(100, 2, 10), //Shape
+        //     this.physicsWorld, //Physics World
+        //     1000 // friction
+        // ); 
+        // await this.rampPhysics.buildAmmoPhysics();
+        // this.physicsToUpdate.push(this.rampPhysics);
+        // this.ramp = new THREE.Mesh( rampa, floorMaterial );
+        // this.ramp.position.set (10,0,10);
+        // this.scene.add(this.ramp);
 
 
         this.cone = new TrafficCone("textures/coneTexture.jpg");
