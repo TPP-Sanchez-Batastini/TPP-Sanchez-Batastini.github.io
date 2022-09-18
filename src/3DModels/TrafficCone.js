@@ -48,6 +48,11 @@ export default class TrafficCone extends VisualEntity{
             this.threeDModel.name = objectName;
             this.threeDModel.position.set(position[0], position[1], position[2]);
             this.threeDModel.scale.set(scale[0], scale[1], scale[2]);
+
+            this.RADIUS_TOP *= scale[0];
+            this.RADIUS_BOTTOM *= scale[0];
+            this.HEIGHT *= scale[1];
+
             scene.add(this.threeDModel);
         }
         return this;

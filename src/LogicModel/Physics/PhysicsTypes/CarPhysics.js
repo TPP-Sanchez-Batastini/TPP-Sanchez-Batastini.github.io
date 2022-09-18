@@ -10,6 +10,8 @@ const SIDE_RIGHT =-1;
 const SIDE_LEFT = 1;
 const MAX_STEER = -0.5;
 
+const MAX_FRICTION_FORCE = 100;
+
 const DISABLE_DEACTIVATION = 4;
 export default class CarPhysics{
 
@@ -46,7 +48,7 @@ export default class CarPhysics{
         this.rigidBody = new Ammo.btRigidBody(rigidBodyInfo);
 
         this.rigidBody.setFriction(this.friction);
-
+        this.rigidBody.setRollingFriction(this.friction *10);
         this.physicsWorld.addRigidBody(this.rigidBody);
 
         this.tuning = new this.Ammo.btVehicleTuning();
@@ -55,7 +57,7 @@ export default class CarPhysics{
         this.vehicle.setCoordinateSystem(0, 1, 2);
         this.physicsWorld.addAction(this.vehicle);
 
-        let radio_rueda = 0.35; 
+        let radio_rueda = 0.35;
         let disti_center = 0.85;
         var wheelAxisPositionBack = -1.45;
         var wheelRadiusBack = radio_rueda;
@@ -88,8 +90,8 @@ export default class CarPhysics{
         var suspensionRestLength = 0.6;
         var rollInfluence = 0.2;
         var friction = 1000;
-        var suspensionDamping = 1.3;
-        var suspensionCompression = 2.4;
+        var suspensionDamping = 3.3;
+        var suspensionCompression = 4.4;
         var wheelInfo = this.vehicle.addWheel(
             pos,
             wheelDirectionCS0,
@@ -151,6 +153,12 @@ export default class CarPhysics{
 
 
     brake(valueBrake){
+        let speedKMH = Math.abs(this.vehicle.getCurrentSpeedKmHour());
+        let frictionBrake = MAX_FRICTION_FORCE / ( speedKMH );
+        if( speedKMH === 0 ){
+            frictionBrake = 0;
+        }
+        valueBrake += frictionBrake;
         this.vehicle.setBrake(valueBrake/2, FRONT_LEFT);
         this.vehicle.setBrake(valueBrake/2, FRONT_RIGHT);
         this.vehicle.setBrake(valueBrake, BACK_LEFT);

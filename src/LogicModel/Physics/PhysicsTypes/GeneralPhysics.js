@@ -47,6 +47,7 @@ export default class GeneralPhysics extends Observable{
         this.rigidBody = new Ammo.btRigidBody(rigidBodyInfo);
 
         this.rigidBody.setFriction(this.friction);
+        this.rigidBody.setRollingFriction(this.friction * 2)
 
         this.physicsWorld.addRigidBody(this.rigidBody);
 

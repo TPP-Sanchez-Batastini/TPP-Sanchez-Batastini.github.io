@@ -8,7 +8,6 @@ import LogitechG29ControllerSingleton from '../LogicModel/ControllerMapping/Logi
 import XboxControllerSingleton from '../LogicModel/ControllerMapping/XboxController';
 import Car from '../LogicModel/CarLogic/Car';
 import AmmoInstance from '../LogicModel/Physics/AmmoInstance';
-import BoxPhysics from '../LogicModel/Physics/PhysicsTypes/BoxPhysics';
 import CylinderPhysics from '../LogicModel/Physics/PhysicsTypes/CylinderPhysics';
 import { Vector3 } from 'three';
 import TrafficCone from '../3DModels/TrafficCone';
@@ -38,8 +37,6 @@ export default class ThreeScene extends Component{
         this.renderer.outputEncoding = THREE.sRGBEncoding;
         this.camera = new Camera();
         
-        
-
         this.clock = new THREE.Clock();
 
         //Ammo.js
@@ -51,58 +48,12 @@ export default class ThreeScene extends Component{
         this.sunLight = new THREE.DirectionalLight( 0xffffff, 1.0 );
         this.sunLight.position.set( 0, 100, 0 );
         this.scene.add( this.sunLight );
-
-        //FLOOR
-        const floorGeometry = new THREE.BoxGeometry( 1000, 10, 1000);
-        const texture = new THREE.TextureLoader().load( 'textures/Piso.png' );
-        texture.wrapS = THREE.RepeatWrapping;
-        texture.wrapT = THREE.RepeatWrapping;
-
-        const quaternion = new THREE.Quaternion();
-        quaternion.setFromAxisAngle( new THREE.Vector3( 0, 0, 0 ), 0);
+        
         let Ammo = await AmmoInstance.getInstance() ;
-        this.floorPhysics = new BoxPhysics(
-            new THREE.Vector3(0,-5,0), //Position
-            quaternion ,  //Quaternion
-            new Ammo.btVector3(0,0,0), //Inertia
-            0, //Mass
-            new THREE.Vector3(5000, 10, 5000), //Shape
-            this.physicsWorld, //Physics World
-            100000 // friction
-        ); 
-
-        await this.floorPhysics.buildAmmoPhysics();
-        texture.repeat.set( 10, 10 );
-        const floorMaterial = new THREE.MeshBasicMaterial( {map: texture,  side: THREE.DoubleSide} );
-        this.floor = new THREE.Mesh( floorGeometry, floorMaterial );
-        this.floor.position.set (0,0,0);
-        this.scene.add(this.floor);
 
         this.level = new LevelFactory(0,this.scene, this.physicsWorld);
         this.physicsToUpdate.push(this.level);
         this.objectsToAnimate.push(this.level);
-        // Rampa 
-
-        // const rampa = new THREE.BoxGeometry( 100, 2, 10);
-        // rampa.rotateX(-Math.PI/4);
-        // const quaternionRamp = new THREE.Quaternion();
-        // quaternionRamp.setFromAxisAngle( new THREE.Vector3( 1, 0, 0 ), -Math.PI / 4);
-
-        // this.rampPhysics = new BoxPhysics(
-        //     new THREE.Vector3(10,0,10), //Position
-        //     quaternionRamp ,  //Quaternion
-        //     new Ammo.btVector3(0,0,0), //Inertia
-        //     0, //Mass
-        //     new THREE.Vector3(100, 2, 10), //Shape
-        //     this.physicsWorld, //Physics World
-        //     1000 // friction
-        // ); 
-        // await this.rampPhysics.buildAmmoPhysics();
-        // this.physicsToUpdate.push(this.rampPhysics);
-        // this.ramp = new THREE.Mesh( rampa, floorMaterial );
-        // this.ramp.position.set (10,0,10);
-        // this.scene.add(this.ramp);
-
 
         this.cone = new TrafficCone("textures/coneTexture.jpg");
         this.cone.addToScene(this.scene, "trafficCone", [10,0,0], [1,1,1]);
@@ -198,7 +149,7 @@ export default class ThreeScene extends Component{
         this.renderer.render( this.scene, this.camera.getCameraInstance() );
     }
 
-    //[3000 , 4000 ,  ]
+
     animation(){
         let deltaTime = this.clock.getDelta();
         requestAnimationFrame(this.animation);
@@ -208,12 +159,8 @@ export default class ThreeScene extends Component{
         });
         this.physicsToUpdate.forEach(function(phys){
             phys.updatePhysics();
-        })
-        let floorData = this.floorPhysics.updatePhysics();
-        this.floor.position.set(floorData['position'].x,floorData['position'].y, floorData['position'].z);
-        this.floor.quaternion.set(floorData['rotation'].x, floorData['rotation'].y, floorData['rotation'].z, floorData['rotation'].w);
+        });
         this.camera.setPositionRelativeToObject();
-        //LogitechG29ControllerSingleton.getInstance(this.carLogic).checkEvents();
         XboxControllerSingleton.getInstance(this.carLogic).checkEvents();
         this.setState({"velocity": this.carLogic.getSpeed(), "currentRPM": this.carLogic.getCurrentRPM(), "currentShift": this.carLogic.getCurrentShift()});
         this.renderer.render( this.scene, this.camera.getCameraInstance());
