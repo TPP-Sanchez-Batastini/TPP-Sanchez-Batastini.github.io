@@ -11,6 +11,7 @@ export default class Camera extends Observer{
     constructor(){
         super();
         this.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+        this.group =  new THREE.Object3D().add(this.camera);
     }
 
 
@@ -23,8 +24,8 @@ export default class Camera extends Observer{
     setPositionRelativeToObject(){
         const cameraOffset = new Vector3(X_DISTANCE, Y_DISTANCE, Z_DISTANCE);
         if(this.observedState != null){
-            let cameraOffsetRotated = cameraOffset.applyQuaternion(this.observedState.rotation);
-            this.camera.position.copy(this.observedState.position).add(cameraOffsetRotated);
+            cameraOffset.applyQuaternion(this.observedState.rotation);
+            this.group.position.copy(this.observedState.position).add(cameraOffset);
             let positionToLookAt = new Vector3(this.observedState.position.x, this.observedState.position.y, this.observedState.position.z);
             let offsetVector = new Vector3(0,0,5);
             offsetVector.applyQuaternion(this.observedState.rotation);
@@ -33,8 +34,7 @@ export default class Camera extends Observer{
             positionToLookAt.z += offsetVector.z;
             this.camera.lookAt(positionToLookAt);
         }else{
-            this.camera.lookAt(new Vector3(0,0,0));
-            this.camera.position.copy(cameraOffset);
+            this.camera.lookAt(new Vector3(0,0,5));
         }
     }
 

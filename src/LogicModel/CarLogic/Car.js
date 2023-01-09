@@ -2,7 +2,6 @@ import { Vector3, Vector4 } from 'three';
 import Observable from '../../ObserverPattern/Observable';
 import CarPhysics from '../Physics/PhysicsTypes/CarPhysics';
 import CarEngine from './CarEngine';
-import ShiftBox from './ShiftBox';
 import ManualBox from './ShiftBoxTypes/ManualBox';
 import SemiAutomaticBox from './ShiftBoxTypes/SemiAutomaticBox';
 

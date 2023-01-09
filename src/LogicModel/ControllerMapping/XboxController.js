@@ -5,19 +5,6 @@ const STICK_LIMIT = 0.1;
 const CLUTCH_PRESED = 0;
 const CLUTCH_NOT_PRESED = 1;
 
-function isConected(){
-    let value = false;
-    let gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads() : []);
-    for (let i = 0; i < gamepads.length; i++) {
-        if (gamepads[i]) {
-          if (gamepads[i].id.startsWith('Xbox')) {
-            value = true;
-          }
-        }
-      }
-    return value;
-}
-
 class XboxController{
     constructor(auto){
         const gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads() : []);

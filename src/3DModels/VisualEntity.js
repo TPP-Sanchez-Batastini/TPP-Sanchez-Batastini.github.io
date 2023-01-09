@@ -1,4 +1,3 @@
-import { Vector3, LoadingManager } from "three";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import Observer from "../ObserverPattern/Observer"

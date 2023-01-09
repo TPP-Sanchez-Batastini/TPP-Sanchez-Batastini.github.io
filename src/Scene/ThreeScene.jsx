@@ -12,6 +12,7 @@ import CylinderPhysics from '../LogicModel/Physics/PhysicsTypes/CylinderPhysics'
 import { Vector3 } from 'three';
 import TrafficCone from '../3DModels/TrafficCone';
 import LevelFactory from '../Levels/LevelsFactory';
+import  {VRButton}  from '../addons/VRbutton';
 
 export default class ThreeScene extends Component{
     
@@ -24,6 +25,7 @@ export default class ThreeScene extends Component{
             "currentShift": 0,
         };
         this.physicsToUpdate = [];
+        localStorage.setItem("VR", false);
     }
 
 
@@ -91,6 +93,8 @@ export default class ThreeScene extends Component{
         this.mount.appendChild(this.renderer.domElement);
         this.animation();
 
+        document.body.appendChild( VRButton.createButton( this.renderer ) );
+        this.renderer.xr.enabled = true;
         
     }
 
@@ -152,7 +156,7 @@ export default class ThreeScene extends Component{
 
     animation(){
         let deltaTime = this.clock.getDelta();
-        requestAnimationFrame(this.animation);
+        this.renderer.setAnimationLoop(this.animation);
         this.physicsWorld.stepSimulation(deltaTime, 10);
         this.objectsToAnimate.forEach(function(object){
             object.animate();
