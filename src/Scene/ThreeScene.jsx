@@ -37,7 +37,7 @@ export default class ThreeScene extends Component{
         this.renderer.setSize( window.innerWidth, window.innerHeight );
         this.renderer.setClearColor( 0x87cefa, 1 );
         this.renderer.outputEncoding = THREE.sRGBEncoding;
-        this.camera = new Camera();
+        this.camera = new Camera(this.renderer);
         
         this.clock = new THREE.Clock();
 
@@ -110,7 +110,7 @@ export default class ThreeScene extends Component{
             this.carLogic.removeObserver(this.camera);
             switch(numCamera){
                 case "1":
-                    this.camera = new Camera();
+                    this.camera = new Camera(this.renderer);
                     break;
                 case "2":
                     this.camera = new OrbitalCamera(this.renderer);
