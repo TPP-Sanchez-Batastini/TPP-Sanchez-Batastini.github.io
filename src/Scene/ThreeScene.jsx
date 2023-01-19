@@ -26,6 +26,7 @@ export default class ThreeScene extends Component{
         };
         this.physicsToUpdate = [];
         localStorage.setItem("VR", false);
+        this.gotAnyEvent = false;
     }
 
 
@@ -168,6 +169,7 @@ export default class ThreeScene extends Component{
         XboxControllerSingleton.getInstance(this.carLogic).checkEvents();
         this.setState({"velocity": this.carLogic.getSpeed(), "currentRPM": this.carLogic.getCurrentRPM(), "currentShift": this.carLogic.getCurrentShift()});
         this.renderer.render( this.scene, this.camera.getCameraInstance());
+        
     }
 
     render(){

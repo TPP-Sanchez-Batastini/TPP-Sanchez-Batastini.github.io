@@ -13,7 +13,7 @@ export default class Car extends Observable{
     constructor(physicsWorld){
         super();
         this.carEngine = new CarEngine();
-        this.shiftBox = new ManualBox(this.carEngine);
+        this.shiftBox = new SemiAutomaticBox(this.carEngine);
         this.currentDirectionTurn = 0; //in rads
         this.currentTireRotation = 0;
         this.position = new Vector3(POSITION[0], POSITION[1], POSITION[2]);

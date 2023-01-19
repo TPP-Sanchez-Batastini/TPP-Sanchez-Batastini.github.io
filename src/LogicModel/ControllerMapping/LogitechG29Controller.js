@@ -92,8 +92,8 @@ class LogitechG29Controller{
         this.checkGamepadChanges();
         if(this.gamepad != null){
             this.doActionByMapping();
-            this.globalControllerHandler.updateCar();
         }
+        this.globalControllerHandler.updateCar();
     }
 
 
