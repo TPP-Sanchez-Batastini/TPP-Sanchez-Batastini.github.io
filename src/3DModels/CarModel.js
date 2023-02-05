@@ -8,6 +8,8 @@ const MAX_TIRE_TURN_IN_RADS = 0.75;
 const FACTOR_KMH_TO_MS = 1/3600;
 const VELOCITY_TO_ANGULAR_VEL = 1/0.25; //Velocity/Radius
 const STEERING_WHEEL_INITIAL_ROTATION_ON_X = -0.35;
+const MAX_VELOCITY_SHOWN = 240;
+const MAX_RPM_SHOWN = 6000;
 
 export default class CarModel extends VisualEntity{
     
@@ -20,6 +22,8 @@ export default class CarModel extends VisualEntity{
         this.currentSpeedRotation = 0;
         this.currentWheelRotation = 0;
         this.lastSteeringRotation = 0;
+        this.lastVelocityRotation = 0;
+        this.lastRPMRotation = 0;
     }
 
 
@@ -152,6 +156,7 @@ export default class CarModel extends VisualEntity{
             this.lastValueRotation = this.observedState["direction"];
             this.rotateWheels();
             this.rotateSteeringWheel();
+            this.rotateVelocityAndRPM();
         }
     }
 
@@ -162,6 +167,20 @@ export default class CarModel extends VisualEntity{
         steeringWheel.rotateOnAxis(vectorRotation, -this.lastSteeringRotation);
         steeringWheel.rotateOnAxis(vectorRotation, -this.observedState['lastRotationWheel']*540/360*Math.PI*2);
         this.lastSteeringRotation = -this.observedState['lastRotationWheel']*540/360*Math.PI*2;
+    }
+
+
+    rotateVelocityAndRPM(){
+        let velocityIndicator = this.threeDModel.children.find(o => o.name === 'Cubo');
+        let rpmIndicator = this.threeDModel.children.find(o => o.name === 'Cubo001');
+        const newVelRotation = -Math.abs(this.observedState["velocity"])*(240*Math.PI/180)/MAX_VELOCITY_SHOWN;
+        const newRPMRotation = -this.observedState["rpm"]*(260*Math.PI/180)/MAX_RPM_SHOWN; //Can surpass a little bit the rpm meter
+        velocityIndicator.rotateOnAxis(new Vector3(0,1,0), -this.lastVelocityRotation);
+        velocityIndicator.rotateOnAxis(new Vector3(0,1,0), newVelRotation);
+        rpmIndicator.rotateOnAxis(new Vector3(0,1,0), -this.lastRPMRotation);
+        rpmIndicator.rotateOnAxis(new Vector3(0,1,0), newRPMRotation);
+        this.lastVelocityRotation = newVelRotation;
+        this.lastRPMRotation = newRPMRotation;
     }
 
 

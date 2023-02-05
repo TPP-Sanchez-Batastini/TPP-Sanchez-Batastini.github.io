@@ -94,7 +94,8 @@ export default class Car extends Observable{
             "position": this.position,
             "rotation": this.rotation,
             "physicsBody": this.carPhysics,
-            "wheelsData": this.wheelsData
+            "wheelsData": this.wheelsData,
+            "rpm": this.getCurrentRPM()
         };
     }
 
