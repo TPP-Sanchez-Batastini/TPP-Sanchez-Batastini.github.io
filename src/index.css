@@ -11,3 +11,21 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.drawer-header:hover{
+  cursor:pointer;
+  background-color: #eeeeee;
+  transition: 0.5s ease;
+}
+
+.level-grid{
+  background-image:
+    repeating-linear-gradient(#ccc 0 1px, transparent 1px 100%),
+    repeating-linear-gradient(90deg, #ccc 0 1px, transparent 1px 100%);
+  background-size: 10% 10%;
+  width: 800px;
+  height: 800px;
+  margin-top: 25px;
+  margin-left: auto;
+  margin-right: auto;
+}
