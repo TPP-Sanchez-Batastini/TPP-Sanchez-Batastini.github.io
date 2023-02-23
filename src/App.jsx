@@ -2,7 +2,7 @@ import ThreeScene from './Scene/ThreeScene';
 import { useEffect } from 'react';
 import { MainMenu } from './Menus/MainMenu';
 import { LevelEditor } from './Menus/LevelEditor';
-import { BrowserRouter as Router, Routes as Switch, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes as Switch, Route } from 'react-router-dom';
 
 
 function App() {
