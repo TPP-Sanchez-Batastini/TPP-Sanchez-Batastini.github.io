@@ -20,8 +20,8 @@ code {
 
 .level-grid{
   background-image:
-    repeating-linear-gradient(#ccc 0 1px, transparent 1px 100%),
-    repeating-linear-gradient(90deg, #ccc 0 1px, transparent 1px 100%);
+    repeating-linear-gradient(#000, transparent 1px 100%),
+    repeating-linear-gradient(90deg, #000, transparent 1px 100%);
   background-size: 10% 10%;
   width: 800px;
   height: 800px;
