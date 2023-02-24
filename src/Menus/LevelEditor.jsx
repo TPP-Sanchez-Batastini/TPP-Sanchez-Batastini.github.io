@@ -66,6 +66,7 @@ export const LevelEditor = () => {
                         position: "absolute",
                         zIndex: item.zIndex.toString()
                       }}
+                      onClick={() => {console.log(`OPEN CONFIGS OF idx: ${idx}, obj: ${JSON.stringify(itemsInGrid[idx])}`)}}
                     />
                   );
                 })}
