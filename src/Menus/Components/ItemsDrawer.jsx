@@ -1,27 +1,23 @@
 import React from 'react';
-import { Button, Grid } from '@mui/material'
+import { Grid } from '@mui/material'
 import { styled, useTheme } from '@mui/material/styles';
-import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
-import CssBaseline from '@mui/material/CssBaseline';
-import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
+import { ItemsContext } from '../LevelEditorContext/ItemsContext';
+
+
+const allUnselected = {
+    "cone": null,
+    "trapecio": null,
+    "street": null
+};
 
 
 export const ItemsDrawer = ( {openItems, handleDrawerClose} ) => {
+    
     const [open, setOpen] = React.useState(false);
+    const {setLastSelectedItem, lastSelectedItem} = React.useContext(ItemsContext);
 
     React.useEffect(() => {
         setOpen(openItems);
@@ -37,6 +33,22 @@ export const ItemsDrawer = ( {openItems, handleDrawerClose} ) => {
         ...theme.mixins.toolbar,
         justifyContent: 'flex-end',
     }));
+
+    const [itemSelected, setItemSelected] = React.useState(allUnselected);
+
+
+    const handleSelection = (item) => {
+        const dictSelection = {...allUnselected};
+        dictSelection[item] = "selected";
+        setItemSelected(dictSelection);
+        setLastSelectedItem({
+            selectedItem: item,
+            scale: 1.0,
+            positionX: 0.0,
+            positionY: 0.0,
+            zIndex: lastSelectedItem ? lastSelectedItem.zIndex + 1 : 1
+        });
+    }
 
     return (
 
@@ -56,9 +68,28 @@ export const ItemsDrawer = ( {openItems, handleDrawerClose} ) => {
                     open={open}
                 >
                     <DrawerHeader onClick={handleDrawerClose} className='drawer-header'>
+                        <div style={{width:"100%"}}>
+                            <h3 style={{textAlign:"left", paddingLeft:10}}>Items</h3>
+                        </div>
                         <ChevronLeftIcon />
                     </DrawerHeader>
                     <Divider />
+                    <Grid style={{justifyContent: "center", display: "flex", alignItems:"center", flexDirection:"column"}}>
+                        {
+                            Object.entries(itemSelected).map(([nameItem, isSelected]) => {
+                                return (
+                                    <img 
+                                        key={nameItem}
+                                        src={`${nameItem}.png`} 
+                                        width={75}
+                                        height={75} 
+                                        className={`imageLevelEditor ${isSelected}`} 
+                                        onClick={() => handleSelection(nameItem)}
+                                    />
+                                );
+                            })
+                        }
+                    </Grid>
                 </Drawer>
             </Grid>
             

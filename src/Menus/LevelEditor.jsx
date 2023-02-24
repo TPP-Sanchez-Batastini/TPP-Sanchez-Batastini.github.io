@@ -4,6 +4,7 @@ import { ConfigDrawer } from './Components/ConfigDrawer';
 import { ItemsDrawer } from './Components/ItemsDrawer';
 import SettingsIcon from '@mui/icons-material/Settings'
 import AddIcon from '@mui/icons-material/Add';
+import { ItemsContext } from './LevelEditorContext/ItemsContext';
 
 const MAX_WIDTH = 4000;
 const MAX_HEIGHT = 4000;
@@ -18,32 +19,63 @@ export const LevelEditor = () => {
   const [openConfigs, setOpenConfigs] = React.useState(false);
   const [widthGrid, setWidthGrid] = React.useState(200);
   const [heightGrid, setHeightGrid] = React.useState(200);
+  const [itemsInGrid, setItemsInGrid] = React.useState([]);
+
+  const [lastSelectedItem, setLastSelectedItem] = React.useState(null);
+
+
+  React.useEffect(() => {
+    if (lastSelectedItem !== null){
+      setItemsInGrid([...itemsInGrid, lastSelectedItem]);
+    }
+    console.log(itemsInGrid);
+  }, [lastSelectedItem]);
 
   return (
     <>
-      <div>
-        <div style={{flexDirection:'row',justifyContent:'space-between', display:"flex"}}>
-          <IconButton onClick={() => setOpenItems(true)} style={{height:40, margin:10}} className='header'>
-            <AddIcon/>
-          </IconButton>
-          <h1>Driving Simulator - Level Editor</h1>
-          <IconButton onClick={() => setOpenConfigs(true)} style={{height:40, margin:10}} className='header' >
-            <SettingsIcon/>
-          </IconButton>
-        </div>
+      <ItemsContext.Provider value={{lastSelectedItem, setLastSelectedItem}}>
         <div>
-            <div 
-              className="level-grid"
-              style={{
-                backgroundSize: `${parseInt(25 - widthGrid*100/(MAX_WIDTH*4))}% ${parseInt(25 - heightGrid*100/(MAX_HEIGHT*4))}%`}}
-            >
-
-            </div>
+          <div style={{flexDirection:'row',justifyContent:'space-between', display:"flex"}}>
+            <IconButton onClick={() => setOpenItems(true)} style={{height:40, margin:10}} className='header'>
+              <AddIcon/>
+            </IconButton>
+            <h1>Driving Simulator - Level Editor</h1>
+            <IconButton onClick={() => setOpenConfigs(true)} style={{height:40, margin:10}} className='header' >
+              <SettingsIcon/>
+            </IconButton>
+          </div>
+          <div>
+              <div 
+                className="level-grid"
+                style={{
+                  backgroundSize: `${parseInt(25 - widthGrid*100/(MAX_WIDTH*4))}% ${parseInt(25 - heightGrid*100/(MAX_HEIGHT*4))}%`,
+                  display:"flex",
+                  position:"relative"
+                }}
+              >
+                {itemsInGrid.map((item, idx) => {
+                  return(
+                    <img 
+                      key={idx} 
+                      src={`${item.selectedItem}.png`} 
+                      width={item.scale*75} 
+                      height={item.scale*75} 
+                      style={{
+                        top:item.positionY, 
+                        left:item.positionX,
+                        position: "absolute",
+                        zIndex: item.zIndex.toString()
+                      }}
+                    />
+                  );
+                })}
+              </div>
+          </div>
+          
         </div>
-        
-      </div>
-      <ItemsDrawer openItems={openItems} handleDrawerClose={() => {setOpenItems(false)}}/>
-      <ConfigDrawer openConfigs={openConfigs} handleDrawerClose={() => {setOpenConfigs(false)}}/>
+        <ItemsDrawer openItems={openItems} handleDrawerClose={() => {setOpenItems(false)}}/>
+        <ConfigDrawer openConfigs={openConfigs} handleDrawerClose={() => {setOpenConfigs(false)}}/>
+      </ItemsContext.Provider>
     </>
   );
 }
