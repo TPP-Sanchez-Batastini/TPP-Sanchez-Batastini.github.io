@@ -1,6 +1,8 @@
 import { Vector3 } from 'three';
 import * as THREE from 'three';
 import VisualEntity from './VisualEntity';
+import { Reflector } from '../addons/Reflector';
+import { Object3D } from 'three';
 
 const SCALE = [1.0, 1.0, 1.0];
 const POSITION = [0,0,0];
@@ -27,8 +29,100 @@ export default class CarModel extends VisualEntity{
     }
 
 
+    generateRetrovisor(){
+        const path = new THREE.Shape();
+        path.absellipse(0,0,0.15,0.075,0, Math.PI*2, false,0);
+        const ellipseGeometry = new THREE.ShapeBufferGeometry( path );
+        const retrovisor = new Reflector(
+            ellipseGeometry, 
+            {
+                textureWidth:window.innerWidth * window.devicePixelRatio,
+                textureHeight:window.innerHeight * window.devicePixelRatio,
+                color: 0x7f7f7f,
+                clipBias: 0,
+                multisample: 4
+            }
+        );
+        retrovisor.rotateX( -Math.PI );
+        retrovisor.rotateY( 0.3 );
+        retrovisor.position.set(0,0.625,0.375);
+        this.threeDModel.add(retrovisor);
+    }
+
+
+    generateLeftMirror(){
+        const path = new THREE.Shape();
+        path.absellipse(0,0,0.105,0.075,0, Math.PI*2, false,0);
+        const leftMirrorGeometry = new THREE.ShapeBufferGeometry( path );
+        const leftMirror = new Reflector(
+            leftMirrorGeometry, 
+            {
+                textureWidth:window.innerWidth * window.devicePixelRatio,
+                textureHeight:window.innerHeight * window.devicePixelRatio,
+                color: 0x7f7f7f,
+                clipBias: 0,
+                multisample: 4
+            }
+        );
+        let container = new Object3D();
+        container.add(leftMirror);
+        container.position.set(1.148, 0.394, 0.538);
+        container.rotateX(-Math.PI+0.03);
+        leftMirror.rotateY(-26*Math.PI/180);
+        this.threeDModel.add(container);
+    }
+
+
+    generateRightMirror(){
+        const path = new THREE.Shape();
+        path.absellipse(0,0,0.105,0.075,0, Math.PI*2, false,0);
+        const rightMirrorGeometry = new THREE.ShapeBufferGeometry( path );
+        const rightMirror = new Reflector(
+            rightMirrorGeometry, 
+            {
+                textureWidth:window.innerWidth * window.devicePixelRatio,
+                textureHeight:window.innerHeight * window.devicePixelRatio,
+                color: 0x7f7f7f,
+                clipBias: 0,
+                multisample: 4
+            }
+        );
+        let container = new Object3D();
+        container.add(rightMirror);
+        container.position.set(-1.138, 0.394, 0.53);
+        container.rotateX(-Math.PI+2.9*Math.PI/180);
+        rightMirror.rotateY(28.2*Math.PI/180);
+        this.threeDModel.add(container);
+    }
+
+
+    generateMirrors(){
+        this.generateRetrovisor();
+        this.generateLeftMirror();
+        this.generateRightMirror();
+    }
+
     async addToScene(scene){
         await super.addToScene(scene, "driverCar", POSITION, SCALE);
+
+        /*
+        console.log(leftMirrorGeometry.geometry);
+        const leftMirror = new Reflector(
+            leftMirrorGeometry.geometry, 
+            {
+                textureWidth:window.innerWidth * window.devicePixelRatio,
+                textureHeight:window.innerHeight * window.devicePixelRatio,
+                color: 0x7f7f7f,
+                clipBias: 0,
+                multisample: 4
+            }
+        );
+        console.log(leftMirrorGeometry.position);
+        console.log(leftMirrorGeometry.scale);
+        leftMirror.position.set(0, 0, 0);
+        leftMirror.rotateX(90/360);
+        scene.add(leftMirror);*/
+        this.generateMirrors();
         //this.addPhysicsView(scene)
         
 

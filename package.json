@@ -16,13 +16,16 @@
     "gh-pages": "^4.0.0",
     "path": "^0.12.7",
     "path-browserify": "^1.0.1",
+    "postprocessing": "^6.30.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.8.1",
     "react-scripts": "^4.0.3",
+    "screen-space-reflections": "^2.5.0",
     "three": "^0.141.0",
     "three-fbx-loader": "^1.0.3",
     "three-orbitcontrols": "^2.110.3",
+    "three-reflector": "^1.0.2",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
