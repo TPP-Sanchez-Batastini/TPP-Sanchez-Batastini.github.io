@@ -34,13 +34,12 @@ export default class CarModel extends VisualEntity{
         path.absellipse(0,0,0.15,0.075,0, Math.PI*2, false,0);
         const ellipseGeometry = new THREE.ShapeBufferGeometry( path );
         const retrovisor = new Reflector(
-            ellipseGeometry, 
+            ellipseGeometry,
             {
-                textureWidth:window.innerWidth * window.devicePixelRatio,
-                textureHeight:window.innerHeight * window.devicePixelRatio,
-                color: 0x7f7f7f,
-                clipBias: 0,
-                multisample: 4
+                textureWidth: 512,//window.innerWidth * window.devicePixelRatio,
+                textureHeight: 512,//window.innerHeight * window.devicePixelRatio,
+                clipBias: 0.35,
+                multisample: 2
             }
         );
         retrovisor.rotateX( -Math.PI );
@@ -57,11 +56,10 @@ export default class CarModel extends VisualEntity{
         const leftMirror = new Reflector(
             leftMirrorGeometry, 
             {
-                textureWidth:window.innerWidth * window.devicePixelRatio,
-                textureHeight:window.innerHeight * window.devicePixelRatio,
-                color: 0x7f7f7f,
+                textureWidth: 512,//window.innerWidth * window.devicePixelRatio,
+                textureHeight: 512,//window.innerHeight * window.devicePixelRatio,
                 clipBias: 0,
-                multisample: 4
+                multisample: 2
             }
         );
         let container = new Object3D();
@@ -80,11 +78,10 @@ export default class CarModel extends VisualEntity{
         const rightMirror = new Reflector(
             rightMirrorGeometry, 
             {
-                textureWidth:window.innerWidth * window.devicePixelRatio,
-                textureHeight:window.innerHeight * window.devicePixelRatio,
-                color: 0x7f7f7f,
+                textureWidth: 512,//window.innerWidth * window.devicePixelRatio,
+                textureHeight: 512,//window.innerHeight * window.devicePixelRatio,
                 clipBias: 0,
-                multisample: 4
+                multisample: 2
             }
         );
         let container = new Object3D();
@@ -104,28 +101,7 @@ export default class CarModel extends VisualEntity{
 
     async addToScene(scene){
         await super.addToScene(scene, "driverCar", POSITION, SCALE);
-
-        /*
-        console.log(leftMirrorGeometry.geometry);
-        const leftMirror = new Reflector(
-            leftMirrorGeometry.geometry, 
-            {
-                textureWidth:window.innerWidth * window.devicePixelRatio,
-                textureHeight:window.innerHeight * window.devicePixelRatio,
-                color: 0x7f7f7f,
-                clipBias: 0,
-                multisample: 4
-            }
-        );
-        console.log(leftMirrorGeometry.position);
-        console.log(leftMirrorGeometry.scale);
-        leftMirror.position.set(0, 0, 0);
-        leftMirror.rotateX(90/360);
-        scene.add(leftMirror);*/
         this.generateMirrors();
-        //this.addPhysicsView(scene)
-        
-
         return this;
     }
 

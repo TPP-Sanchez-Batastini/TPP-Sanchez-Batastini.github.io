@@ -23,7 +23,7 @@ class Reflector extends Mesh {
 		this.isReflector = true;
 
 		this.type = 'Reflector';
-		this.camera = new PerspectiveCamera();
+		this.camera = new PerspectiveCamera(null, null, 0.1, 10);
 
 		const scope = this;
 
