@@ -2,9 +2,14 @@ import React from 'react'
 import { Grid, Container, Typography, Button, IconButton } from '@mui/material'
 import { ConfigDrawer } from './Components/ConfigDrawer';
 import { ItemsDrawer } from './Components/ItemsDrawer';
-import SettingsIcon from '@mui/icons-material/Settings'
+import SettingsIcon from '@mui/icons-material/Settings';
+import MemoryIcon from '@mui/icons-material/Memory';
 import AddIcon from '@mui/icons-material/Add';
 import { ItemsContext } from './LevelEditorContext/ItemsContext';
+import { useState } from 'react';
+import { InputsGrid } from './Components/InputsGrid';
+
+import { LevelGrid } from './Components/LevelGrid';
 
 const MAX_WIDTH = 4000;
 const MAX_HEIGHT = 4000;
@@ -15,15 +20,21 @@ const MAX_HEIGHT_INPUT = 3000;
 
 export const LevelEditor = () => {
 
-  const [openItems, setOpenItems] = React.useState(false);
-  const [openConfigs, setOpenConfigs] = React.useState(false);
-  const [widthGrid, setWidthGrid] = React.useState(200);
-  const [heightGrid, setHeightGrid] = React.useState(200);
-  const [itemsInGrid, setItemsInGrid] = React.useState([]);
+  const [openItems, setOpenItems] = useState(false);
+  const [openConfigs, setOpenConfigs] = useState(false);
 
-  const [lastSelectedItem, setLastSelectedItem] = React.useState(null);
+  const [itemsInGrid, setItemsInGrid] = useState([]);
 
+  const [lastSelectedItem, setLastSelectedItem] = useState(null);
 
+  const [gridDimensions, setGridDimensions] = useState({width:20, height:20});
+
+  const setGridWidth = (NewWidth)=>{
+    setGridDimensions({...gridDimensions,width: NewWidth})
+  };
+  const setGridHeight = (NewHeight)=>{
+    setGridDimensions({...gridDimensions,height: NewHeight})
+  };
   React.useEffect(() => {
     if (lastSelectedItem !== null){
       setItemsInGrid([...itemsInGrid, lastSelectedItem]);
@@ -45,32 +56,30 @@ export const LevelEditor = () => {
             </IconButton>
           </div>
           <div>
-              <div 
-                className="level-grid"
-                style={{
-                  backgroundSize: `${parseInt(25 - widthGrid*100/(MAX_WIDTH*4))}% ${parseInt(25 - heightGrid*100/(MAX_HEIGHT*4))}%`,
-                  display:"flex",
-                  position:"relative"
-                }}
-              >
-                {itemsInGrid.map((item, idx) => {
-                  return(
-                    <img 
-                      key={idx} 
-                      src={`${item.selectedItem}.png`} 
-                      width={item.scale*75} 
-                      height={item.scale*75} 
-                      style={{
-                        top:item.positionY, 
-                        left:item.positionX,
-                        position: "absolute",
-                        zIndex: item.zIndex.toString()
-                      }}
-                      onClick={() => {console.log(`OPEN CONFIGS OF idx: ${idx}, obj: ${JSON.stringify(itemsInGrid[idx])}`)}}
-                    />
-                  );
-                })}
-              </div>
+              <InputsGrid setGridDimensions={setGridDimensions} gridDimensions={gridDimensions}></InputsGrid>
+              <LevelGrid gridDimensions = {gridDimensions}/>
+              {/*itemsInGrid.map((item, idx) => {
+                return(
+                  <img 
+                    key={idx} 
+                    src={`${item.selectedItem}.png`} 
+                    width={item.scale*75} 
+                    height={item.scale*75} 
+                    style={{
+                      top:item.positionY, 
+                      left:item.positionX,
+                      position: "absolute",
+                      zIndex: item.zIndex.toString()
+                    }}
+                    onClick={() => {console.log(`OPEN CONFIGS OF idx: ${idx}, obj: ${JSON.stringify(itemsInGrid[idx])}`)}}
+                  />
+                );
+              })*/}
+          </div>
+          <div style={{display:"flex", justifyContent:"center", marginTop:40}}>
+            <Button variant="contained" color="success">
+              <MemoryIcon/> Procesar nivel...
+            </Button>
           </div>
           
         </div>
