@@ -17,7 +17,7 @@ export default class CarModel extends VisualEntity{
     
     
     constructor(){
-        super('res/models/source/AutoConInterior.gltf');
+        super('res/models/source/AutoConInterior.glb');
         this.carModel = null;
         this.carLogic = null;
         this.lastValueRotation = 0;
