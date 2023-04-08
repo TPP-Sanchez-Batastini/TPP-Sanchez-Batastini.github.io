@@ -38,13 +38,9 @@ export default class Camera extends Observer{
                 this.group180Rot.setRotationFromAxisAngle(new Vector3(0,1,0), Math.PI);
                 this.camera.lookAt(new Vector3(0,0,5));
             }else{
-                let positionToLookAt = new Vector3(this.observedState.position.x, this.observedState.position.y, this.observedState.position.z);
-                let offsetVector = new Vector3(0,0,5);
-                offsetVector.applyQuaternion(this.observedState.rotation);
-                positionToLookAt.x += offsetVector.x;
-                positionToLookAt.y += offsetVector.y;
-                positionToLookAt.z += offsetVector.z;
-                this.camera.lookAt(positionToLookAt);
+                const rotationQuat = new THREE.Quaternion(this.observedState.rotation.x, this.observedState.rotation.y, this.observedState.rotation.z, this.observedState.rotation.w).normalize();
+                this.group180Rot.setRotationFromAxisAngle(new Vector3(0,1,0), -5*Math.PI/180);
+                this.group.quaternion.copy(rotationQuat);
             }
         }else{
             this.camera.lookAt(new Vector3(0,0,5));
@@ -53,6 +49,12 @@ export default class Camera extends Observer{
 
 
     getCameraInstance(){
+        console.log(this.camera.quaternion);
         return this.camera;
+    }
+
+    
+    addContainerToScene(scene){
+        scene.add(this.group);
     }
 }

@@ -39,6 +39,7 @@ export default class ThreeScene extends Component{
         this.renderer.setClearColor( 0x87cefa, 1 );
         this.renderer.outputEncoding = THREE.sRGBEncoding;
         this.camera = new Camera(this.renderer);
+        this.camera.addContainerToScene(this.scene);
         
         this.clock = new THREE.Clock();
 
@@ -115,6 +116,7 @@ export default class ThreeScene extends Component{
             switch(numCamera){
                 case "1":
                     this.camera = new Camera(this.renderer);
+                    this.camera.addContainerToScene(this.scene);
                     break;
                 case "2":
                     this.camera = new OrbitalCamera(this.renderer);
