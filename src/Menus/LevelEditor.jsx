@@ -1,5 +1,5 @@
 import React from 'react'
-import { Grid, Container, Typography, Button, IconButton } from '@mui/material'
+import { Button, IconButton } from '@mui/material'
 import { ConfigDrawer } from './Components/ConfigDrawer';
 import { ItemsDrawer } from './Components/ItemsDrawer';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -10,13 +10,6 @@ import { useState } from 'react';
 import { InputsGrid } from './Components/InputsGrid';
 
 import { LevelGrid } from './Components/LevelGrid';
-
-const MAX_WIDTH = 4000;
-const MAX_HEIGHT = 4000;
-
-const MAX_WIDTH_INPUT = 3000;
-const MAX_HEIGHT_INPUT = 3000;
-
 
 export const LevelEditor = () => {
 
@@ -29,17 +22,10 @@ export const LevelEditor = () => {
 
   const [gridDimensions, setGridDimensions] = useState({width:20, height:20});
 
-  const setGridWidth = (NewWidth)=>{
-    setGridDimensions({...gridDimensions,width: NewWidth})
-  };
-  const setGridHeight = (NewHeight)=>{
-    setGridDimensions({...gridDimensions,height: NewHeight})
-  };
   React.useEffect(() => {
     if (lastSelectedItem !== null){
-      setItemsInGrid([...itemsInGrid, lastSelectedItem]);
+      setItemsInGrid(currentItems => [...currentItems, lastSelectedItem]);
     }
-    console.log(itemsInGrid);
   }, [lastSelectedItem]);
 
   return (
@@ -58,9 +44,10 @@ export const LevelEditor = () => {
           <div>
               <InputsGrid setGridDimensions={setGridDimensions} gridDimensions={gridDimensions}></InputsGrid>
               <LevelGrid gridDimensions = {gridDimensions}/>
-              {/*itemsInGrid.map((item, idx) => {
+              {itemsInGrid.map((item, idx) => {
                 return(
-                  <img 
+                  <span key={idx}></span>
+                  /*<img 
                     key={idx} 
                     src={`${item.selectedItem}.png`} 
                     width={item.scale*75} 
@@ -72,9 +59,9 @@ export const LevelEditor = () => {
                       zIndex: item.zIndex.toString()
                     }}
                     onClick={() => {console.log(`OPEN CONFIGS OF idx: ${idx}, obj: ${JSON.stringify(itemsInGrid[idx])}`)}}
-                  />
+                  />*/
                 );
-              })*/}
+              })}
           </div>
           <div style={{display:"flex", justifyContent:"center", marginTop:40}}>
             <Button variant="contained" color="success">

@@ -59,9 +59,6 @@ export default class ThreeScene extends Component{
         this.physicsToUpdate.push(this.level);
         this.objectsToAnimate.push(this.level);
 
-        
-        this.scene.add(this.mirror);
-
         this.cone = new TrafficCone("textures/coneTexture.jpg");
         this.cone.addToScene(this.scene, "trafficCone", [10,0,0], [1,1,1]);
         this.conePhysics = new CylinderPhysics(

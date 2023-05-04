@@ -19,7 +19,6 @@ export const LevelGrid = ({gridDimensions}) => {
 
   useEffect(() => {
     let finalGrid = [];
-    console.log(gridDimensions);
     for(let i=0; i<gridDimensions.height; i++){
       let currentRow = [];
       for(let j=0; j<gridDimensions.width; j++){
@@ -50,13 +49,11 @@ export const LevelGrid = ({gridDimensions}) => {
   const onEnterHoverWithClickCell = (row, col) => {
     if(click){
       const levelGridCopy = [...levelGrid];
-      const cell = levelGrid[row][col];
       levelGridCopy[row][col].filled = true;
       levelGridCopy[row][col].div_color = COLORS["FILLED"];
       setLevelGrid(levelGridCopy);
     }else if(rightClick){
       const levelGridCopy = [...levelGrid];
-      const cell = levelGrid[row][col];
       levelGridCopy[row][col].filled = false;
       levelGridCopy[row][col].div_color = COLORS["EMPTY"];
       setLevelGrid(levelGridCopy);
@@ -66,13 +63,11 @@ export const LevelGrid = ({gridDimensions}) => {
   const onClickCell = (row, col, btn_click) => {
     if(btn_click === LEFT_CLICK){
       const levelGridCopy = [...levelGrid];
-      const cell = levelGrid[row][col];
       levelGridCopy[row][col].filled = true;
       levelGridCopy[row][col].div_color = COLORS["FILLED"];
       setLevelGrid(levelGridCopy);
     }else if(btn_click === RIGHT_CLICK){
       const levelGridCopy = [...levelGrid];
-      const cell = levelGrid[row][col];
       levelGridCopy[row][col].filled = false;
       levelGridCopy[row][col].div_color = COLORS["EMPTY"];
       setLevelGrid(levelGridCopy);

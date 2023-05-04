@@ -30,7 +30,7 @@ export default class Camera extends Observer{
             cameraOffset.applyQuaternion(this.observedState.rotation);
             this.group.position.copy(this.observedState.position).add(cameraOffset);
             
-            if (localStorage.getItem("VR") == "true"){
+            if (localStorage.getItem("VR") === "true"){
                 let offsetVectorCamera = new Vector3(0,-1.25,0); //Offset to be in place for driver's seat
                 offsetVectorCamera.applyQuaternion(this.observedState.rotation);
                 this.group.position.add(offsetVectorCamera);
@@ -49,7 +49,6 @@ export default class Camera extends Observer{
 
 
     getCameraInstance(){
-        console.log(this.camera.quaternion);
         return this.camera;
     }
 

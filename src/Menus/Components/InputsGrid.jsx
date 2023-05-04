@@ -3,14 +3,20 @@ import {useState} from 'react';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 
+const MAX_WIDTH_INPUT = 40;
+const MAX_HEIGHT_INPUT = 40;
+
 export const InputsGrid = ({setGridDimensions, gridDimensions}) => {
     const [InputWidth, setInputWidth] = useState(gridDimensions.width);
     const [InputHeight, setInputHeight] = useState(gridDimensions.height);
 
     const onSubmit = () =>{
-        console.log(InputWidth);
-        console.log(InputHeight);
-        setGridDimensions({width: InputWidth, height: InputHeight});
+      setGridDimensions(
+        {
+          width: InputWidth, 
+          height: InputHeight
+        }
+      );
     }
   return (
     <Grid container  direction="row" width={"80%"} marginLeft={'10%'}
@@ -23,7 +29,10 @@ export const InputsGrid = ({setGridDimensions, gridDimensions}) => {
             type="number" 
             step="1" 
           onChange={
-              (event) => setInputWidth(parseInt(event.target.value.replaceAll(",","").replaceAll(".","")))
+              (event) => {
+                let value = parseInt(event.target.value.replaceAll(",","").replaceAll(".",""));
+                setInputWidth(value > MAX_WIDTH_INPUT ? MAX_WIDTH_INPUT : value);
+              }
         } 
           />
         </Grid>
@@ -36,7 +45,11 @@ export const InputsGrid = ({setGridDimensions, gridDimensions}) => {
               type="number" 
               step="1" 
               onChange={
-                (event) => setInputHeight(parseInt(event.target.value.replaceAll(",","").replaceAll(".","")))
+                (event) => {
+                  let value = parseInt(event.target.value.replaceAll(",","").replaceAll(".",""));
+                  setInputHeight(value > MAX_HEIGHT_INPUT ? MAX_HEIGHT_INPUT : value);
+                  
+                }
               }
             />
           </div>
