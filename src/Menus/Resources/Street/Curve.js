@@ -8,10 +8,6 @@ const POSSIBLE_ROTATIONS = {
 }
 
 export class Curve extends AbstractStreet{
-
-    constructor(ninePerNineGrid, rowIndex, ColumnIndex){
-       super(ninePerNineGrid, rowIndex, ColumnIndex);
-    }
     
     static isValidNinePerNineGrid(ninePerNineGrid){
         //Tiene que tener solo 2 lindantes, y no ser en misma direccion.
@@ -32,5 +28,12 @@ export class Curve extends AbstractStreet{
         if(right && top){
             return POSSIBLE_ROTATIONS["RIGHT_TO_TOP"];
         }
+    }
+
+
+    getAsJSON(){
+        let dict = super.getAsJSON();
+        dict["type"] = "CURVE";
+        return dict;
     }
 }

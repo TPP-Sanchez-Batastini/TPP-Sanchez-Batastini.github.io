@@ -7,10 +7,6 @@ const POSSIBLE_ROTATIONS = {
     "RIGHT_SINGLE": Math.PI*3/2
 }
 export class TStreet extends AbstractStreet {
-    
-    constructor(ninePerNineGrid, rowIndex, ColumnIndex){
-        super(ninePerNineGrid, rowIndex, ColumnIndex);
-    }
 
     static isValidNinePerNineGrid(ninePerNineGrid){
         let [rowCount, columnCount] = AbstractStreet.calculateNeighboursFilled(ninePerNineGrid);    
@@ -30,6 +26,12 @@ export class TStreet extends AbstractStreet {
         if(right && top && bot){
             return POSSIBLE_ROTATIONS["RIGHT_SINGLE"];
         }
+    }
+
+    getAsJSON(){
+        let dict = super.getAsJSON();
+        dict["type"] = "T_STREET";
+        return dict;
     }
 
 }

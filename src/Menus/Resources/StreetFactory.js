@@ -90,7 +90,7 @@ export class StreetFactory{
         let typeDefined = false;
         let typeResult = undefined;
         for ( let i = 0; i < TYPES_OF_STREETS.length && !typeDefined; i++){
-            typeDefined = TYPES_OF_STREETS[i].isValidNinePerNineGrid();
+            typeDefined = TYPES_OF_STREETS[i].isValidNinePerNineGrid(ninePerNineGrid);
             typeResult = TYPES_OF_STREETS[i];
         }
         if (!typeDefined){

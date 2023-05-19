@@ -15,10 +15,6 @@ export class StraightStreet extends AbstractStreet {
 
     }
 
-    constructor(ninePerNineGrid, rowIndex, ColumnIndex){
-        super(ninePerNineGrid, rowIndex, ColumnIndex);
-    }
-
     determineStreetRotation(top, left, bot, right){
         if(top && bot){
             return POSSIBLE_ROTATIONS["VERTICAL"];
@@ -30,5 +26,12 @@ export class StraightStreet extends AbstractStreet {
 
     isStraight(){
         return true;
+    }
+
+
+    getAsJSON(){
+        let dict = super.getAsJSON();
+        dict["type"] = "STRAIGHT";
+        return dict;
     }
 }

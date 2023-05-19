@@ -8,12 +8,14 @@ export class Intersection extends AbstractStreet{
         return(columnCount === 2 && rowCount === 2 )
     }
 
-    constructor(ninePerNineGrid, rowIndex, ColumnIndex){
-        super(ninePerNineGrid, rowIndex, ColumnIndex);
-    }
-
     determineStreetRotation(){
         //No sense to rotate it
         return 0;
+    }
+
+    getAsJSON(){
+        let dict = super.getAsJSON();
+        dict["type"] = "INTERSECTION";
+        return dict;
     }
 }
