@@ -1,8 +1,12 @@
 import { useEffect, useState } from 'react';
+import { Button } from '@mui/material';
+import MemoryIcon from '@mui/icons-material/Memory';
+import { downloadObjectAsJson, validateGrid, generateJSONFromGrid } from '../Resources/LevelEditor';
 
 const COLORS = {
   "FILLED": "darkgray",
-  "EMPTY": "white"
+  "EMPTY": "white",
+  "WARNING": 'orange',
 };
 
 const WIDTH_GRID_VIEW = 600;
@@ -45,7 +49,46 @@ export const LevelGrid = ({gridDimensions}) => {
       }
     });
     window.addEventListener("contextmenu", (event) => { event.preventDefault(); });
-  }, [])
+  }, []);
+
+
+  const arrayContains = (array, insiderArray) => {
+    if (!insiderArray || !array){
+      return false;
+    }
+    for (let i=0; i<array.length; i++){
+      let equals = true;
+      for (let j=0; j<array[i].length; j++){
+        try{
+          if(array[i][j] != insiderArray[j]){
+            equals = false;
+          }
+        }catch(exc){j=array[i].length; equals=false;}
+      }
+      if(equals) return true;
+    }
+    return false;
+  }
+
+
+  const onSubmitLevel = () =>{
+    let result = validateGrid(levelGrid);
+    let vec_aux = [...levelGrid];
+    for( let i=0; i< levelGrid.length; i++ ){
+      for( let j=0; j < levelGrid[i].length; j++){
+        if (vec_aux[i][j].filled){
+          vec_aux[i][j].div_color = arrayContains(result.wrongCells, [i,j]) ? COLORS["WARNING"] : COLORS["FILLED"];
+        }
+        
+      }
+    }
+    setLevelGrid(vec_aux);
+    if (result.valid) {
+      //downloadObjectAsJson(generateJSONFromGrid(levelGrid), "Driving_Simulator_Custom_Level.json");
+    }
+    
+  }
+
 
   const onEnterHoverWithClickCell = (row, col) => {
     if(click){
@@ -63,6 +106,7 @@ export const LevelGrid = ({gridDimensions}) => {
     }
   };
 
+  
   const onClickCell = (row, col, btn_click) => {
     if(btn_click === LEFT_CLICK){
       const levelGridCopy = [...levelGrid];
@@ -138,6 +182,11 @@ export const LevelGrid = ({gridDimensions}) => {
           </div>
         );
       })}
+      <div style={{display:"flex", justifyContent:"center", marginTop:40}}>
+        <Button variant="contained" onClick={onSubmitLevel}  color="success">
+          <MemoryIcon/> Procesar nivel...
+        </Button>
+      </div>
     </div>
   );
 }

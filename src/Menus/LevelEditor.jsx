@@ -76,11 +76,6 @@ export const LevelEditor = () => {
                 );
               })*/}
           </div>
-          <div style={{display:"flex", justifyContent:"center", marginTop:40}}>
-            <Button variant="contained" color="success">
-              <MemoryIcon/> Procesar nivel...
-            </Button>
-          </div>
           
         </div>
         <ItemsDrawer openItems={openItems} handleDrawerClose={() => {setOpenItems(false)}}/>
