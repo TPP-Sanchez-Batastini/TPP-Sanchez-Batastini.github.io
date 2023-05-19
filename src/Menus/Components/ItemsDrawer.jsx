@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid } from '@mui/material'
-import { styled, useTheme } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 import Drawer from '@mui/material/Drawer';
 import Divider from '@mui/material/Divider';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -23,7 +23,7 @@ export const ItemsDrawer = ( {openItems, handleDrawerClose} ) => {
         setOpen(openItems);
     }, [openItems]);
 
-    const theme = useTheme();
+    //const theme = useTheme();
 
     const DrawerHeader = styled('div')(({ theme }) => ({
         display: 'flex',
@@ -79,6 +79,7 @@ export const ItemsDrawer = ( {openItems, handleDrawerClose} ) => {
                             Object.entries(itemSelected).map(([nameItem, isSelected]) => {
                                 return (
                                     <img 
+                                        alt={`${nameItem}`}
                                         key={nameItem}
                                         src={`${nameItem}.png`} 
                                         width={75}

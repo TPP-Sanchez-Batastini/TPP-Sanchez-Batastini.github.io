@@ -117,28 +117,24 @@ class LogitechG29Controller{
         if(this.gamepad.axes[this.DPad] !== DPAD_NOT_PRESSED){
             
             if(this.gamepad.axes[this.DPad] === this.valueDpadDOWN && !this.dpadPressed[DPAD_DOWN_PRESSED]){
-                console.log("DPAD DOWN");
                 this.dpadPressed[DPAD_DOWN_PRESSED] = true;
             }else if (this.gamepad.axes[this.DPad] !== this.valueDpadDOWN){
                 this.dpadPressed[DPAD_DOWN_PRESSED] = false;
             }
 
             if(this.gamepad.axes[this.DPad] === this.valueDpadLEFT && !this.dpadPressed[DPAD_LEFT_PRESSED]){
-                console.log("DPAD LEFT");
                 this.dpadPressed[DPAD_LEFT_PRESSED] = true;
             }else if (this.gamepad.axes[this.DPad] !== this.valueDpadLEFT){
                 this.dpadPressed[DPAD_LEFT_PRESSED] = false;
             }
 
             if(this.gamepad.axes[this.DPad] === this.valueDpadRIGHT && !this.dpadPressed[DPAD_RIGHT_PRESSED]){
-                console.log("DPAD RIGHT");
                 this.dpadPressed[DPAD_RIGHT_PRESSED] = true;
             }else if (this.gamepad.axes[this.DPad] !== this.valueDpadRIGHT){
                 this.dpadPressed[DPAD_RIGHT_PRESSED] = false;
             }
 
             if(this.gamepad.axes[this.DPad] === this.valueDpadUP && !this.dpadPressed[DPAD_UP_PRESSED]){
-                console.log("DPAD UP");
                 this.dpadPressed[DPAD_UP_PRESSED] = true;
             }else if (this.gamepad.axes[this.DPad] !== this.valueDpadUP){
                 this.dpadPressed[DPAD_UP_PRESSED] = false;
@@ -154,7 +150,6 @@ class LogitechG29Controller{
     doActionsButtons(){
 
         if (this.gamepad.buttons[this.buttonX].pressed && !this.buttonsPressed[this.buttonX]) {
-            console.log("BOTON X");
             this.buttonsPressed[this.buttonX] = true
         }else if(!this.gamepad.buttons[this.buttonX].pressed){
             this.buttonsPressed[this.buttonX] = false;
@@ -162,7 +157,6 @@ class LogitechG29Controller{
 
 
         if (this.gamepad.buttons[this.buttonTriangle].pressed && !this.buttonsPressed[this.buttonTriangle]) {
-            console.log("BOTON TRIANGULO");
             this.buttonsPressed[this.buttonTriangle] = true;
         }else if(!this.gamepad.buttons[this.buttonTriangle].pressed){
             this.buttonsPressed[this.buttonTriangle] = false;
@@ -170,7 +164,6 @@ class LogitechG29Controller{
 
 
         if (this.gamepad.buttons[this.buttonCircle].pressed && !this.buttonsPressed[this.buttonCircle]) {
-            console.log("BOTON CIRCULO");
             this.buttonsPressed[this.buttonCircle] = true;
         }else if(!this.gamepad.buttons[this.buttonCircle].pressed){
             this.buttonsPressed[this.buttonCircle] = false;
@@ -178,7 +171,6 @@ class LogitechG29Controller{
 
 
         if (this.gamepad.buttons[this.buttonSquare].pressed && !this.buttonsPressed[this.buttonSquare]) {
-            console.log("BOTON CUADRADO");
             this.buttonsPressed[this.buttonSquare] = true;
         }else if(!this.gamepad.buttons[this.buttonSquare].pressed){
             this.buttonsPressed[this.buttonSquare] = false;
@@ -186,7 +178,6 @@ class LogitechG29Controller{
 
 
         if (this.gamepad.buttons[this.psButton].pressed && !this.buttonsPressed[this.psButton]) {
-            this.carLogic.changeShiftBox("manual");
             this.buttonsPressed[this.psButton] = true;
         }else if(!this.gamepad.buttons[this.psButton].pressed){
             this.buttonsPressed[this.psButton] = false;
@@ -194,7 +185,6 @@ class LogitechG29Controller{
 
 
         if (this.gamepad.buttons[this.buttonPlus].pressed && !this.buttonsPressed[this.buttonPlus]) {
-            console.log("BOTON +");
             this.buttonsPressed[this.buttonPlus] = true;
         }else if(!this.gamepad.buttons[this.buttonPlus].pressed){
             this.buttonsPressed[this.buttonPlus] = false;
@@ -202,7 +192,6 @@ class LogitechG29Controller{
 
 
         if (this.gamepad.buttons[this.buttonMinus].pressed && !this.buttonsPressed[this.buttonMinus]) {
-            console.log("BOTON -");
             this.buttonsPressed[this.buttonMinus] = true;
         }else if(!this.gamepad.buttons[this.buttonMinus].pressed){
             this.buttonsPressed[this.buttonMinus] = false;
@@ -210,7 +199,6 @@ class LogitechG29Controller{
 
 
         if (this.gamepad.buttons[this.buttonL2].pressed && !this.buttonsPressed[this.buttonL2]) {
-            console.log("BOTON L2");
             this.buttonsPressed[this.buttonL2] = true;
         }else if(!this.gamepad.buttons[this.buttonL2].pressed){
             this.buttonsPressed[this.buttonL2] = false;
@@ -218,7 +206,6 @@ class LogitechG29Controller{
 
 
         if (this.gamepad.buttons[this.buttonL3].pressed && !this.buttonsPressed[this.buttonL3]) {
-            console.log("BOTON L3");
             this.buttonsPressed[this.buttonL3] = true;
         }else if(!this.gamepad.buttons[this.buttonL3].pressed){
             this.buttonsPressed[this.buttonL3] = false;
@@ -234,7 +221,6 @@ class LogitechG29Controller{
 
 
         if (this.gamepad.buttons[this.buttonR3].pressed && !this.buttonsPressed[this.buttonR3]) {
-            console.log("BOTON R3");
         this.buttonsPressed[this.buttonR3] = true;
         }else if(!this.gamepad.buttons[this.buttonR3].pressed){
             this.buttonsPressed[this.buttonR3] = false;
@@ -242,7 +228,6 @@ class LogitechG29Controller{
 
 
         if (this.gamepad.buttons[this.enter].pressed && !this.buttonsPressed[this.enter]) {
-            console.log("BOTON ENTER");
             this.buttonsPressed[this.enter] = true;
         }else if(!this.gamepad.buttons[this.enter].pressed){
             this.buttonsPressed[this.enter] = false;
@@ -250,7 +235,6 @@ class LogitechG29Controller{
         
         
         if (this.gamepad.buttons[this.shareButton].pressed && !this.buttonsPressed[this.shareButton]) {
-            console.log("BOTON SHARE");
             this.buttonsPressed[this.shareButton] = true;
         }else if(!this.gamepad.buttons[this.shareButton].pressed){
             this.buttonsPressed[this.shareButton] = false;
@@ -258,7 +242,6 @@ class LogitechG29Controller{
 
 
         if (this.gamepad.buttons[this.optionsButton].pressed && !this.buttonsPressed[this.optionsButton]) {
-            console.log("BOTON OPTIONS");
             this.buttonsPressed[this.optionsButton] = true;
         }else if(!this.gamepad.buttons[this.optionsButton].pressed){
             this.buttonsPressed[this.optionsButton] = false;
@@ -266,7 +249,6 @@ class LogitechG29Controller{
 
 
         if (this.gamepad.buttons[this.bumperLeft].pressed && !this.buttonsPressed[this.bumperLeft]) {
-            console.log("BOTON BUMPER LEFT");
             this.buttonsPressed[this.bumperLeft] = true;
         }else if(!this.gamepad.buttons[this.bumperLeft].pressed){
             this.buttonsPressed[this.bumperLeft] = false;
@@ -274,7 +256,6 @@ class LogitechG29Controller{
 
 
         if (this.gamepad.buttons[this.bumperRight].pressed && !this.buttonsPressed[this.bumperRight]) {
-            console.log("BOTON BUMPER RIGHT");
             this.buttonsPressed[this.bumperRight] = true;
         }else if(!this.gamepad.buttons[this.bumperRight].pressed){
             this.buttonsPressed[this.bumperRight] = false;
@@ -282,13 +263,11 @@ class LogitechG29Controller{
 
 
         if (this.gamepad.buttons[this.wheelInEnterLeft].pressed && !this.buttonsPressed[this.wheelInEnterLeft]) {
-            console.log("RUEDA IZQ");
             this.buttonsPressed[this.wheelInEnterLeft] = true;
         }else if(!this.gamepad.buttons[this.wheelInEnterLeft].pressed){
             this.buttonsPressed[this.wheelInEnterLeft] = false;
         }
         if (this.gamepad.buttons[this.wheelInEnterRight].pressed && !this.buttonsPressed[this.wheelInEnterRight]) {
-            console.log("RUEDA DER");
             this.buttonsPressed[this.wheelInEnterRight] = true;
         }else if(!this.gamepad.buttons[this.wheelInEnterRight].pressed){
             this.buttonsPressed[this.wheelInEnterRight] = false;

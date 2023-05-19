@@ -1,6 +1,6 @@
 import React from 'react';
-import { Button, Grid } from '@mui/material'
-import { styled, useTheme } from '@mui/material/styles';
+import { Grid } from '@mui/material'
+import { styled } from '@mui/material/styles';
 import Drawer from '@mui/material/Drawer';
 import Divider from '@mui/material/Divider';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -8,7 +8,6 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 export const ConfigDrawer = ( {openConfigs, handleDrawerClose} ) => {
     const [open, setOpen] = React.useState(false);
-    const theme = useTheme();
 
     React.useEffect(() => {
         setOpen(openConfigs);

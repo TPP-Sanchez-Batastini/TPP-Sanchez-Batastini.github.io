@@ -14,7 +14,6 @@ export default class TrafficCone extends VisualEntity{
 
     animate(){
         if(this.observedState != null){
-           // console.log(this.observedState);
             this.threeDModel.position.set(
                 this.observedState["position"].x, 
                 this.observedState["position"].y, 
