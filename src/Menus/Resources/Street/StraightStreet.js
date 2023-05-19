@@ -10,7 +10,7 @@ export class StraightStreet extends AbstractStreet {
     
     static isValidNinePerNineGrid(ninePerNineGrid){
         
-        let [rowCount, columnCount] = AbstractStreet.calculateNeighboursFilled(ninePerNineGrid);    
+        let [rowCount, columnCount] = AbstractStreet.calculateNeighboursFilled(ninePerNineGrid);
         return(columnCount === 2 && rowCount === 0 )|| (columnCount === 0 && rowCount === 2 )
 
     }

@@ -26,7 +26,6 @@ function getCountSidesPainted(levelGrid, i, j){
             aux += levelGrid[i][y].filled ? 1 : 0;
         }
     }
-    console.log(aux)
     return aux;
 }
 
@@ -65,7 +64,7 @@ export function generateJSONFromGrid(levelGrid){
     const objectsAndStreets = {
         "streets": streetsArray
     };
-    return JSON.stringify(objectsAndStreets);
+    return objectsAndStreets;
 
     
 }
