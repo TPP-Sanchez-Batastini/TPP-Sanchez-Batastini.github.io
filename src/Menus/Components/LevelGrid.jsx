@@ -59,7 +59,7 @@ export const LevelGrid = ({gridDimensions}) => {
       let equals = true;
       for (let j=0; j<array[i].length; j++){
         try{
-          if(array[i][j] != insiderArray[j]){
+          if(array[i][j] !== insiderArray[j]){
             equals = false;
           }
         }catch(exc){j=array[i].length; equals=false;}
@@ -83,7 +83,7 @@ export const LevelGrid = ({gridDimensions}) => {
     }
     setLevelGrid(vec_aux);
     if (result.valid) {
-      //downloadObjectAsJson(generateJSONFromGrid(levelGrid), "Driving_Simulator_Custom_Level.json");
+      downloadObjectAsJson(generateJSONFromGrid(levelGrid), "Driving_Simulator_Custom_Level.json");
     }
     
   }

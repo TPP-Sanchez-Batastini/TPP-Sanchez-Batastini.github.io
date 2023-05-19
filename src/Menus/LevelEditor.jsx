@@ -1,9 +1,8 @@
 import React from 'react'
-import { Button, IconButton } from '@mui/material'
+import { IconButton } from '@mui/material'
 import { ConfigDrawer } from './Components/ConfigDrawer';
 import { ItemsDrawer } from './Components/ItemsDrawer';
 import SettingsIcon from '@mui/icons-material/Settings';
-import MemoryIcon from '@mui/icons-material/Memory';
 import AddIcon from '@mui/icons-material/Add';
 import { ItemsContext } from './LevelEditorContext/ItemsContext';
 import { useState } from 'react';
