@@ -1,4 +1,4 @@
-import { StraightStreet, TStreet, Intersection, Curve } from "./Street";
+import { StraightStreet, TStreet, Intersection, Curve, StraightStreetLinker } from "./Street";
 
 const TYPES_OF_STREETS = [
     StraightStreet,
@@ -34,8 +34,10 @@ export class StreetFactory{
             
         }
         const conjunctedStraightStreets = this.linkStraightStreets(straightStreetsArray);
-        const finalArray = [...conjunctedStraightStreets, ...curvedStreetsArray];
-        return finalArray.map(street => street.getAsJSON());
+        let finalArray = curvedStreetsArray.map(street => street.getAsJSON());
+        return [...finalArray, ...conjunctedStraightStreets];
+        //const finalArray = [...conjunctedStraightStreets, ...curvedStreetsArray];
+        //return finalArray.map(street => street.getAsJSON());
     }
 
     getNinePerNineGridInfinite(indexRow, indexColumn){
@@ -102,8 +104,8 @@ export class StreetFactory{
 
 
     linkStraightStreets(straightStreetsArray){
-        return straightStreetsArray;
-        //Hacer las conjunciones
+        const linker = new StraightStreetLinker(straightStreetsArray);
+        return linker.getSectionsAsJSON();
     }
     
 }
