@@ -34,4 +34,9 @@ export class StraightStreet extends AbstractStreet {
         dict["type"] = "STRAIGHT";
         return dict;
     }
+
+
+    isHorizontal(){
+        return this.rotation === POSSIBLE_ROTATIONS["HORIZONTAL"];
+    }
 }

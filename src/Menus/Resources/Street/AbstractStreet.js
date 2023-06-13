@@ -30,8 +30,8 @@ export class AbstractStreet{
     static calculateNeighboursFilled(ninePerNineGrid){
         let rowCount = 0;
         let columnCount = 0;
-        rowCount += this.sumValueForCell(ninePerNineGrid[1][0]) + this.sumValueForCell(ninePerNineGrid[1][2]);
-        columnCount += this.sumValueForCell(ninePerNineGrid[0][1]) + this.sumValueForCell(ninePerNineGrid[2][1]);
+        rowCount += AbstractStreet.sumValueForCell(ninePerNineGrid[1][0]) + AbstractStreet.sumValueForCell(ninePerNineGrid[1][2]);
+        columnCount += AbstractStreet.sumValueForCell(ninePerNineGrid[0][1]) + AbstractStreet.sumValueForCell(ninePerNineGrid[2][1]);
         return [rowCount, columnCount];
     }
 
@@ -52,6 +52,29 @@ export class AbstractStreet{
             "long_x": this.long[0],
             "long_y": this.long[1]
         }
+    }
+
+    getPositionAsRowAndColumn(){
+        const row = (this.position[0] - STANDARD_BOX_LONG/2) / STANDARD_BOX_LONG;
+        const col = (this.position[1] - STANDARD_BOX_LONG/2) / STANDARD_BOX_LONG;
+        return [row, col];
+    }
+
+
+    getPositionX(){
+        return this.position[0];
+    }
+
+    getPositionY(){
+        return this.position[1];
+    }
+
+    getLongX(){
+        return this.long[0];
+    }
+
+    getLongY(){
+        return this.long[1];
     }
    
 }

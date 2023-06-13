@@ -11,7 +11,7 @@ export class Curve extends AbstractStreet{
     
     static isValidNinePerNineGrid(ninePerNineGrid){
         //Tiene que tener solo 2 lindantes, y no ser en misma direccion.
-        let [rowCount, columnCount] = this.calculateNeighboursFilled(ninePerNineGrid);    
+        let [rowCount, columnCount] = AbstractStreet.calculateNeighboursFilled(ninePerNineGrid);    
         return (rowCount === 1 && columnCount === 1);
     }
 
@@ -29,7 +29,6 @@ export class Curve extends AbstractStreet{
             return POSSIBLE_ROTATIONS["RIGHT_TO_TOP"];
         }
     }
-
 
     getAsJSON(){
         let dict = super.getAsJSON();
