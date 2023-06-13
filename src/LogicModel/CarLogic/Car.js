@@ -6,7 +6,7 @@ import ManualBox from './ShiftBoxTypes/ManualBox';
 import SemiAutomaticBox from './ShiftBoxTypes/SemiAutomaticBox';
 
 
-const POSITION = [0,0,0];
+const POSITION = [0,1,0];
 const FACTOR_BRAKE_TO_FORCE = 300;
 export default class Car extends Observable{
 

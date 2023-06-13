@@ -8,9 +8,7 @@ import LogitechG29ControllerSingleton from '../LogicModel/ControllerMapping/Logi
 import XboxControllerSingleton from '../LogicModel/ControllerMapping/XboxController';
 import Car from '../LogicModel/CarLogic/Car';
 import AmmoInstance from '../LogicModel/Physics/AmmoInstance';
-import CylinderPhysics from '../LogicModel/Physics/PhysicsTypes/CylinderPhysics';
 import { Vector3 } from 'three';
-import TrafficCone from '../3DModels/TrafficCone';
 import LevelFactory from '../Levels/LevelsFactory';
 import  {VRButton}  from '../addons/VRbutton';
 
@@ -37,7 +35,7 @@ export default class ThreeScene extends Component{
         this.renderer = new THREE.WebGLRenderer({ alpha: true });
         this.renderer.setSize( window.innerWidth, window.innerHeight );
         this.renderer.setClearColor( 0x87cefa, 1 );
-        this.renderer.outputEncoding = THREE.sRGBEncoding;
+        //this.renderer.outputEncoding = THREE.sRGBEncoding;
         this.camera = new Camera(this.renderer);
         this.camera.addContainerToScene(this.scene);
         
@@ -52,28 +50,11 @@ export default class ThreeScene extends Component{
         this.sunLight = new THREE.DirectionalLight( 0xffffff, 1.0 );
         this.sunLight.position.set( 0, 100, 0 );
         this.scene.add( this.sunLight );
-        
-        let Ammo = await AmmoInstance.getInstance();
 
-        this.level = new LevelFactory(0,this.scene, this.physicsWorld);
+        this.level = new LevelFactory(this.scene, this.physicsWorld);
+        await this.level.createLevelCustom();
         this.physicsToUpdate.push(this.level);
         this.objectsToAnimate.push(this.level);
-
-        this.cone = new TrafficCone("textures/coneTexture.jpg");
-        this.cone.addToScene(this.scene, "trafficCone", [10,0,0], [1,1,1]);
-        this.conePhysics = new CylinderPhysics(
-            new THREE.Vector3(10,0,0), 
-            new THREE.Quaternion().setFromAxisAngle( new THREE.Vector3( 1, 0, 0 ), 0), 
-            new Ammo.btVector3(0,0,0), 
-            10, 
-            new THREE.Vector3(this.cone.RADIUS_BOTTOM, this.cone.HEIGHT/2, this.cone.RADIUS_BOTTOM), 
-            this.physicsWorld,
-            1000
-        );
-        await this.conePhysics.buildAmmoPhysics();
-        this.physicsToUpdate.push(this.conePhysics);
-        this.conePhysics.attachObserver(this.cone);
-        this.objectsToAnimate.push(this.cone);
 
         //Add driver's car to scene
         this.carLogic = new Car(this.physicsWorld);
@@ -178,13 +159,6 @@ export default class ThreeScene extends Component{
         return(
             <div>
                 <div style={{position:"absolute", left:"10px", top:"10px", color:"red"}} id="Acelerador">
-                    {/*
-                    <p style={{ zIndex: 20, display: 'float', fontWeight: "bold"}} >
-                        Velocidad: {parseInt(this.state.velocity)} km/h
-                    </p>
-                    <p style={{ zIndex: 20, display: 'float', fontWeight: "bold"}} >
-                        RPM: {parseInt(this.state.currentRPM)}
-                    </p>*/}
                     <p style={{ zIndex: 20, display: 'float', fontWeight: "bold"}} >
                         Cambio Actual: {parseInt(this.state.currentShift)}
                     </p>

@@ -2,21 +2,17 @@ import * as THREE from 'three';
 import BoxPhysics from '../LogicModel/Physics/PhysicsTypes/BoxPhysics';
 import AmmoInstance from '../LogicModel/Physics/AmmoInstance';
 import TrafficCone from '../3DModels/TrafficCone';
-// import ConePhysics from '../LogicModel/Physics/PhysicsTypes/ConePhysics'
 import CylinderPhysics from '../LogicModel/Physics/PhysicsTypes/CylinderPhysics';
+import StraightStreet from '../3DModels/StraightStreet';
 
 export default class LevelFactory {
 
 
-    constructor(level, scene,physicsWorld){
+    constructor(scene,physicsWorld){
         this.scene = scene;
         this.physicsWorld = physicsWorld
         this.physicsToUpdate = [];
         this.objectsToAnimate = [];
-        if(level === 0){
-            this.createLevel0()
-        }
-        
     }
 
 
@@ -92,6 +88,51 @@ export default class LevelFactory {
         this.objectsToAnimate.push(cone);
     }
 
+    async buildStreetPhysics(position, street, Ammo){
+        let streetPhysics = new BoxPhysics(
+            new THREE.Vector3(position[0], position[1], position[2]),
+            new THREE.Quaternion().setFromAxisAngle( new THREE.Vector3( 1, 0, 0 ), 0), 
+            new Ammo.btVector3(0,0,0), 
+            0, 
+            new THREE.Vector3(street.SIZE, 0.1, street.LONG), 
+            this.physicsWorld,
+            1000
+        );
+        await streetPhysics.buildAmmoPhysics();
+        let leftSidewalkPhysics = new BoxPhysics(
+            new THREE.Vector3(position[0]-8.4*street.SIZE/24, position[1]+street.SIDEWALK_HEIGHT/2, position[2]),
+            new THREE.Quaternion().setFromAxisAngle( new THREE.Vector3( 1, 0, 0 ), 0), 
+            new Ammo.btVector3(0,0,0), 
+            0, 
+            new THREE.Vector3(7*street.SIZE/24, street.SIDEWALK_HEIGHT, street.LONG), 
+            this.physicsWorld,
+            1000
+        );
+        await leftSidewalkPhysics.buildAmmoPhysics();
+        let rightSidewalkPhysics = new BoxPhysics(
+            new THREE.Vector3(position[0]+8.4*street.SIZE/24, position[1]+street.SIDEWALK_HEIGHT/2, position[2]),
+            new THREE.Quaternion().setFromAxisAngle( new THREE.Vector3( 1, 0, 0 ), 0), 
+            new Ammo.btVector3(0,0,0), 
+            0, 
+            new THREE.Vector3(7*street.SIZE/24, street.SIDEWALK_HEIGHT, street.LONG), 
+            this.physicsWorld,
+            1000
+        );
+        await rightSidewalkPhysics.buildAmmoPhysics();
+        streetPhysics.attachObserver(street);
+        this.physicsToUpdate.push(streetPhysics);
+        this.physicsToUpdate.push(leftSidewalkPhysics);
+        this.physicsToUpdate.push(rightSidewalkPhysics);
+    }
+
+
+    async createStreet(position, rotation, Ammo, segmentsQuantity){
+        let street = new StraightStreet("textures/road.jpg");
+        await street.addToScene(this.scene, "street", position, segmentsQuantity);
+        await this.buildStreetPhysics(position, street, Ammo);
+        this.objectsToAnimate.push(street);
+    }
+
 
     async createLevel0(){
         let Ammo = await AmmoInstance.getInstance();
@@ -101,6 +142,11 @@ export default class LevelFactory {
         this.createCone( [ 0, 0.5, 10 ], Ammo );
         this.createCone( [ 0, 0.5, 30 ], Ammo );
         this.createCone( [ 0, 0.5, 20 ], Ammo );
+    }
+
+    async createLevelCustom(){
+        let Ammo = await AmmoInstance.getInstance();
+        this.createStreet([0,0,0], 0, Ammo, 20);
     }
 
 }
