@@ -7,7 +7,7 @@ export default class VisualEntity extends Observer{
     constructor(pathToTexture){
         super();
         this.fbxLoader = new FBXLoader();
-        this.gltfLoader = new GLTFLoader()
+        this.gltfLoader = new GLTFLoader();
         this.threeDModel = null;
         this.pathToTexture = pathToTexture;
     }

@@ -10,7 +10,7 @@ export default class Camera extends Observer{
 
     constructor(renderer){
         super();
-        this.camera = new THREE.PerspectiveCamera( 85, window.innerWidth / window.innerHeight, 0.1, 200 );
+        this.camera = new THREE.PerspectiveCamera( 85, window.innerWidth / window.innerHeight, 0.1, 100 );
         this.group =  new THREE.Object3D();
         this.group180Rot = new THREE.Object3D().add(this.camera);
         this.group.add(this.group180Rot);

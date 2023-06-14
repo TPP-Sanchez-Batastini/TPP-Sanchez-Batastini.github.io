@@ -1,8 +1,10 @@
 import { Vector3 } from 'three';
 import * as THREE from 'three';
 import VisualEntity from './VisualEntity';
-import { Reflector } from '../addons/Reflector';
+//import { Reflector } from '../addons/Reflector';
+import { Reflector } from 'three/examples/jsm/objects/Reflector';
 import { Object3D } from 'three';
+import Models from './Models';
 
 const SCALE = [1.0, 1.0, 1.0];
 const POSITION = [0,0,0];
@@ -36,8 +38,8 @@ export default class CarModel extends VisualEntity{
         const retrovisor = new Reflector(
             ellipseGeometry,
             {
-                textureWidth: 512,//window.innerWidth * window.devicePixelRatio,
-                textureHeight: 512,//window.innerHeight * window.devicePixelRatio,
+                textureWidth: window.innerWidth * window.devicePixelRatio/2,//window.innerWidth * window.devicePixelRatio,
+                textureHeight: window.innerHeight * window.devicePixelRatio/2,//window.innerHeight * window.devicePixelRatio,
                 clipBias: 0.35,
                 multisample: 2
             }
@@ -56,8 +58,8 @@ export default class CarModel extends VisualEntity{
         const leftMirror = new Reflector(
             leftMirrorGeometry, 
             {
-                textureWidth: 512,//window.innerWidth * window.devicePixelRatio,
-                textureHeight: 512,//window.innerHeight * window.devicePixelRatio,
+                textureWidth: window.innerWidth * window.devicePixelRatio/2,//512
+                textureHeight: window.innerHeight * window.devicePixelRatio/2 ,//512
                 clipBias: 0,
                 multisample: 2
             }
@@ -100,7 +102,16 @@ export default class CarModel extends VisualEntity{
     }
 
     async addToScene(scene){
-        await super.addToScene(scene, "driverCar", POSITION, SCALE);
+        const models = await Models.getInstance();
+        this.threeDModel = await models.carModel;
+        this.threeDModel.name = "driverCar";
+        this.threeDModel.position.x = POSITION[0];
+        this.threeDModel.position.y = POSITION[1];
+        this.threeDModel.position.z = POSITION[2];
+        this.threeDModel.scale.x = SCALE[0];
+        this.threeDModel.scale.y = SCALE[1];
+        this.threeDModel.scale.z = SCALE[2];
+        scene.add(this.threeDModel);
         this.generateMirrors();
         return this;
     }

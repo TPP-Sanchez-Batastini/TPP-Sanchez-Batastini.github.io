@@ -11,6 +11,9 @@ import AmmoInstance from '../LogicModel/Physics/AmmoInstance';
 import { Vector3 } from 'three';
 import LevelFactory from '../Levels/LevelsFactory';
 import  {VRButton}  from '../addons/VRbutton';
+import GLBench from 'gl-bench/dist/gl-bench';
+
+
 
 export default class ThreeScene extends Component{
     
@@ -25,6 +28,7 @@ export default class ThreeScene extends Component{
         this.physicsToUpdate = [];
         localStorage.setItem("VR", false);
         this.gotAnyEvent = false;
+        this.bench = null;
     }
 
 
@@ -35,6 +39,7 @@ export default class ThreeScene extends Component{
         this.renderer = new THREE.WebGLRenderer({ alpha: true });
         this.renderer.setSize( window.innerWidth, window.innerHeight );
         this.renderer.setClearColor( 0x87cefa, 1 );
+        this.bench = new GLBench(this.renderer.getContext());
         //this.renderer.outputEncoding = THREE.sRGBEncoding;
         this.camera = new Camera(this.renderer);
         this.camera.addContainerToScene(this.scene);
@@ -74,7 +79,8 @@ export default class ThreeScene extends Component{
 
         //Append canvas to DOM in HTML and start animating
         this.mount.appendChild(this.renderer.domElement);
-        this.animation();
+        this.renderer.setAnimationLoop((now) => this.animation(now));
+        //this.animation(null);
 
         document.body.appendChild( VRButton.createButton( this.renderer ) );
         this.renderer.xr.enabled = true;
@@ -138,9 +144,9 @@ export default class ThreeScene extends Component{
     }
 
 
-    animation(){
+    animation(now){
         let deltaTime = this.clock.getDelta();
-        this.renderer.setAnimationLoop(this.animation);
+        this.bench.begin();
         this.physicsWorld.stepSimulation(deltaTime, 10);
         this.objectsToAnimate.forEach(function(object){
             object.animate();
@@ -152,13 +158,16 @@ export default class ThreeScene extends Component{
         XboxControllerSingleton.getInstance(this.carLogic).checkEvents();
         this.setState({"velocity": this.carLogic.getSpeed(), "currentRPM": this.carLogic.getCurrentRPM(), "currentShift": this.carLogic.getCurrentShift()});
         this.renderer.render( this.scene, this.camera.getCameraInstance());
+        console.log("drawCalls:",this.renderer.info.render.calls);
+        this.bench.end();
+        this.bench.nextFrame(now);
         
     }
 
     render(){
         return(
-            <div>
-                <div style={{position:"absolute", left:"10px", top:"10px", color:"red"}} id="Acelerador">
+            <div style={{width:"100vw"}}>
+                <div style={{position:"absolute", top:"10px", right:"10px", color:"red", width:"175px"}} id="Acelerador">
                     <p style={{ zIndex: 20, display: 'float', fontWeight: "bold"}} >
                         Cambio Actual: {parseInt(this.state.currentShift)}
                     </p>

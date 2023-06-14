@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import VisualEntity from "./VisualEntity";
+import Models from './Models';
 
 const SEPARATION_BETWEEN_BUILDINGS = 7;
 
@@ -66,36 +67,31 @@ export default class StraightStreet extends VisualEntity{
     }
 
     async loadBuildingBlock(id){
-        const glbPath = `res/models/source/buildings/Building_${id}.glb`;
-        const result = await this.gltfLoader.loadAsync( 
-            glbPath, 
-            function ( threeDObject ) {
-                return threeDObject;
-            }
-        );
-        return result;
+        const models = await Models.getInstance();
+        const modelBuilding = await models[`building_${id}`];
+        return modelBuilding.clone();
     }
 
     async createBuildings(scale, position, iter){
         let model3D = await this.loadBuildingBlock(1+(parseInt(Math.random()*4)));
-        model3D.scene.name = "buildingsRight_"+iter;
-        model3D.scene.position.x = position[0]+10*this.SIZE/24;
-        model3D.scene.position.y = position[1]+this.SIDEWALK_HEIGHT+0.05;
-        model3D.scene.position.z = position[2]-this.LONG/2+4+iter*SEPARATION_BETWEEN_BUILDINGS;
-        model3D.scene.scale.x = 0.8;
-        model3D.scene.scale.y = 1;
-        model3D.scene.scale.z = 0.6;
-        model3D.scene.rotateOnAxis(new THREE.Vector3(0,1,0), -Math.PI/2);
+        model3D.name = "buildingsRight_"+iter;
+        model3D.position.x = position[0]+10*this.SIZE/24;
+        model3D.position.y = position[1]+this.SIDEWALK_HEIGHT+0.05;
+        model3D.position.z = position[2]-this.LONG/2+4+iter*SEPARATION_BETWEEN_BUILDINGS;
+        model3D.scale.x = 0.8;
+        model3D.scale.y = 1;
+        model3D.scale.z = 0.6;
+        model3D.rotateOnAxis(new THREE.Vector3(0,1,0), -Math.PI/2);
         let secondModel3D = await this.loadBuildingBlock(1+(parseInt(Math.random()*4)));
-        secondModel3D.scene.name = "buildingsLeft_"+iter;
-        secondModel3D.scene.position.x = position[0]-10*this.SIZE/24;
-        secondModel3D.scene.position.y = position[1]+this.SIDEWALK_HEIGHT+0.05;
-        secondModel3D.scene.position.z = position[2]-this.LONG/2+4+iter*SEPARATION_BETWEEN_BUILDINGS;
-        secondModel3D.scene.scale.x = 0.8;
-        secondModel3D.scene.scale.y = 1;
-        secondModel3D.scene.scale.z = 0.6;
-        secondModel3D.scene.rotateOnAxis(new THREE.Vector3(0,1,0), Math.PI/2);
-        this.threeDModel.add(model3D.scene, secondModel3D.scene);
+        secondModel3D.name = "buildingsLeft_"+iter;
+        secondModel3D.position.x = position[0]-10*this.SIZE/24;
+        secondModel3D.position.y = position[1]+this.SIDEWALK_HEIGHT+0.05;
+        secondModel3D.position.z = position[2]-this.LONG/2+4+iter*SEPARATION_BETWEEN_BUILDINGS;
+        secondModel3D.scale.x = 0.8;
+        secondModel3D.scale.y = 1;
+        secondModel3D.scale.z = 0.6;
+        secondModel3D.rotateOnAxis(new THREE.Vector3(0,1,0), Math.PI/2);
+        this.threeDModel.add(model3D, secondModel3D);
         return [model3D.scene, secondModel3D.scene];
     }
 
