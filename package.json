@@ -26,6 +26,7 @@
     "react-router-dom": "^6.8.1",
     "react-scripts": "^4.0.3",
     "screen-space-reflections": "^2.5.0",
+    "stats.js": "^0.17.0",
     "three": "^0.141.0",
     "three-fbx-loader": "^1.0.3",
     "three-orbitcontrols": "^2.110.3",

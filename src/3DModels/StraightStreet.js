@@ -72,7 +72,7 @@ export default class StraightStreet extends VisualEntity{
         return modelBuilding.clone();
     }
 
-    async createBuildings(scale, position, iter){
+    async createBuildings(position, iter){
         let model3D = await this.loadBuildingBlock(1+(parseInt(Math.random()*4)));
         model3D.name = "buildingsRight_"+iter;
         model3D.position.x = position[0]+10*this.SIZE/24;
@@ -82,6 +82,9 @@ export default class StraightStreet extends VisualEntity{
         model3D.scale.y = 1;
         model3D.scale.z = 0.6;
         model3D.rotateOnAxis(new THREE.Vector3(0,1,0), -Math.PI/2);
+        model3D.updateMatrix();
+        model3D.updateMatrixWorld();
+        model3D.matrixAutoUpdate = false;
         let secondModel3D = await this.loadBuildingBlock(1+(parseInt(Math.random()*4)));
         secondModel3D.name = "buildingsLeft_"+iter;
         secondModel3D.position.x = position[0]-10*this.SIZE/24;
@@ -91,8 +94,10 @@ export default class StraightStreet extends VisualEntity{
         secondModel3D.scale.y = 1;
         secondModel3D.scale.z = 0.6;
         secondModel3D.rotateOnAxis(new THREE.Vector3(0,1,0), Math.PI/2);
+        secondModel3D.updateMatrix();
+        secondModel3D.updateMatrixWorld();
+        secondModel3D.matrixAutoUpdate = false;
         this.threeDModel.add(model3D, secondModel3D);
-        return [model3D.scene, secondModel3D.scene];
     }
 
     async addToScene(scene, objectName, position, scale){
@@ -106,13 +111,23 @@ export default class StraightStreet extends VisualEntity{
             this.threeDModel = new THREE.Group();
             this.threeDModel.add(baseStreet).add(leftSidewalk).add(rightSidewalk)
             for (let i=0; i<4*scale; i++){
-                this.createBuildings(scale, position, i);
+                this.createBuildings(position, i);
             }
             this.threeDModel.name = objectName;
             this.threeDModel.position.set(position[0], position[1], position[2]);
             baseStreet.scale.set(1.0, 1.0, scale);
             leftSidewalk.scale.set(1.0, 1.0, scale);
             rightSidewalk.scale.set(1.0, 1.0, scale);
+            baseStreet.updateMatrix();
+            baseStreet.updateMatrixWorld();
+            baseStreet.matrixAutoUpdate = false;
+            leftSidewalk.updateMatrix();
+            leftSidewalk.updateMatrixWorld();
+            leftSidewalk.matrixAutoUpdate = false;
+            rightSidewalk.updateMatrix();
+            rightSidewalk.updateMatrixWorld();
+            rightSidewalk.matrixAutoUpdate = false;
+            this.threeDModel.matrixAutoUpdate = false;
             this.LONG = this.SIZE*scale;
             scene.add(this.threeDModel);
         }

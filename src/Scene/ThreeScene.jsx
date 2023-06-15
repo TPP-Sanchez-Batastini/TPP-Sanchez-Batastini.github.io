@@ -11,8 +11,7 @@ import AmmoInstance from '../LogicModel/Physics/AmmoInstance';
 import { Vector3 } from 'three';
 import LevelFactory from '../Levels/LevelsFactory';
 import  {VRButton}  from '../addons/VRbutton';
-import GLBench from 'gl-bench/dist/gl-bench';
-
+import Stats from "stats.js";
 
 
 export default class ThreeScene extends Component{
@@ -28,7 +27,7 @@ export default class ThreeScene extends Component{
         this.physicsToUpdate = [];
         localStorage.setItem("VR", false);
         this.gotAnyEvent = false;
-        this.bench = null;
+        this.stats = new Stats();
     }
 
 
@@ -36,14 +35,16 @@ export default class ThreeScene extends Component{
         //Generate elements needed to render the scene
         this.objectsToAnimate = [];
         this.scene = new THREE.Scene();
-        this.renderer = new THREE.WebGLRenderer({ alpha: true });
+        this.renderer = new THREE.WebGLRenderer({ 
+            alpha: true, 
+            powerPreference:"high-performance", 
+            antialias:true });
         this.renderer.setSize( window.innerWidth, window.innerHeight );
         this.renderer.setClearColor( 0x87cefa, 1 );
-        this.bench = new GLBench(this.renderer.getContext());
-        //this.renderer.outputEncoding = THREE.sRGBEncoding;
         this.camera = new Camera(this.renderer);
         this.camera.addContainerToScene(this.scene);
-        
+        this.stats.showPanel( 0 );
+        document.body.appendChild(this.stats.dom);
         this.clock = new THREE.Clock();
 
         //Ammo.js
@@ -79,8 +80,7 @@ export default class ThreeScene extends Component{
 
         //Append canvas to DOM in HTML and start animating
         this.mount.appendChild(this.renderer.domElement);
-        this.renderer.setAnimationLoop((now) => this.animation(now));
-        //this.animation(null);
+        this.renderer.setAnimationLoop(this.animation);
 
         document.body.appendChild( VRButton.createButton( this.renderer ) );
         this.renderer.xr.enabled = true;
@@ -144,9 +144,9 @@ export default class ThreeScene extends Component{
     }
 
 
-    animation(now){
+    animation(){
+        this.stats.begin();
         let deltaTime = this.clock.getDelta();
-        this.bench.begin();
         this.physicsWorld.stepSimulation(deltaTime, 10);
         this.objectsToAnimate.forEach(function(object){
             object.animate();
@@ -159,8 +159,7 @@ export default class ThreeScene extends Component{
         this.setState({"velocity": this.carLogic.getSpeed(), "currentRPM": this.carLogic.getCurrentRPM(), "currentShift": this.carLogic.getCurrentShift()});
         this.renderer.render( this.scene, this.camera.getCameraInstance());
         console.log("drawCalls:",this.renderer.info.render.calls);
-        this.bench.end();
-        this.bench.nextFrame(now);
+        this.stats.end();
         
     }
 

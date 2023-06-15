@@ -1,8 +1,7 @@
 import { Vector3 } from 'three';
 import * as THREE from 'three';
 import VisualEntity from './VisualEntity';
-//import { Reflector } from '../addons/Reflector';
-import { Reflector } from 'three/examples/jsm/objects/Reflector';
+import { Reflector } from '../addons/Reflector';
 import { Object3D } from 'three';
 import Models from './Models';
 
@@ -38,8 +37,8 @@ export default class CarModel extends VisualEntity{
         const retrovisor = new Reflector(
             ellipseGeometry,
             {
-                textureWidth: window.innerWidth * window.devicePixelRatio/2,//window.innerWidth * window.devicePixelRatio,
-                textureHeight: window.innerHeight * window.devicePixelRatio/2,//window.innerHeight * window.devicePixelRatio,
+                textureWidth: window.innerWidth * window.devicePixelRatio,//window.innerWidth * window.devicePixelRatio,
+                textureHeight: window.innerHeight * window.devicePixelRatio,//window.innerHeight * window.devicePixelRatio,
                 clipBias: 0.35,
                 multisample: 2
             }
@@ -58,8 +57,8 @@ export default class CarModel extends VisualEntity{
         const leftMirror = new Reflector(
             leftMirrorGeometry, 
             {
-                textureWidth: window.innerWidth * window.devicePixelRatio/2,//512
-                textureHeight: window.innerHeight * window.devicePixelRatio/2 ,//512
+                textureWidth: window.innerWidth * window.devicePixelRatio,//512
+                textureHeight: window.innerHeight * window.devicePixelRatio ,//512
                 clipBias: 0,
                 multisample: 2
             }
@@ -80,8 +79,8 @@ export default class CarModel extends VisualEntity{
         const rightMirror = new Reflector(
             rightMirrorGeometry, 
             {
-                textureWidth: 512,//window.innerWidth * window.devicePixelRatio,
-                textureHeight: 512,//window.innerHeight * window.devicePixelRatio,
+                textureWidth: window.innerWidth * window.devicePixelRatio,
+                textureHeight: window.innerHeight * window.devicePixelRatio,
                 clipBias: 0,
                 multisample: 2
             }
