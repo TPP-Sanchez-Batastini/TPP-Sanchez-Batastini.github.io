@@ -80,10 +80,11 @@ export default class ThreeScene extends Component{
 
         //Append canvas to DOM in HTML and start animating
         this.mount.appendChild(this.renderer.domElement);
-        this.renderer.setAnimationLoop(this.animation);
-
-        document.body.appendChild( VRButton.createButton( this.renderer ) );
         this.renderer.xr.enabled = true;
+        //POR ALGUNA RAZON NO FUNCIONA. TODO: PREGUNTAR
+        this.renderer.xr.setFramebufferScaleFactor(0.5);
+        document.body.appendChild( VRButton.createButton( this.renderer ) );
+        this.renderer.setAnimationLoop(this.animation);
         
     }
 
