@@ -5,7 +5,7 @@ export class Reflector extends THREE.Mesh {
     super(geometry);
     this.isReflector = true;
     this.type = "Reflector";
-    this.camera = new THREE.PerspectiveCamera();
+    this.camera = new THREE.PerspectiveCamera(50, 1, 1, 5);
     const scope = this;
     const color =
       options.color !== undefined
@@ -55,7 +55,7 @@ export class Reflector extends THREE.Mesh {
       normal.applyMatrix4(rotationMatrix);
       view.subVectors(reflectorWorldPosition, cameraWorldPosition); // Avoid rendering when reflector is facing away
 
-      if (view.dot(normal) > -0.5) return;
+      if (view.dot(normal) > 0) return;
       view.reflect(normal).negate();
       view.add(reflectorWorldPosition);
       rotationMatrix.extractRotation(camera.matrixWorld);

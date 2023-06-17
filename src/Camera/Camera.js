@@ -4,13 +4,13 @@ import Observer from '../ObserverPattern/Observer';
 
 const Y_DISTANCE = 0.6;
 const Z_DISTANCE = -0.1;
-const X_DISTANCE = 0.35;
+const X_DISTANCE = 0.4;
 export default class Camera extends Observer{
 
 
     constructor(renderer){
         super();
-        this.camera = new THREE.PerspectiveCamera( 85, window.innerWidth / window.innerHeight, 0.1, 100 );
+        this.camera = new THREE.PerspectiveCamera( 85, window.innerWidth / window.innerHeight, 0.1, 1000 );
         this.group =  new THREE.Object3D();
         this.group180Rot = new THREE.Object3D().add(this.camera);
         this.group.add(this.group180Rot);

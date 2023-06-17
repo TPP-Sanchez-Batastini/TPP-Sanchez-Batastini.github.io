@@ -23,7 +23,8 @@ class ModelsSingleton{
     }
 
     async loadModels(){
-        this.carModel = this.loadGLTF('res/models/source/AutoConInterior.glb');
+        //this.carModel = this.loadGLTF('res/models/source/AutoConInterior.glb');
+        this.carModel = this.loadGLTF('res/models/source/Mercedes.glb');
         this.building_1 = this.loadGLTF('res/models/source/buildings/Building_1.glb');
         this.building_2 = this.loadGLTF('res/models/source/buildings/Building_2.glb');
         this.building_3 = this.loadGLTF('res/models/source/buildings/Building_3.glb');

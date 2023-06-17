@@ -10,7 +10,8 @@ const POSITION = [0,0,0];
 const MAX_TIRE_TURN_IN_RADS = 0.75;
 const FACTOR_KMH_TO_MS = 1/3600;
 const VELOCITY_TO_ANGULAR_VEL = 1/0.25; //Velocity/Radius
-const STEERING_WHEEL_INITIAL_ROTATION_ON_X = -0.35;
+//const STEERING_WHEEL_INITIAL_ROTATION_ON_X = -0.35;
+const STEERING_WHEEL_INITIAL_ROTATION_ON_X = 0.13
 const MAX_VELOCITY_SHOWN = 240;
 const MAX_RPM_SHOWN = 6000;
 
@@ -18,7 +19,8 @@ export default class CarModel extends VisualEntity{
     
     
     constructor(){
-        super('res/models/source/AutoConInterior.glb');
+        //super('res/models/source/AutoConInterior.glb');
+        super('res/models/source/Mercedes.glb');
         this.carModel = null;
         this.carLogic = null;
         this.lastValueRotation = 0;
@@ -31,65 +33,63 @@ export default class CarModel extends VisualEntity{
 
 
     generateRetrovisor(){
-        const path = new THREE.Shape();
-        path.absellipse(0,0,0.15,0.075,0, Math.PI*2, false,0);
-        const ellipseGeometry = new THREE.ShapeBufferGeometry( path );
+        //const path = new THREE.Shape();
+        //path.absellipse(0,0,0.15,0.075,0, Math.PI*2, false,0);
+        //const ellipseGeometry = new THREE.ShapeBufferGeometry( path );
+        const plane = new THREE.PlaneGeometry(0.145, 0.085);
         const retrovisor = new Reflector(
-            ellipseGeometry,
+            plane,
+            //ellipseGeometry,
             {
-                textureWidth: window.innerWidth * window.devicePixelRatio,//window.innerWidth * window.devicePixelRatio,
-                textureHeight: window.innerHeight * window.devicePixelRatio,//window.innerHeight * window.devicePixelRatio,
+                textureWidth: window.innerWidth,//window.innerWidth * window.devicePixelRatio,
+                textureHeight: window.innerHeight,//window.innerHeight * window.devicePixelRatio,
                 clipBias: 0.35,
-                multisample: 2
+                multisample: 0
             }
         );
-        retrovisor.rotateX( -Math.PI );
-        retrovisor.rotateY( 0.3 );
-        retrovisor.position.set(0,0.625,0.375);
+        retrovisor.rotateX( Math.PI-0.04 );
+        retrovisor.rotateY( 0.35 );
+        retrovisor.position.set(0.075,0.625,0.31);
         this.threeDModel.add(retrovisor);
     }
 
 
     generateLeftMirror(){
-        const path = new THREE.Shape();
-        path.absellipse(0,0,0.105,0.075,0, Math.PI*2, false,0);
-        const leftMirrorGeometry = new THREE.ShapeBufferGeometry( path );
+        const leftMirrorGeometry = new THREE.PlaneGeometry(0.19, 0.10);
         const leftMirror = new Reflector(
             leftMirrorGeometry, 
             {
-                textureWidth: window.innerWidth * window.devicePixelRatio,//512
-                textureHeight: window.innerHeight * window.devicePixelRatio ,//512
+                textureWidth: window.innerWidth,//512
+                textureHeight: window.innerHeight,//512
                 clipBias: 0,
-                multisample: 2
+                multisample: 0
             }
         );
         let container = new Object3D();
         container.add(leftMirror);
-        container.position.set(1.148, 0.394, 0.538);
-        container.rotateX(-Math.PI+0.03);
-        leftMirror.rotateY(-26*Math.PI/180);
+        container.position.set(0.96, 0.345, 0.62);
+        container.rotateX(-Math.PI+0.13);
+        leftMirror.rotateY(-18*Math.PI/180);
         this.threeDModel.add(container);
     }
 
 
     generateRightMirror(){
-        const path = new THREE.Shape();
-        path.absellipse(0,0,0.105,0.075,0, Math.PI*2, false,0);
-        const rightMirrorGeometry = new THREE.ShapeBufferGeometry( path );
+        const rightMirrorGeometry = new THREE.PlaneGeometry(0.19, 0.10);
         const rightMirror = new Reflector(
             rightMirrorGeometry, 
             {
-                textureWidth: window.innerWidth * window.devicePixelRatio,
-                textureHeight: window.innerHeight * window.devicePixelRatio,
+                textureWidth: window.innerWidth,
+                textureHeight: window.innerHeight,
                 clipBias: 0,
-                multisample: 2
+                multisample: 0
             }
         );
         let container = new Object3D();
         container.add(rightMirror);
-        container.position.set(-1.138, 0.394, 0.53);
-        container.rotateX(-Math.PI+2.9*Math.PI/180);
-        rightMirror.rotateY(28.2*Math.PI/180);
+        container.position.set(-0.96, 0.345, 0.62);
+        container.rotateX(-Math.PI+0.13);
+        rightMirror.rotateY(18*Math.PI/180);
         this.threeDModel.add(container);
     }
 
@@ -244,15 +244,15 @@ export default class CarModel extends VisualEntity{
     rotateSteeringWheel(){
         let steeringWheel = this.threeDModel.children.find(o => o.name === 'Steering_Wheel');
         let vectorRotation = new Vector3(0,0,1).applyAxisAngle(new Vector3(1,0,0), STEERING_WHEEL_INITIAL_ROTATION_ON_X);
-        steeringWheel.rotateOnAxis(vectorRotation, -this.lastSteeringRotation);
-        steeringWheel.rotateOnAxis(vectorRotation, -this.observedState['lastRotationWheel']*540/360*Math.PI*2);
+        steeringWheel.rotateOnAxis(vectorRotation, this.lastSteeringRotation);
+        steeringWheel.rotateOnAxis(vectorRotation, this.observedState['lastRotationWheel']*540/360*Math.PI*2);
         this.lastSteeringRotation = -this.observedState['lastRotationWheel']*540/360*Math.PI*2;
     }
 
 
     rotateVelocityAndRPM(){
-        let velocityIndicator = this.threeDModel.children.find(o => o.name === 'Cubo');
-        let rpmIndicator = this.threeDModel.children.find(o => o.name === 'Cubo001');
+        let velocityIndicator = this.threeDModel.children.find(o => o.name === 'Cubo001');
+        let rpmIndicator = this.threeDModel.children.find(o => o.name === 'Cubo');
         const newVelRotation = -Math.abs(this.observedState["velocity"])*(240*Math.PI/180)/MAX_VELOCITY_SHOWN;
         const newRPMRotation = -this.observedState["rpm"]*(260*Math.PI/180)/MAX_RPM_SHOWN; //Can surpass a little bit the rpm meter
         velocityIndicator.rotateOnAxis(new Vector3(0,1,0), -this.lastVelocityRotation);
@@ -265,10 +265,14 @@ export default class CarModel extends VisualEntity{
 
 
     rotateWheels(){
-        let wheelFrontRight = this.threeDModel.children.find(o => o.name === 'wheel002');
-        let wheelFrontLeft = this.threeDModel.children.find(o => o.name === 'wheel');
-        let wheelBackRight = this.threeDModel.children.find(o => o.name === 'wheel003');
-        let wheelBackLeft = this.threeDModel.children.find(o => o.name === 'wheel001');
+        // let wheelFrontRight = this.threeDModel.children.find(o => o.name === 'wheel002');
+        // let wheelFrontLeft = this.threeDModel.children.find(o => o.name === 'wheel');
+        // let wheelBackRight = this.threeDModel.children.find(o => o.name === 'wheel003');
+        // let wheelBackLeft = this.threeDModel.children.find(o => o.name === 'wheel001');
+        let wheelFrontRight = this.threeDModel.children.find(o => o.name === 'W222WheelFtR');
+        let wheelFrontLeft = this.threeDModel.children.find(o => o.name === 'W222WheelFtL');
+        let wheelBackRight = this.threeDModel.children.find(o => o.name === 'W222WheelBkR');
+        let wheelBackLeft = this.threeDModel.children.find(o => o.name === 'W222WheelBkL');
 
         let rotationYVectorTwo = new Vector3(0,1,0).applyAxisAngle(
             new Vector3(1,0,0), 
@@ -285,8 +289,8 @@ export default class CarModel extends VisualEntity{
         
         //Moving by rotation caused by speed.
         wheelFrontLeft.rotateX(this.observedState['velocity'] * FACTOR_KMH_TO_MS * VELOCITY_TO_ANGULAR_VEL);
-        wheelFrontRight.rotateX(-this.observedState['velocity'] * FACTOR_KMH_TO_MS * VELOCITY_TO_ANGULAR_VEL);
-        wheelBackRight.rotateX(-this.observedState['velocity'] * FACTOR_KMH_TO_MS * VELOCITY_TO_ANGULAR_VEL);
+        wheelFrontRight.rotateX(this.observedState['velocity'] * FACTOR_KMH_TO_MS * VELOCITY_TO_ANGULAR_VEL);
+        wheelBackRight.rotateX(this.observedState['velocity'] * FACTOR_KMH_TO_MS * VELOCITY_TO_ANGULAR_VEL);
         wheelBackLeft.rotateX(this.observedState['velocity'] * FACTOR_KMH_TO_MS * VELOCITY_TO_ANGULAR_VEL);
 
         rotationYVectorTwo = new Vector3(0,1,0).applyAxisAngle(
