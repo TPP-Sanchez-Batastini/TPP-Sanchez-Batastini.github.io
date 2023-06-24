@@ -1,4 +1,5 @@
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import * as THREE from 'three';
 
 class ModelsSingleton{
 
@@ -11,6 +12,24 @@ class ModelsSingleton{
         this.building_4 = null;
     }
 
+
+    changeMaterialsToBasic(children){
+        for (let i=0; i < children.length; i++) {
+            const child = children[i];
+            
+            if(child.isGroup){
+                if(child.name === "W222Body"){
+                    console.log(child.children);
+                }
+                this.changeMaterialsToBasic(child.children);
+            }else if(child.isMesh){
+                child.material = new THREE.MeshBasicMaterial().copy(child.material);
+            }
+
+        }
+    }
+
+
     async loadGLTF(pathToTextureRcvd){
         let pathToTexture = pathToTextureRcvd;
         const result = await this.gltfLoader.loadAsync( 
@@ -19,6 +38,7 @@ class ModelsSingleton{
                 return threeDObject;
             }
         );
+        this.changeMaterialsToBasic(result.scene.children);
         return result.scene;
     }
 

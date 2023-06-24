@@ -51,7 +51,7 @@ export default class ThreeScene extends Component{
         await this.createAmmo();
 
         //Add elements to the scene
-        this.ambientLight = new THREE.AmbientLight(0xffffff, 0.75);
+        this.ambientLight = new THREE.AmbientLight(0xffffff, 1);
         this.scene.add(this.ambientLight);
 
         this.level = new LevelFactory(this.scene, this.physicsWorld);

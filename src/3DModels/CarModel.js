@@ -1,7 +1,6 @@
 import { Vector3 } from 'three';
 import * as THREE from 'three';
 import VisualEntity from './VisualEntity';
-//import { Reflector } from '../addons/Reflector';
 import { Reflector } from 'three/examples/jsm/objects/Reflector';
 import { Object3D } from 'three';
 import Models from './Models';
@@ -45,7 +44,7 @@ export default class CarModel extends VisualEntity{
                 textureWidth: window.innerWidth,//window.innerWidth * window.devicePixelRatio,
                 textureHeight: window.innerHeight,//window.innerHeight * window.devicePixelRatio,
                 clipBias: 0.35,
-                multisample: 0
+                multisample: 2
             }
         );
         retrovisor.rotateX( Math.PI-0.04 );
@@ -63,7 +62,7 @@ export default class CarModel extends VisualEntity{
                 textureWidth: window.innerWidth,//512
                 textureHeight: window.innerHeight,//512
                 clipBias: 0,
-                multisample: 0
+                multisample: 2
             }
         );
         let container = new Object3D();
@@ -83,13 +82,13 @@ export default class CarModel extends VisualEntity{
                 textureWidth: window.innerWidth,
                 textureHeight: window.innerHeight,
                 clipBias: 0,
-                multisample: 0
+                multisample: 2
             }
         );
         let container = new Object3D();
         container.add(rightMirror);
         container.position.set(-0.96, 0.345, 0.62);
-        container.rotateX(-Math.PI+0.13);
+        container.rotateX(-Math.PI+0.1);
         rightMirror.rotateY(18*Math.PI/180);
         this.threeDModel.add(container);
     }
