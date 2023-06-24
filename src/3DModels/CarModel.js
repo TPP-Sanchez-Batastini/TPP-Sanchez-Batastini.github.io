@@ -1,7 +1,8 @@
 import { Vector3 } from 'three';
 import * as THREE from 'three';
 import VisualEntity from './VisualEntity';
-import { Reflector } from '../addons/Reflector';
+//import { Reflector } from '../addons/Reflector';
+import { Reflector } from 'three/examples/jsm/objects/Reflector';
 import { Object3D } from 'three';
 import Models from './Models';
 

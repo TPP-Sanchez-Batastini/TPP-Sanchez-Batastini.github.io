@@ -51,11 +51,8 @@ export default class ThreeScene extends Component{
         await this.createAmmo();
 
         //Add elements to the scene
-        this.ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
+        this.ambientLight = new THREE.AmbientLight(0xffffff, 0.75);
         this.scene.add(this.ambientLight);
-        this.sunLight = new THREE.DirectionalLight( 0xffffff, 1.0 );
-        this.sunLight.position.set( 0, 100, 0 );
-        this.scene.add( this.sunLight );
 
         this.level = new LevelFactory(this.scene, this.physicsWorld);
         await this.level.createLevelCustom();
