@@ -35,7 +35,7 @@ export default class StraightStreet extends VisualEntity{
         const texture = new THREE.TextureLoader().load("textures/pavimento.jpg");
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
-        texture.repeat.set( 3, 2*scale );
+        texture.repeat.set( 3, 10*scale );
         let normalTexture = new THREE.TextureLoader().load(
             this.pathToNormalMap
         );

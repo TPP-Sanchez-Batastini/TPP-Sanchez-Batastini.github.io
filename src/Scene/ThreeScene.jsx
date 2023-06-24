@@ -77,7 +77,7 @@ export default class ThreeScene extends Component{
         
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.xr.enabled = true;
-        this.renderer.xr.setFramebufferScaleFactor(0.5);
+        this.renderer.xr.setFramebufferScaleFactor(0.75);
         this.mount.appendChild(this.renderer.domElement);
         document.body.appendChild( VRButton.createButton( this.renderer ) );
         this.renderer.setAnimationLoop(this.animation);

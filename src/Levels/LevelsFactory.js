@@ -4,6 +4,7 @@ import AmmoInstance from '../LogicModel/Physics/AmmoInstance';
 import TrafficCone from '../3DModels/TrafficCone';
 import CylinderPhysics from '../LogicModel/Physics/PhysicsTypes/CylinderPhysics';
 import StraightStreet from '../3DModels/StraightStreet';
+import Intersection from '../3DModels/Intersection';
 
 export default class LevelFactory {
 
@@ -134,6 +135,13 @@ export default class LevelFactory {
     }
 
 
+    async createIntersection(position, rotation, Ammo){
+        let intersection = new Intersection("textures/CleanRoad.jpg");
+        await intersection.addToScene(this.scene, "intersection", position);
+        this.objectsToAnimate.push(intersection);
+    }
+
+
     async createLevel0(){
         let Ammo = await AmmoInstance.getInstance();
         this.createRectangle( [ 10, 0, 10 ], 10, 2, 10, -Math.PI/8, 'textures/pavimento.jpg', Ammo, 'textures/pavimento_map.png' );
@@ -147,6 +155,7 @@ export default class LevelFactory {
     async createLevelCustom(){
         let Ammo = await AmmoInstance.getInstance();
         this.createStreet([0,0,0], 0, Ammo, 20);
+        this.createIntersection([0,20,0], 0, Ammo);
     }
 
 }

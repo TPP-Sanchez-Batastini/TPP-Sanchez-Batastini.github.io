@@ -44,7 +44,7 @@ export default class CarModel extends VisualEntity{
                 textureWidth: window.innerWidth,//window.innerWidth * window.devicePixelRatio,
                 textureHeight: window.innerHeight,//window.innerHeight * window.devicePixelRatio,
                 clipBias: 0.35,
-                multisample: 2
+                multisample: 4
             }
         );
         retrovisor.rotateX( Math.PI-0.04 );
@@ -62,7 +62,7 @@ export default class CarModel extends VisualEntity{
                 textureWidth: window.innerWidth,//512
                 textureHeight: window.innerHeight,//512
                 clipBias: 0,
-                multisample: 2
+                multisample: 4
             }
         );
         let container = new Object3D();
@@ -82,7 +82,7 @@ export default class CarModel extends VisualEntity{
                 textureWidth: window.innerWidth,
                 textureHeight: window.innerHeight,
                 clipBias: 0,
-                multisample: 2
+                multisample: 4
             }
         );
         let container = new Object3D();
