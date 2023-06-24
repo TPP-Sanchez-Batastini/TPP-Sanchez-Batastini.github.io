@@ -18,9 +18,6 @@ class ModelsSingleton{
             const child = children[i];
             
             if(child.isGroup){
-                if(child.name === "W222Body"){
-                    console.log(child.children);
-                }
                 this.changeMaterialsToBasic(child.children);
             }else if(child.isMesh){
                 child.material = new THREE.MeshBasicMaterial().copy(child.material);
@@ -43,7 +40,6 @@ class ModelsSingleton{
     }
 
     async loadModels(){
-        //this.carModel = this.loadGLTF('res/models/source/AutoConInterior.glb');
         this.carModel = this.loadGLTF('res/models/source/Mercedes.glb');
         this.building_1 = this.loadGLTF('res/models/source/buildings/Building_1.glb');
         this.building_2 = this.loadGLTF('res/models/source/buildings/Building_2.glb');
