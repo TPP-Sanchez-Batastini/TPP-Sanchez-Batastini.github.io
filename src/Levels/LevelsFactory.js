@@ -154,8 +154,8 @@ export default class LevelFactory {
 
     async createLevelCustom(){
         let Ammo = await AmmoInstance.getInstance();
-        this.createStreet([0,0,0], 0, Ammo, 20);
-        this.createIntersection([0,20,0], 0, Ammo);
+        this.createStreet([0,0,0], 0, Ammo, 2);
+        this.createIntersection([0,0,30+15], 0, Ammo);
     }
 
 }

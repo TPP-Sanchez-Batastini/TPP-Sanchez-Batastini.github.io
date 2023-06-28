@@ -8,6 +8,7 @@ export default class Intersection extends VisualEntity{
         this.pathToNormalMap = "textures/pavimento_map.png"
         this.SIZE = 30;
         this.SIDEWALK_HEIGHT = .4;
+        this.SQUARE_SIZE = 7*30/24;
         this.observedState = null;
     }
 
@@ -43,22 +44,21 @@ export default class Intersection extends VisualEntity{
     }
 
     createSidewalkCurve(){
-        let initialPoint = new THREE.Vector3(-5,0,-5);
-        const lerpPoints = this.getLerpPoints(initialPoint, new THREE.Vector3(-5,0,1), 5);
+        let initialPoint = new THREE.Vector3(-this.SQUARE_SIZE/2,0,-this.SQUARE_SIZE/2);
+        const lerpPoints = this.getLerpPoints(initialPoint, new THREE.Vector3(-this.SQUARE_SIZE/2,0,this.SQUARE_SIZE/10), 5);
         const curve = new THREE.QuadraticBezierCurve(
-            new THREE.Vector2(-5,1),
-            new THREE.Vector2(-5,5),
-            new THREE.Vector2(-1,5)
+            new THREE.Vector2(-this.SQUARE_SIZE/2,this.SQUARE_SIZE/10),
+            new THREE.Vector2(-this.SQUARE_SIZE/2,this.SQUARE_SIZE/2),
+            new THREE.Vector2(-this.SQUARE_SIZE/10,this.SQUARE_SIZE/2)
         );
         const pointsCurve = curve.getPoints(10);
         for (let i=0; i<pointsCurve.length; i++){
             pointsCurve[i] = new THREE.Vector3(pointsCurve[i].x, 0, pointsCurve[i].y);
         }
-        const secondLerpPoints = this.getLerpPoints(new THREE.Vector3(-1,0,5), new THREE.Vector3(5,0,5), 5);
-        const thirdLerpPoints = this.getLerpPoints(new THREE.Vector3(5,0,5), new THREE.Vector3(5,0,-5), 5);
-        const fourthLerpPoints = this.getLerpPoints(new THREE.Vector3(5,0,-5), new THREE.Vector3(-5,0,-5), 5);
+        const secondLerpPoints = this.getLerpPoints(new THREE.Vector3(-this.SQUARE_SIZE/10,0,this.SQUARE_SIZE/2), new THREE.Vector3(this.SQUARE_SIZE/2,0,this.SQUARE_SIZE/2), 5);
+        const thirdLerpPoints = this.getLerpPoints(new THREE.Vector3(this.SQUARE_SIZE/2,0,this.SQUARE_SIZE/2), new THREE.Vector3(this.SQUARE_SIZE/2,0,-this.SQUARE_SIZE/2), 5);
+        const fourthLerpPoints = this.getLerpPoints(new THREE.Vector3(this.SQUARE_SIZE/2,0,-this.SQUARE_SIZE/2), new THREE.Vector3(-this.SQUARE_SIZE/2,0,-this.SQUARE_SIZE/2), 5);
         return [
-            initialPoint, 
             ...lerpPoints, 
             ...pointsCurve, 
             ...secondLerpPoints, 
@@ -72,15 +72,32 @@ export default class Intersection extends VisualEntity{
         const geom = new THREE.BufferGeometry();
         const points = this.createSidewalkCurve();
         const columnas = points.length;
-        const filas = 3; //Fila baja, fila alta, tapa alta
+        const filas = 4; //Fila baja, fila alta, tapa alta
         const aux_vertices = [[],[],[]];
         const indexes = [];
+        const uv1 = [];
+        const uv2 = [];
+        const uv3 = [];
+        let accum_x = 0;
+        let accum_z = 0;
+        for (let i=0; i<points.length; i++){
+            accum_x += points[i].x;
+            accum_z += points[i].z;
+        }
+        
         for (let i=0; i<points.length; i++){
             aux_vertices[0].push(points[i].x, points[i].y, points[i].z);
             aux_vertices[1].push(points[i].x, this.SIDEWALK_HEIGHT, points[i].z);
-            aux_vertices[2].push(5, this.SIDEWALK_HEIGHT, 5);
+            aux_vertices[2].push(accum_x/points.length, this.SIDEWALK_HEIGHT, accum_z/points.length);
+            // Los uvs se calculan como la posicion del punto en la tapa (X,Z)
+            // Normalizar para el UV con +this.SQUARE_SIZE/2 / this.SQUARE_SIZE.
+            //uv1.push((points[i].x+this.SQUARE_SIZE/2)/this.SQUARE_SIZE, (points[i].z+this.SQUARE_SIZE/2)/this.SQUARE_SIZE);
+            uv1.push(0.03414,0);
+            uv2.push((points[i].x+this.SQUARE_SIZE/2)/this.SQUARE_SIZE, (points[i].z+this.SQUARE_SIZE/2)/this.SQUARE_SIZE);
+            uv3.push(((accum_x/points.length)+this.SQUARE_SIZE/2)/this.SQUARE_SIZE, ((accum_z/points.length)+this.SQUARE_SIZE/2)/this.SQUARE_SIZE);
         }
-        const vertex = [...aux_vertices[0], ...aux_vertices[1], ...aux_vertices[2]];
+        const uv = [...uv1, ...uv1, ...uv2, ...uv3];
+        const vertex = [...aux_vertices[0], ...aux_vertices[1], ...aux_vertices[1], ...aux_vertices[2]];
         for (let i=0; i < filas-1; i++) {
             for (let j=1; j < columnas; j++) {
                 //1er triangulo
@@ -88,44 +105,38 @@ export default class Intersection extends VisualEntity{
                 indexes.push((i+1)*columnas+j-1);
                 indexes.push(i*columnas+j);
                 //2do triangulo
-                indexes.push((i+1)*columnas+j-1);
                 indexes.push(i*columnas+j);
+                indexes.push((i+1)*columnas+j-1);
                 indexes.push((i+1)*columnas+j);
-                if ((i*columnas + j) % columnas === 0 && (j !== 0) && (i*columnas+j) !== (filas*columnas-1)){
-                    indexes.push((i+1)*columnas+j);
-                    indexes.push((i+1)*columnas);
-                }
+
             }
         }
-        console.log(indexes);
         const vertexArr = new Float32Array(vertex);
+        const uvArr = new Float32Array(uv);
         geom.setIndex(indexes);
         geom.setAttribute("position", new THREE.BufferAttribute(vertexArr, 3));
+        geom.setAttribute("uv", new THREE.BufferAttribute(uvArr, 2));
         return geom;
     }
 
 
     createSidewalkMesh(){
-        //const texture = new THREE.TextureLoader().load("textures/cone.png");
-        //let normalTexture = new THREE.TextureLoader().load(
-        //    this.pathToNormalMap
-        //);
-        //const materialSidewalk = new THREE.MeshStandardMaterial( {map: texture,  side: THREE.DoubleSide} );
-        const materialSidewalk = new THREE.MeshBasicMaterial({color:0xefefef, side: THREE.DoubleSide});
-        //materialSidewalk.normalMap = normalTexture;
+        const texture = new THREE.TextureLoader().load("textures/pavimento.jpg");
+        texture.repeat.set( 3, 3 );
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
+        const materialSidewalk = new THREE.MeshBasicMaterial( {map: texture,  side: THREE.DoubleSide} );
         const geometrySidewalk = this.getGeometrySidewalk();
-
         return new THREE.Mesh( geometrySidewalk, materialSidewalk );
     }
 
     createStreetMesh(){
         const geometry = new THREE.BoxGeometry( this.SIZE, 0.1, this.SIZE );
         const texture = new THREE.TextureLoader().load(this.pathToTexture);
-        let normalTexture = new THREE.TextureLoader().load(
-            this.pathToNormalMap
-        );
-        const material = new THREE.MeshStandardMaterial( {map: texture,  side: THREE.DoubleSide} );
-        material.normalMap = normalTexture;
+        texture.repeat.set( 1, 2 );
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
+        const material = new THREE.MeshBasicMaterial( {map: texture,  side: THREE.DoubleSide} );
         return new THREE.Mesh( geometry, material );
     }
 
@@ -138,16 +149,16 @@ export default class Intersection extends VisualEntity{
             this.threeDModel.add(baseStreet);
             for (let i=0; i<4; i++){
                 const sidewalk = this.createSidewalkMesh();
-                if (i==0){
-                    sidewalk.position.set(-this.SIZE/2+5,1,-this.SIZE/2+5);
+                if (i===0){
+                    sidewalk.position.set(-this.SIZE/2+this.SQUARE_SIZE/2+0.12,0,-this.SIZE/2+this.SQUARE_SIZE/2);
                     sidewalk.rotateOnAxis(new THREE.Vector3(0,1,0), Math.PI/2);
-                }else if(i==2){
-                    sidewalk.position.set(-this.SIZE/2+5,1,this.SIZE/2-5);
+                }else if(i===2){
+                    sidewalk.position.set(-this.SIZE/2+this.SQUARE_SIZE/2+0.12,0,this.SIZE/2-this.SQUARE_SIZE/2);
                     sidewalk.rotateOnAxis(new THREE.Vector3(0,1,0), Math.PI);
-                }else if(i==3){
-                    sidewalk.position.set(this.SIZE/2-5,1,-this.SIZE/2+5);
+                }else if(i===3){
+                    sidewalk.position.set(this.SIZE/2-this.SQUARE_SIZE/2-0.12,0,-this.SIZE/2+this.SQUARE_SIZE/2);
                 }else{
-                    sidewalk.position.set(this.SIZE/2-5,1,this.SIZE/2-5);
+                    sidewalk.position.set(this.SIZE/2-this.SQUARE_SIZE/2-0.12,0,this.SIZE/2-this.SQUARE_SIZE/2);
                     sidewalk.rotateOnAxis(new THREE.Vector3(0,1,0), -Math.PI/2);
                 }
                 sidewalk.updateMatrix();

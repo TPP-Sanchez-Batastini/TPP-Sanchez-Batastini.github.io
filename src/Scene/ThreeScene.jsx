@@ -155,7 +155,6 @@ export default class ThreeScene extends Component{
         XboxControllerSingleton.getInstance(this.carLogic).checkEvents();
         this.setState({"velocity": this.carLogic.getSpeed(), "currentRPM": this.carLogic.getCurrentRPM(), "currentShift": this.carLogic.getCurrentShift()});
         this.renderer.render( this.scene, this.camera.getCameraInstance());
-        console.log("drawCalls:",this.renderer.info.render.calls);
         this.stats.end();
         
     }
