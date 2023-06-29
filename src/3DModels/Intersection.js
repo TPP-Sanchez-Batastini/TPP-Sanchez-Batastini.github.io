@@ -88,7 +88,7 @@ export default class Intersection extends VisualEntity{
         for (let i=0; i<points.length; i++){
             aux_vertices[0].push(points[i].x, points[i].y, points[i].z);
             aux_vertices[1].push(points[i].x, this.SIDEWALK_HEIGHT, points[i].z);
-            aux_vertices[2].push(accum_x/points.length, this.SIDEWALK_HEIGHT, accum_z/points.length);
+            aux_vertices[2].push(accum_x/points.length, this.SIDEWALK_HEIGHT, accum_z/points.length);            
             // Los uvs se calculan como la posicion del punto en la tapa (X,Z)
             // Normalizar para el UV con +this.SQUARE_SIZE/2 / this.SQUARE_SIZE.
             //uv1.push((points[i].x+this.SQUARE_SIZE/2)/this.SQUARE_SIZE, (points[i].z+this.SQUARE_SIZE/2)/this.SQUARE_SIZE);
@@ -116,6 +116,7 @@ export default class Intersection extends VisualEntity{
         geom.setIndex(indexes);
         geom.setAttribute("position", new THREE.BufferAttribute(vertexArr, 3));
         geom.setAttribute("uv", new THREE.BufferAttribute(uvArr, 2));
+        geom.computeVertexNormals();
         return geom;
     }
 
@@ -125,9 +126,12 @@ export default class Intersection extends VisualEntity{
         texture.repeat.set( 3, 3 );
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
-        const materialSidewalk = new THREE.MeshBasicMaterial( {map: texture,  side: THREE.DoubleSide} );
+        const materialSidewalk = new THREE.MeshPhongMaterial( {map: texture,  side: THREE.DoubleSide} );
         const geometrySidewalk = this.getGeometrySidewalk();
-        return new THREE.Mesh( geometrySidewalk, materialSidewalk );
+        const mesh = new THREE.Mesh( geometrySidewalk, materialSidewalk );
+        mesh.receiveShadow = true;
+        mesh.castShadow = true;
+        return mesh;
     }
 
     createStreetMesh(){
@@ -136,8 +140,11 @@ export default class Intersection extends VisualEntity{
         texture.repeat.set( 1, 2 );
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
-        const material = new THREE.MeshBasicMaterial( {map: texture,  side: THREE.DoubleSide} );
-        return new THREE.Mesh( geometry, material );
+        const material = new THREE.MeshPhongMaterial( {map: texture,  side: THREE.DoubleSide} );
+        const mesh = new THREE.Mesh( geometry, material );
+        mesh.receiveShadow = true;
+        mesh.castShadow = true;
+        return mesh;
     }
 
 
@@ -167,6 +174,7 @@ export default class Intersection extends VisualEntity{
                 this.threeDModel.add(sidewalk);
             }
             this.threeDModel.name = objectName;
+            this.threeDModel.receiveShadow = true;
             this.threeDModel.position.set(position[0], position[1], position[2]);
             baseStreet.updateMatrix();
             baseStreet.updateMatrixWorld();

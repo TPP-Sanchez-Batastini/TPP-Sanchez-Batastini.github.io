@@ -41,6 +41,8 @@ export default class TrafficCone extends VisualEntity{
             const box = new THREE.Mesh( geometryPlane, materialBox );
             box.position.set(0,-this.HEIGHT/2,0);
             const cone = new THREE.Mesh( geometry, material );
+            cone.castShadow = true;
+            cone.receiveShadow = true;
             cone.position.set(0,0,0);
             this.threeDModel = new THREE.Group();
             this.threeDModel.add(cone).add(box);

@@ -20,7 +20,11 @@ class ModelsSingleton{
             if(child.isGroup){
                 this.changeMaterialsToBasic(child.children);
             }else if(child.isMesh){
-                child.material = new THREE.MeshBasicMaterial().copy(child.material);
+                const newMaterial = new THREE.MeshPhongMaterial();
+                THREE.MeshBasicMaterial.prototype.copy.call( newMaterial, child.material );
+                child.material = newMaterial;
+                child.receiveShadow = true;
+                child.castShadow = true;
             }
 
         }

@@ -40,6 +40,8 @@ export default class ThreeScene extends Component{
             powerPreference:"high-performance", 
             antialias:true });
         this.renderer.setSize( window.innerWidth, window.innerHeight );
+        this.renderer.shadowMap.enabled = true;
+        //this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         this.renderer.setClearColor( 0x87cefa, 1 );
         this.camera = new Camera(this.renderer);
         this.camera.addContainerToScene(this.scene);
@@ -51,8 +53,16 @@ export default class ThreeScene extends Component{
         await this.createAmmo();
 
         //Add elements to the scene
-        this.ambientLight = new THREE.AmbientLight(0xffffff, 1);
+        this.ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+        this.directionalLight = new THREE.DirectionalLight(0xeeeeee, 1);
+        this.directionalLight.position.set(0,2,5);
+        this.directionalLight.castShadow = true;
+        this.directionalLight.shadow.mapSize.width = 1024;
+        this.directionalLight.shadow.mapSize.height = 1024;
+        this.directionalLight.shadow.camera.near = 0.1;
+        this.directionalLight.shadow.camera.far = 1000;
         this.scene.add(this.ambientLight);
+        this.scene.add(this.directionalLight);
 
         this.level = new LevelFactory(this.scene, this.physicsWorld);
         await this.level.createLevelCustom();
@@ -66,7 +76,7 @@ export default class ThreeScene extends Component{
         this.carLogic.attachObserver(this.camera);
         this.objectsToAnimate.push(await carModel.addToScene(this.scene));
         this.carLogic.notifyObservers();
-        
+
         //Bind this to methods of the class
         this.animation = this.animation.bind(this);
         this.handleWindowResize = this.handleWindowResize.bind(this);

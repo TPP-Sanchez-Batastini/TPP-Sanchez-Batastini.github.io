@@ -36,7 +36,7 @@ export default class StraightStreet extends VisualEntity{
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
         texture.repeat.set( 3, 10*scale );
-        const materialSidewalk = new THREE.MeshBasicMaterial( {map: texture,  side: THREE.DoubleSide} );
+        const materialSidewalk = new THREE.MeshPhongMaterial( {map: texture,  side: THREE.DoubleSide} );
         const geometrySidewalk = new THREE.BoxGeometry(7*this.SIZE/24, this.SIDEWALK_HEIGHT, this.SIZE);
         return new THREE.Mesh( geometrySidewalk, materialSidewalk );
     }
@@ -48,8 +48,11 @@ export default class StraightStreet extends VisualEntity{
         texture.repeat.set( 1, 2*scale );
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
-        const material = new THREE.MeshBasicMaterial( {map: texture,  side: THREE.DoubleSide} );
-        return new THREE.Mesh( geometry, material );
+        const material = new THREE.MeshPhongMaterial( {map: texture,  side: THREE.DoubleSide} );
+        const mesh = new THREE.Mesh( geometry, material );
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+        return mesh;
     }
 
     async loadBuildingBlock(id){
