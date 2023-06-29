@@ -273,11 +273,6 @@ export default class CarModel extends VisualEntity{
         let wheelFrontLeft = this.threeDModel.children.find(o => o.name === 'W222WheelFtL');
         let wheelBackRight = this.threeDModel.children.find(o => o.name === 'W222WheelBkR');
         let wheelBackLeft = this.threeDModel.children.find(o => o.name === 'W222WheelBkL');
-
-        let rotationYVectorTwo = new Vector3(0,1,0).applyAxisAngle(
-            new Vector3(1,0,0), 
-            this.currentSpeedRotation
-        );
         let rotationYVectorOne = new Vector3(0,1,0).applyAxisAngle(
             new Vector3(1,0,0), 
             -this.currentSpeedRotation
@@ -285,7 +280,7 @@ export default class CarModel extends VisualEntity{
 
         //Resetting position in direction
         wheelFrontLeft.rotateOnAxis(rotationYVectorOne, this.currentWheelRotation);
-        wheelFrontRight.rotateOnAxis(rotationYVectorTwo, this.currentWheelRotation);
+        wheelFrontRight.rotateOnAxis(rotationYVectorOne, this.currentWheelRotation);
         
         //Moving by rotation caused by speed.
         wheelFrontLeft.rotateX(this.observedState['velocity'] * FACTOR_KMH_TO_MS * VELOCITY_TO_ANGULAR_VEL);
@@ -293,10 +288,6 @@ export default class CarModel extends VisualEntity{
         wheelBackRight.rotateX(this.observedState['velocity'] * FACTOR_KMH_TO_MS * VELOCITY_TO_ANGULAR_VEL);
         wheelBackLeft.rotateX(this.observedState['velocity'] * FACTOR_KMH_TO_MS * VELOCITY_TO_ANGULAR_VEL);
 
-        rotationYVectorTwo = new Vector3(0,1,0).applyAxisAngle(
-            new Vector3(1,0,0), 
-            this.currentSpeedRotation + this.observedState['velocity'] * FACTOR_KMH_TO_MS * VELOCITY_TO_ANGULAR_VEL
-        );
         rotationYVectorOne = new Vector3(0,1,0).applyAxisAngle(
             new Vector3(1,0,0), 
             -this.currentSpeedRotation - this.observedState['velocity'] * FACTOR_KMH_TO_MS * VELOCITY_TO_ANGULAR_VEL
@@ -304,7 +295,7 @@ export default class CarModel extends VisualEntity{
 
         //Moving to the sides based on steering wheel value
         wheelFrontLeft.rotateOnAxis(rotationYVectorOne, -this.observedState['lastRotationWheel']*MAX_TIRE_TURN_IN_RADS);
-        wheelFrontRight.rotateOnAxis(rotationYVectorTwo, -this.observedState['lastRotationWheel']*MAX_TIRE_TURN_IN_RADS);
+        wheelFrontRight.rotateOnAxis(rotationYVectorOne, -this.observedState['lastRotationWheel']*MAX_TIRE_TURN_IN_RADS);
         this.currentWheelRotation = this.observedState['lastRotationWheel']*MAX_TIRE_TURN_IN_RADS;
 
         this.currentSpeedRotation += this.observedState['velocity'] * FACTOR_KMH_TO_MS * VELOCITY_TO_ANGULAR_VEL;
