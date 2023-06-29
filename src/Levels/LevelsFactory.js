@@ -127,6 +127,20 @@ export default class LevelFactory {
     }
 
 
+    async buildIntersectionPhysics(position, Ammo){
+        let streetPhysics = new BoxPhysics(
+            new THREE.Vector3(position[0], position[1], position[2]),
+            new THREE.Quaternion().setFromAxisAngle( new THREE.Vector3( 1, 0, 0 ), 0), 
+            new Ammo.btVector3(0,0,0), 
+            0, 
+            new THREE.Vector3(30, 0.1, 30), 
+            this.physicsWorld,
+            1000
+        );
+        await streetPhysics.buildAmmoPhysics();
+    }
+
+
     async createStreet(position, rotation, Ammo, segmentsQuantity){
         let street = new StraightStreet("textures/road.jpg");
         await street.addToScene(this.scene, "street", position, segmentsQuantity);
@@ -135,9 +149,10 @@ export default class LevelFactory {
     }
 
 
-    async createIntersection(position, rotation, Ammo){
+    async createIntersection(position, Ammo){
         let intersection = new Intersection("textures/CleanRoad.jpg");
         await intersection.addToScene(this.scene, "intersection", position);
+        await this.buildIntersectionPhysics(position, Ammo);
         this.objectsToAnimate.push(intersection);
     }
 
@@ -155,7 +170,7 @@ export default class LevelFactory {
     async createLevelCustom(){
         let Ammo = await AmmoInstance.getInstance();
         this.createStreet([0,0,0], 0, Ammo, 2);
-        this.createIntersection([0,0,30+15], 0, Ammo);
+        this.createIntersection([0,0,30+15], Ammo);
     }
 
 }
