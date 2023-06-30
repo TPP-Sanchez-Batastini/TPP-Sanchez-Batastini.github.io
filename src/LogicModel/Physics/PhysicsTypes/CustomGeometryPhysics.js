@@ -3,6 +3,7 @@ import AmmoInstance from "../AmmoInstance";
 export default class CustomGeometryPhysics extends GeneralPhysics{
     async generateShape(){
         let Ammo = await AmmoInstance.getInstance();
+        // eslint-disable-next-line
         let _triangle, triangle_mesh = new Ammo.btTriangleMesh();
         //declare triangles position vectors
         let vectA = new Ammo.btVector3(0, 0, 0);
