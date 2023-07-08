@@ -59,7 +59,6 @@ export class StraightStreetLinker{
         const sectionsJSON = [];
         for(let i = 0; i < this.sections.length; i++){
             //Rotation is the same for all of them
-            console.log(this.sections[i]);
             const jsonForStreet = {
                 "position_x": this.sections[i].reduce((acum, elem) => acum + elem.getPositionX(), 0)/this.sections[i].length,
                 "position_y": this.sections[i].reduce((acum, elem) => acum + elem.getPositionY(), 0)/this.sections[i].length,

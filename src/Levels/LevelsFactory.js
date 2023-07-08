@@ -6,6 +6,7 @@ import CylinderPhysics from '../LogicModel/Physics/PhysicsTypes/CylinderPhysics'
 import CustomGeometryPhysics from '../LogicModel/Physics/PhysicsTypes/CustomGeometryPhysics'
 import StraightStreet from '../3DModels/StraightStreet';
 import Intersection from '../3DModels/Intersection';
+import Curve from '../3DModels/Curve';
 
 export default class LevelFactory {
 
@@ -90,10 +91,10 @@ export default class LevelFactory {
         this.objectsToAnimate.push(cone);
     }
 
-    async buildStreetPhysics(position, street, Ammo){
+    async buildStreetPhysics(position, street, Ammo, rotationY){
         let streetPhysics = new BoxPhysics(
             new THREE.Vector3(position[0], position[1], position[2]),
-            new THREE.Quaternion().setFromAxisAngle( new THREE.Vector3( 1, 0, 0 ), 0), 
+            new THREE.Quaternion().setFromAxisAngle( new THREE.Vector3( 0, 1, 0 ), rotationY), 
             new Ammo.btVector3(0,0,0), 
             0, 
             new THREE.Vector3(street.SIZE, 0.1, street.LONG), 
@@ -101,9 +102,10 @@ export default class LevelFactory {
             1000
         );
         await streetPhysics.buildAmmoPhysics();
+        const movingLeft = new THREE.Vector3(-8.4*street.SIZE/24, street.SIDEWALK_HEIGHT/2, 0).applyAxisAngle(new THREE.Vector3(0,1,0), rotationY);
         let leftSidewalkPhysics = new BoxPhysics(
-            new THREE.Vector3(position[0]-8.4*street.SIZE/24, position[1]+street.SIDEWALK_HEIGHT/2, position[2]),
-            new THREE.Quaternion().setFromAxisAngle( new THREE.Vector3( 1, 0, 0 ), 0), 
+            new THREE.Vector3(position[0] + movingLeft.x, position[1] + movingLeft.y, position[2] + movingLeft.z),
+            new THREE.Quaternion().setFromAxisAngle( new THREE.Vector3( 0, 1, 0 ), rotationY), 
             new Ammo.btVector3(0,0,0), 
             0, 
             new THREE.Vector3(7*street.SIZE/24, street.SIDEWALK_HEIGHT, street.LONG), 
@@ -111,9 +113,10 @@ export default class LevelFactory {
             1000
         );
         await leftSidewalkPhysics.buildAmmoPhysics();
+        const movingRight = new THREE.Vector3(8.4*street.SIZE/24, street.SIDEWALK_HEIGHT/2, 0).applyAxisAngle(new THREE.Vector3(0,1,0), rotationY);
         let rightSidewalkPhysics = new BoxPhysics(
-            new THREE.Vector3(position[0]+8.4*street.SIZE/24, position[1]+street.SIDEWALK_HEIGHT/2, position[2]),
-            new THREE.Quaternion().setFromAxisAngle( new THREE.Vector3( 1, 0, 0 ), 0), 
+            new THREE.Vector3(position[0] + movingRight.x, position[1]+street.SIDEWALK_HEIGHT/2 + movingRight.y, position[2] + movingRight.z),
+            new THREE.Quaternion().setFromAxisAngle( new THREE.Vector3( 0, 1, 0 ), rotationY), 
             new Ammo.btVector3(0,0,0), 
             0, 
             new THREE.Vector3(7*street.SIZE/24, street.SIDEWALK_HEIGHT, street.LONG), 
@@ -131,7 +134,7 @@ export default class LevelFactory {
     async buildIntersectionPhysics(position, Ammo, intersection){
         let streetPhysics = new BoxPhysics(
             new THREE.Vector3(position[0], position[1], position[2]),
-            new THREE.Quaternion().setFromAxisAngle( new THREE.Vector3( 1, 0, 0 ), 0), 
+            new THREE.Quaternion().identity(), 
             new Ammo.btVector3(0,0,0), 
             0, 
             new THREE.Vector3(30, 0.1, 30), 
@@ -141,7 +144,7 @@ export default class LevelFactory {
         await streetPhysics.buildAmmoPhysics();
         const cornerPhysicsOne = new CustomGeometryPhysics(
             new THREE.Vector3(position[0]-intersection.SIZE/2+intersection.SQUARE_SIZE/2+0.12, position[1], position[2]-intersection.SIZE/2+intersection.SQUARE_SIZE/2),
-            new THREE.Quaternion().setFromAxisAngle( new THREE.Vector3( 0, 1, 0 ), Math.PI / 2 ),
+            new THREE.Quaternion().setFromAxisAngle( new THREE.Vector3( 0, 1, 0 ), Math.PI / 2),
             new Ammo.btVector3(0,0,0),
             0,
             intersection.getGeometrySidewalk(),
@@ -149,10 +152,9 @@ export default class LevelFactory {
             1000
         );
         await cornerPhysicsOne.buildAmmoPhysics();
-        console.log("GEOM SIDEWALK: ",intersection.getGeometrySidewalk());
         const cornerPhysicsTwo = new CustomGeometryPhysics(
             new THREE.Vector3(position[0]-intersection.SIZE/2+intersection.SQUARE_SIZE/2+0.12, position[1], position[2]+intersection.SIZE/2-intersection.SQUARE_SIZE/2),
-            new THREE.Quaternion().setFromAxisAngle( new THREE.Vector3( 0, 1, 0 ), Math.PI ),
+            new THREE.Quaternion().setFromAxisAngle( new THREE.Vector3( 0, 1, 0 ), Math.PI),
             new Ammo.btVector3(0,0,0),
             0,
             intersection.getGeometrySidewalk(),
@@ -188,10 +190,48 @@ export default class LevelFactory {
     }
 
 
-    async createStreet(position, rotation, Ammo, segmentsQuantity){
+    async buildCurvePhysics(position, Ammo, curve, rotationY){
+        let streetPhysics = new BoxPhysics(
+            new THREE.Vector3(position[0], position[1], position[2]),
+            new THREE.Quaternion().setFromAxisAngle( new THREE.Vector3( 0, 1, 0 ), rotationY), 
+            new Ammo.btVector3(0,0,0), 
+            0, 
+            new THREE.Vector3(30, 0.1, 30), 
+            this.physicsWorld,
+            1000
+        );
+        await streetPhysics.buildAmmoPhysics();
+        const movingCorner = new THREE.Vector3(-curve.SIZE/2+curve.SQUARE_SIZE/2, 0, -curve.SIZE/2+curve.SQUARE_SIZE/2).applyAxisAngle(new THREE.Vector3(0,1,0), rotationY);
+        const cornerPhysics = new CustomGeometryPhysics(
+            new THREE.Vector3(position[0]+movingCorner.x, position[1]+movingCorner.y, position[2]+movingCorner.z),
+            new THREE.Quaternion().setFromAxisAngle( new THREE.Vector3( 0, 1, 0 ), Math.PI / 2 + rotationY ),
+            new Ammo.btVector3(0,0,0),
+            0,
+            curve.getGeometrySidewalk(),
+            this.physicsWorld,
+            1000
+        );
+        await cornerPhysics.buildAmmoPhysics();
+        const longSidePhysics = new CustomGeometryPhysics(
+            new THREE.Vector3(position[0], position[1], position[2]),
+            new THREE.Quaternion().setFromAxisAngle( new THREE.Vector3( 0, 1, 0 ), -Math.PI / 2 + rotationY ),
+            new Ammo.btVector3(0,0,0),
+            0,
+            curve.getGeometryLongSidewalk(),
+            this.physicsWorld,
+            1000
+        );
+        await longSidePhysics.buildAmmoPhysics();
+        this.physicsToUpdate.push(streetPhysics);
+        this.physicsToUpdate.push(cornerPhysics);
+        this.physicsToUpdate.push(longSidePhysics);
+    }
+
+
+    async createStreet(position, rotation, Ammo, segmentsQuantity, rotationY){
         let street = new StraightStreet("textures/road.jpg");
-        await street.addToScene(this.scene, "street", position, segmentsQuantity);
-        await this.buildStreetPhysics(position, street, Ammo);
+        await street.addToScene(this.scene, "street", position, segmentsQuantity, rotationY);
+        await this.buildStreetPhysics(position, street, Ammo, rotationY);
         this.objectsToAnimate.push(street);
     }
 
@@ -201,6 +241,14 @@ export default class LevelFactory {
         await intersection.addToScene(this.scene, "intersection", position);
         await this.buildIntersectionPhysics(position, Ammo, intersection);
         this.objectsToAnimate.push(intersection);
+    }
+
+
+    async createCurve(position, Ammo, rotationY){
+        let curve = new Curve("textures/CleanRoad.jpg");
+        await curve.addToScene(this.scene, "curve", position, rotationY);
+        await this.buildCurvePhysics(position, Ammo, curve, rotationY);
+        this.objectsToAnimate.push(curve);
     }
 
 
@@ -216,8 +264,9 @@ export default class LevelFactory {
 
     async createLevelCustom(){
         let Ammo = await AmmoInstance.getInstance();
-        this.createStreet([0,0,0], 0, Ammo, 2);
+        this.createStreet([0,0,0], 0, Ammo, 2, 0);
         this.createIntersection([0,0,30+15], Ammo);
+        this.createCurve([0,0,60+15], Ammo, -Math.PI/2);
     }
 
 }

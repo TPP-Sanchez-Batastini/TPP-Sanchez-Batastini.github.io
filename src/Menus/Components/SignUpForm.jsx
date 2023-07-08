@@ -77,7 +77,6 @@ export const SignUpForm = () => {
       return;
     }
     const res = await postSignUp();
-    console.log(res);
     /*TODO: Mostrar dialog de creado exitoso, y despues mandarlo al login...*/
   }
 
