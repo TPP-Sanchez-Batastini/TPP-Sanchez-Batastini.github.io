@@ -7,6 +7,7 @@ import CustomGeometryPhysics from '../LogicModel/Physics/PhysicsTypes/CustomGeom
 import StraightStreet from '../3DModels/StraightStreet';
 import Intersection from '../3DModels/Intersection';
 import Curve from '../3DModels/Curve';
+import TStreet from '../3DModels/TStreet';
 
 export default class LevelFactory {
 
@@ -131,6 +132,11 @@ export default class LevelFactory {
     }
 
 
+    async buildTStreetPhysics(position, Ammo, tStreet, rotationY){
+        //TODO
+        console.log("TODO");
+    }
+
     async buildIntersectionPhysics(position, Ammo, intersection){
         let streetPhysics = new BoxPhysics(
             new THREE.Vector3(position[0], position[1], position[2]),
@@ -252,6 +258,14 @@ export default class LevelFactory {
     }
 
 
+    async createTStreet(position, Ammo, rotationY){
+        let tStreet = new TStreet("textures/CleanRoad.jpg");
+        await tStreet.addToScene(this.scene, "tStreet", position, rotationY);
+        await this.buildTStreetPhysics(position, Ammo, tStreet, rotationY);
+        this.objectsToAnimate.push(tStreet);
+    }
+
+
     async createLevel0(){
         let Ammo = await AmmoInstance.getInstance();
         this.createRectangle( [ 10, 0, 10 ], 10, 2, 10, -Math.PI/8, 'textures/pavimento.jpg', Ammo, 'textures/pavimento_map.png' );
@@ -267,6 +281,7 @@ export default class LevelFactory {
         this.createStreet([0,0,0], 0, Ammo, 2, 0);
         this.createIntersection([0,0,30+15], Ammo);
         this.createCurve([0,0,60+15], Ammo, -Math.PI/2);
+        this.createTStreet([0,0,-45], Ammo, 0);
     }
 
 }
