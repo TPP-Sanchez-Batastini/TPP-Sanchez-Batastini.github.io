@@ -15,6 +15,12 @@ export default class LevelFactory {
     this.physicsWorld = physicsWorld;
     this.physicsToUpdate = [];
     this.objectsToAnimate = [];
+    this.STREET_TYPES = {
+      "STRAIGHT": this.createStreet.bind(this),
+      "CURVE": this.createCurve.bind(this),
+      "T_STREET": this.createTStreet.bind(this),
+      "INTERSECTION": this.createIntersection.bind(this)
+    };
   }
 
   updatePhysics() {
@@ -395,7 +401,7 @@ export default class LevelFactory {
     this.physicsToUpdate.push(longSidePhysics);
   }
 
-  async createStreet(position, rotation, Ammo, segmentsQuantity, rotationY) {
+  async createStreet(position, Ammo, rotationY, segmentsQuantity) {
     let street = new StraightStreet("textures/road.jpg");
     await street.addToScene(
       this.scene,
@@ -424,6 +430,7 @@ export default class LevelFactory {
 
   async createTStreet(position, Ammo, rotationY) {
     let tStreet = new TStreet("textures/CleanRoadNoBorder.jpg");
+    console.log("T_STREET", position, rotationY);
     await tStreet.addToScene(this.scene, "tStreet", position, rotationY);
     await this.buildTStreetPhysics(position, Ammo, tStreet, rotationY);
     this.objectsToAnimate.push(tStreet);
@@ -466,11 +473,22 @@ export default class LevelFactory {
     this.createCone([0, 0.5, 20], Ammo);
   }
 
-  async createLevelCustom() {
+
+  async instantiateStreet(position, rotation, long, type){
     let Ammo = await AmmoInstance.getInstance();
-    this.createStreet([0, 0, 0], 0, Ammo, 2, 0);
-    this.createIntersection([0, 0, 45], Ammo);
-    this.createCurve([0, 0, 75], Ammo, -Math.PI / 2);
-    this.createTStreet([0, 0, -45], Ammo, Math.PI/2);
+    let segments = (long[0] === 30 ? long[1] : long[0])/30;
+    this.STREET_TYPES[type]([position[0], 0, position[1]], Ammo, rotation, segments);
+  }
+
+  async createLevelCustom(json) {
+    
+    json.streets.forEach(street => {
+      this.instantiateStreet(
+        [street.position_x,street.position_y], 
+        street.rotation, 
+        [street.long_x, street.long_y], 
+        street.type
+      );
+    });
   }
 }

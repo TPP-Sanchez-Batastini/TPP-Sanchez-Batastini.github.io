@@ -10,7 +10,7 @@ export default class Camera extends Observer{
 
     constructor(renderer){
         super();
-        this.camera = new THREE.PerspectiveCamera( 85, window.innerWidth / window.innerHeight, 0.1, 1000 );
+        this.camera = new THREE.PerspectiveCamera( 85, window.innerWidth / window.innerHeight, 0.1, 300 );
         this.group =  new THREE.Object3D();
         this.group180Rot = new THREE.Object3D().add(this.camera);
         this.group.add(this.group180Rot);
@@ -39,7 +39,7 @@ export default class Camera extends Observer{
                 this.camera.lookAt(new Vector3(0,0,5));
             }else{
                 const rotationQuat = new THREE.Quaternion(this.observedState.rotation.x, this.observedState.rotation.y, this.observedState.rotation.z, this.observedState.rotation.w).normalize();
-                this.group180Rot.setRotationFromAxisAngle(new Vector3(0,1,0), -5*Math.PI/180);
+                this.group180Rot.setRotationFromAxisAngle(new Vector3(0,1,0), -5*Math.PI/180); //SUMAR ROTACION EXTRA SI USAMOS EL JOYSTICK DERECHO
                 this.group.quaternion.copy(rotationQuat);
             }
         }else{

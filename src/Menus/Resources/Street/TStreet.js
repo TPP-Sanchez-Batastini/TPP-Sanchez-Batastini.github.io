@@ -1,10 +1,10 @@
 import { AbstractStreet } from "./AbstractStreet";
 
 const POSSIBLE_ROTATIONS = {
-    "TOP_SINGLE": 0,
-    "LEFT_SINGLE": Math.PI/2,
-    "BOT_SINGLE": Math.PI,
-    "RIGHT_SINGLE": Math.PI*3/2
+    "TOP_SINGLE": Math.PI,
+    "LEFT_SINGLE": Math.PI*3/2,
+    "BOT_SINGLE": 0,
+    "RIGHT_SINGLE": Math.PI/2
 }
 export class TStreet extends AbstractStreet {
 

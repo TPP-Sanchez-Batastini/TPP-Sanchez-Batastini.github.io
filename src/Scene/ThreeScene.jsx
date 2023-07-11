@@ -28,70 +28,87 @@ export default class ThreeScene extends Component{
         localStorage.setItem("VR", false);
         this.gotAnyEvent = false;
         this.stats = new Stats();
-    }
-
-
-    async componentDidMount(){
-        //Generate elements needed to render the scene
         this.objectsToAnimate = [];
         this.scene = new THREE.Scene();
         this.renderer = new THREE.WebGLRenderer({ 
             alpha: true, 
             powerPreference:"high-performance", 
-            antialias:true });
+            antialias:true 
+        });
         this.renderer.setSize( window.innerWidth, window.innerHeight );
         this.renderer.shadowMap.enabled = true;
-        //this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        this.clock = new THREE.Clock();
+    }
+
+
+    async componentDidMount(){
+        this.jsonLevel = this.props.jsonLevel;
+        this.generateGeneralElements = this.generateGeneralElements.bind(this);
+        this.animation = this.animation.bind(this);
+        this.handleWindowResize = this.handleWindowResize.bind(this);
+        this.generateEvents = this.generateEvents.bind(this);
+        this.addPlayerCar = this.addPlayerCar.bind(this);
+        this.generateLevel = this.generateLevel.bind(this);
+        this.addVR = this.addVR.bind(this);
+
+        await this.generateGeneralElements();
+        await this.createAmmo();
+        await this.addGeneralLights();
+        await this.generateLevel();
+        await this.addPlayerCar();
+        this.generateEvents();
+        this.addVR();
+        this.renderer.setAnimationLoop(this.animation);
+    }
+
+
+    async addVR(){
+        this.renderer.setPixelRatio(window.devicePixelRatio);
+        this.renderer.xr.enabled = true;
+        this.renderer.xr.setFramebufferScaleFactor(0.75);
+        this.mount.appendChild(this.renderer.domElement);
+        document.body.appendChild( VRButton.createButton( this.renderer ) );
+    }
+
+
+    async generateLevel(){
+        this.level = new LevelFactory(this.scene, this.physicsWorld);
+        await this.level.createLevelCustom(this.jsonLevel);
+        const geomField = new THREE.BoxGeometry(10000,10000);
+        const texture = new THREE.TextureLoader().load("./textures/pasto.jpeg");
+        texture.repeat.set( 500, 500 );
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
+        const matField = new THREE.MeshBasicMaterial({map: texture});
+        const meshField = new THREE.Mesh(geomField, matField);
+        meshField.position.set(0,-1, 0);
+        meshField.rotateOnAxis(new THREE.Vector3(1,0,0), Math.PI/2);
+        this.scene.add(meshField);
+
+    }
+
+
+    async generateGeneralElements(){
         this.renderer.setClearColor( 0x87cefa, 1 );
         this.camera = new Camera(this.renderer);
         this.camera.addContainerToScene(this.scene);
         this.stats.showPanel( 0 );
         document.body.appendChild(this.stats.dom);
-        this.clock = new THREE.Clock();
+    }
 
-        //Ammo.js
-        await this.createAmmo();
 
-        //Add elements to the scene
-        this.ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
-        this.directionalLight = new THREE.DirectionalLight(0xeeeeee, 1);
-        this.directionalLight.position.set(0,2,5);
-        this.directionalLight.castShadow = true;
-        this.directionalLight.shadow.mapSize.width = 1024;
-        this.directionalLight.shadow.mapSize.height = 1024;
-        this.directionalLight.shadow.camera.near = 0.1;
-        this.directionalLight.shadow.camera.far = 1000;
-        this.scene.add(this.ambientLight);
-        this.scene.add(this.directionalLight);
+    async addGeneralLights(){
+        this.scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+    }
 
-        this.level = new LevelFactory(this.scene, this.physicsWorld);
-        await this.level.createLevelCustom();
-        this.physicsToUpdate.push(this.level);
-        this.objectsToAnimate.push(this.level);
 
-        //Add driver's car to scene
+    async addPlayerCar(){
         this.carLogic = new Car(this.physicsWorld);
         let carModel = new CarModel();
         this.carLogic.attachObserver(carModel);
         this.carLogic.attachObserver(this.camera);
         this.objectsToAnimate.push(await carModel.addToScene(this.scene));
         this.carLogic.notifyObservers();
-
-        //Bind this to methods of the class
-        this.animation = this.animation.bind(this);
-        this.handleWindowResize = this.handleWindowResize.bind(this);
-        this.generateEvents = this.generateEvents.bind(this);
-        
-        //Handle resize and gamepad connection on window.
-        this.generateEvents();
-        
-        this.renderer.setPixelRatio(window.devicePixelRatio);
-        this.renderer.xr.enabled = true;
-        this.renderer.xr.setFramebufferScaleFactor(0.75);
-        this.mount.appendChild(this.renderer.domElement);
-        document.body.appendChild( VRButton.createButton( this.renderer ) );
-        this.renderer.setAnimationLoop(this.animation);
-        
     }
 
 
