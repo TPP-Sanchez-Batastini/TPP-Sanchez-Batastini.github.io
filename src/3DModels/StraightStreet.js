@@ -50,7 +50,6 @@ export default class StraightStreet extends VisualEntity{
         texture.wrapT = THREE.RepeatWrapping;
         const material = new THREE.MeshPhongMaterial( {map: texture,  side: THREE.DoubleSide} );
         const mesh = new THREE.Mesh( geometry, material );
-        mesh.castShadow = true;
         mesh.receiveShadow = true;
         return mesh;
     }

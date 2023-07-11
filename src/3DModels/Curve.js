@@ -288,13 +288,12 @@ export default class Curve extends VisualEntity{
     createStreetMesh(){
         const geometry = new THREE.BoxGeometry( this.SIZE, 0.1, this.SIZE );
         const texture = new THREE.TextureLoader().load(this.pathToTexture);
-        texture.repeat.set( 1, 2 );
+        texture.repeat.set( 2.4, 2.4 );
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
         const material = new THREE.MeshPhongMaterial( {map: texture,  side: THREE.DoubleSide} );
         const mesh = new THREE.Mesh( geometry, material );
         mesh.receiveShadow = true;
-        mesh.castShadow = true;
         return mesh;
     }
 

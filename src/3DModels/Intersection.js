@@ -8,7 +8,7 @@ export default class Intersection extends VisualEntity{
         this.pathToNormalMap = "textures/pavimento_map.png"
         this.SIZE = 30;
         this.SIDEWALK_HEIGHT = .4;
-        this.SQUARE_SIZE = 7*30/24;
+        this.SQUARE_SIZE = 7*30/24 + 0.12;
         this.observedState = null;
     }
 
@@ -137,13 +137,12 @@ export default class Intersection extends VisualEntity{
     createStreetMesh(){
         const geometry = new THREE.BoxGeometry( this.SIZE, 0.1, this.SIZE );
         const texture = new THREE.TextureLoader().load(this.pathToTexture);
-        texture.repeat.set( 1, 2 );
+        texture.repeat.set( 2.4, 2.4 );
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
         const material = new THREE.MeshPhongMaterial( {map: texture,  side: THREE.DoubleSide} );
         const mesh = new THREE.Mesh( geometry, material );
         mesh.receiveShadow = true;
-        mesh.castShadow = true;
         return mesh;
     }
 
@@ -157,15 +156,15 @@ export default class Intersection extends VisualEntity{
             for (let i=0; i<4; i++){
                 const sidewalk = this.createSidewalkMesh();
                 if (i===0){
-                    sidewalk.position.set(-this.SIZE/2+this.SQUARE_SIZE/2+0.12,0,-this.SIZE/2+this.SQUARE_SIZE/2);
+                    sidewalk.position.set(-this.SIZE/2+this.SQUARE_SIZE/2,0,-this.SIZE/2+this.SQUARE_SIZE/2);
                     sidewalk.rotateOnAxis(new THREE.Vector3(0,1,0), Math.PI/2);
                 }else if(i===2){
-                    sidewalk.position.set(-this.SIZE/2+this.SQUARE_SIZE/2+0.12,0,this.SIZE/2-this.SQUARE_SIZE/2);
+                    sidewalk.position.set(-this.SIZE/2+this.SQUARE_SIZE/2,0,this.SIZE/2-this.SQUARE_SIZE/2);
                     sidewalk.rotateOnAxis(new THREE.Vector3(0,1,0), Math.PI);
                 }else if(i===3){
-                    sidewalk.position.set(this.SIZE/2-this.SQUARE_SIZE/2-0.12,0,-this.SIZE/2+this.SQUARE_SIZE/2);
+                    sidewalk.position.set(this.SIZE/2-this.SQUARE_SIZE/2,0,-this.SIZE/2+this.SQUARE_SIZE/2);
                 }else{
-                    sidewalk.position.set(this.SIZE/2-this.SQUARE_SIZE/2-0.12,0,this.SIZE/2-this.SQUARE_SIZE/2);
+                    sidewalk.position.set(this.SIZE/2-this.SQUARE_SIZE/2,0,this.SIZE/2-this.SQUARE_SIZE/2);
                     sidewalk.rotateOnAxis(new THREE.Vector3(0,1,0), -Math.PI/2);
                 }
                 sidewalk.updateMatrix();
