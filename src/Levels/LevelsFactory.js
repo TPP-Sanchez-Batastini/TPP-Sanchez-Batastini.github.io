@@ -8,6 +8,7 @@ import StraightStreet from "../3DModels/StraightStreet";
 import Intersection from "../3DModels/Intersection";
 import Curve from "../3DModels/Curve";
 import TStreet from "../3DModels/TStreet";
+import Checkpoint from "../3DModels/Checkpoint";
 
 export default class LevelFactory {
   constructor(scene, physicsWorld) {
@@ -20,6 +21,9 @@ export default class LevelFactory {
       "CURVE": this.createCurve.bind(this),
       "T_STREET": this.createTStreet.bind(this),
       "INTERSECTION": this.createIntersection.bind(this)
+    };
+    this.OBJECTS = {
+      "CONE": this.createCone.bind(this)
     };
   }
 
@@ -77,18 +81,18 @@ export default class LevelFactory {
     );
 
     await rampPhysics.buildAmmoPhysics();
-    this.physicsToUpdate.push(rampPhysics);
+    //this.physicsToUpdate.push(rampPhysics);
     let ramp = new THREE.Mesh(rampa, floorMaterial);
     ramp.position.set(position[0], position[1], position[2]);
     this.scene.add(ramp);
   }
 
-  async createCone(position, Ammo) {
+  async createCone(position, Ammo, rotationY) {
     let cone = new TrafficCone("textures/coneTexture.jpg");
-    cone.addToScene(this.scene, "trafficCone", position, [0.5, 0.5, 0.5]);
+    cone = await cone.addToScene(this.scene, "trafficCone", position, [0.5, 0.5, 0.5]);
     let conePhysics = new CylinderPhysics(
       new THREE.Vector3(position[0], position[1], position[2]), //Position
-      new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), 0),
+      new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), rotationY),
       new Ammo.btVector3(0, 0, 0),
       10,
       new THREE.Vector3(
@@ -99,6 +103,28 @@ export default class LevelFactory {
       this.physicsWorld,
       1000
     );
+    // let coneGeometry = {
+    //   attributes: {...cone.threeDModel.children[0].geometry.attributes},
+    //   getAttribute: (attr) => {
+    //     return coneGeometry.attributes[attr];
+    //   }
+    // };
+    // let conePhysics = new CustomGeometryPhysics(
+    //   new THREE.Vector3(
+    //     position[0],
+    //     position[1],
+    //     position[2],
+    //   ),
+    //   new THREE.Quaternion().setFromAxisAngle(
+    //     new THREE.Vector3(0, 1, 0),
+    //     rotationY
+    //   ),
+    //   new Ammo.btVector3(0, 0, 0),
+    //   10,
+    //   coneGeometry,
+    //   this.physicsWorld,
+    //   1000
+    // );
     await conePhysics.buildAmmoPhysics();
     this.physicsToUpdate.push(conePhysics);
     conePhysics.attachObserver(cone);
@@ -171,10 +197,6 @@ export default class LevelFactory {
       1000
     );
     await rightSidewalkPhysics.buildAmmoPhysics();
-    streetPhysics.attachObserver(street);
-    this.physicsToUpdate.push(streetPhysics);
-    this.physicsToUpdate.push(leftSidewalkPhysics);
-    this.physicsToUpdate.push(rightSidewalkPhysics);
   }
 
   async buildTStreetPhysics(position, Ammo, tStreet, rotationY) {
@@ -258,10 +280,6 @@ export default class LevelFactory {
       1000
     );
     await rightSidewalkPhysics.buildAmmoPhysics();
-    this.physicsToUpdate.push(streetPhysics);
-    this.physicsToUpdate.push(cornerPhysicsOne);
-    this.physicsToUpdate.push(cornerPhysicsTwo);
-    this.physicsToUpdate.push(rightSidewalkPhysics);
   }
 
   async buildIntersectionPhysics(position, Ammo, intersection) {
@@ -340,11 +358,6 @@ export default class LevelFactory {
       1000
     );
     await cornerPhysicsFour.buildAmmoPhysics();
-    this.physicsToUpdate.push(streetPhysics);
-    this.physicsToUpdate.push(cornerPhysicsOne);
-    this.physicsToUpdate.push(cornerPhysicsTwo);
-    this.physicsToUpdate.push(cornerPhysicsThree);
-    this.physicsToUpdate.push(cornerPhysicsFour);
   }
 
   async buildCurvePhysics(position, Ammo, curve, rotationY) {
@@ -396,9 +409,6 @@ export default class LevelFactory {
       1000
     );
     await longSidePhysics.buildAmmoPhysics();
-    this.physicsToUpdate.push(streetPhysics);
-    this.physicsToUpdate.push(cornerPhysics);
-    this.physicsToUpdate.push(longSidePhysics);
   }
 
   async createStreet(position, Ammo, rotationY, segmentsQuantity) {
@@ -411,29 +421,31 @@ export default class LevelFactory {
       rotationY
     );
     await this.buildStreetPhysics(position, street, Ammo, rotationY);
-    this.objectsToAnimate.push(street);
   }
 
   async createIntersection(position, Ammo) {
     let intersection = new Intersection("textures/CleanRoadNoBorder.jpg");
     await intersection.addToScene(this.scene, "intersection", position);
     await this.buildIntersectionPhysics(position, Ammo, intersection);
-    this.objectsToAnimate.push(intersection);
   }
 
   async createCurve(position, Ammo, rotationY) {
     let curve = new Curve("textures/CleanRoadNoBorder.jpg");
     await curve.addToScene(this.scene, "curve", position, rotationY);
     await this.buildCurvePhysics(position, Ammo, curve, rotationY);
-    this.objectsToAnimate.push(curve);
   }
 
   async createTStreet(position, Ammo, rotationY) {
     let tStreet = new TStreet("textures/CleanRoadNoBorder.jpg");
-    console.log("T_STREET", position, rotationY);
     await tStreet.addToScene(this.scene, "tStreet", position, rotationY);
     await this.buildTStreetPhysics(position, Ammo, tStreet, rotationY);
-    this.objectsToAnimate.push(tStreet);
+  }
+
+
+  async createCheckpoint(position, Ammo, checkpoints){
+    let checkpoint = new Checkpoint(checkpoints);
+    await checkpoint.addToScene(this.scene, "checkpoint", position, [1,1,1]);
+    this.objectsToAnimate.push(checkpoint);
   }
 
   async createLevel0() {
@@ -477,18 +489,47 @@ export default class LevelFactory {
   async instantiateStreet(position, rotation, long, type){
     let Ammo = await AmmoInstance.getInstance();
     let segments = (long[0] === 30 ? long[1] : long[0])/30;
-    this.STREET_TYPES[type]([position[0], 0, position[1]], Ammo, rotation, segments);
+    await this.STREET_TYPES[type]([position[0], 0, position[1]], Ammo, rotation, segments);
+  }
+
+
+  async instantiateObject(position, rotation, type){
+    let Ammo = await AmmoInstance.getInstance();
+    await this.OBJECTS[type]([position[0], 0.5, position[1]], Ammo, rotation);
   }
 
   async createLevelCustom(json) {
     
-    json.streets.forEach(street => {
-      this.instantiateStreet(
+    for( let i=0 ; i<json.streets.length; i++ ){
+      let street = json.streets[i];
+      await this.instantiateStreet(
         [street.position_x,street.position_y], 
         street.rotation, 
         [street.long_x, street.long_y], 
         street.type
       );
-    });
+    }
+    for( let i=0 ; i<json.objects.length; i++){
+      let obj = json.objects[i];
+      await this.instantiateObject(
+        [obj.position_x,obj.position_y], 
+        obj.rotation, 
+        obj.type
+      );
+    }
+    await this.createCheckpoint(
+      [15,1,30],
+      0,
+      json.checkpoints
+    )
+    return {
+      physicsToUpdate: this.physicsToUpdate,
+      objectsToAnimate: this.objectsToAnimate
+    };
+    // json.checkpoints.forEach --> Instancio y guardo en un array
+    // onCollide de un checkpoint --> saco ese de la escena y agrego uno nuevo (El que le sigue)
+    // Si el checkpoint es el ultimo --> Fin de nivel? Solo si esta marcado con un bool de fin nivel o algo asi
+
+    
   }
 }

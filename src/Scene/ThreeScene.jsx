@@ -73,7 +73,9 @@ export default class ThreeScene extends Component{
 
     async generateLevel(){
         this.level = new LevelFactory(this.scene, this.physicsWorld);
-        await this.level.createLevelCustom(this.jsonLevel);
+        let updateDataLevel = await this.level.createLevelCustom(this.jsonLevel);
+        this.objectsToAnimate = [...this.objectsToAnimate, ...updateDataLevel.objectsToAnimate];
+        this.physicsToUpdate = [...this.physicsToUpdate, ...updateDataLevel.physicsToUpdate];
         const geomField = new THREE.BoxGeometry(10000,10000);
         const texture = new THREE.TextureLoader().load("./textures/pasto.jpeg");
         texture.repeat.set( 500, 500 );
