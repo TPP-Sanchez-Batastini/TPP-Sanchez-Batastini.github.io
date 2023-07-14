@@ -24,7 +24,7 @@ export default class Car extends Observable{
         this.inertia = new Vector3(1,0,1);
 
         this.carPhysics = new CarPhysics(this.position, this.rotationQuaternion, this.inertia, this.mass, this.physicsShape, physicsWorld, 0);
-        this.carPhysics.buildAmmoPhysics();
+        // this.carPhysics.buildAmmoPhysics();
         
     }
 

@@ -126,6 +126,7 @@ export default class LevelFactory {
     //   1000
     // );
     await conePhysics.buildAmmoPhysics();
+    conePhysics.rigidBody.threeObject = cone;
     this.physicsToUpdate.push(conePhysics);
     conePhysics.attachObserver(cone);
     this.objectsToAnimate.push(cone);
