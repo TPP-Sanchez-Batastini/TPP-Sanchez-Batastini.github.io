@@ -1,7 +1,7 @@
 export default class LevelScore {
 
     constructor(initialScore = 0){
-        this.score = 0;
+        this.score = initialScore;
     }
 
     alterScore(points){
