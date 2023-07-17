@@ -45,6 +45,10 @@ export default class Car extends Observable{
         this.carPhysics.brake(valueBrake*FACTOR_BRAKE_TO_FORCE);
     }
 
+    doHorn(){
+        new Audio("./sounds/bocina.wav").play();
+    }
+
 
     changeShift(valueClutch, newShift){
         this.shiftBox.changeShift(valueClutch, newShift, this.carPhysics.getVelocity());

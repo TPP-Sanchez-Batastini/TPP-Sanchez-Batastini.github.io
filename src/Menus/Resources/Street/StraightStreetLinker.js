@@ -33,7 +33,6 @@ export class StraightStreetLinker{
             sectionsArray = [...sectionsArray, ...this.generateArraySubsections(value)];
         }
         for(const [, value] of Object.entries(cols)){
-            console.log(value);
             sectionsArray = [...sectionsArray, ...this.generateArraySubsections(value)];
         }
         return sectionsArray;

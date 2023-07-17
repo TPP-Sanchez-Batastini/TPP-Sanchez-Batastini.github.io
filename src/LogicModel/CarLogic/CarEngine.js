@@ -12,11 +12,29 @@ export default class CarEngine{
         this.engineState = new TurnedOffEngine();
         this.currentRPM = 0;
         this.currentXInRPMCurve = 0;
+        this.playbackRate = 1.1;
     }
 
 
     turnOn(){
-        this.engineState = new TurnedOnEngine();
+        if(this.engineState instanceof TurnedOffEngine){
+            new Audio('./sounds/encendido.wav').play();
+            this.engineState = new TurnedOnEngine();
+            setTimeout(() => {
+                this.soundEngine = new (window.AudioContext || window.webkitAudioContext)();
+                fetch("./sounds/engine.wav").then(
+                    response => response.arrayBuffer()
+                ).then(buffer => this.soundEngine.decodeAudioData(buffer)
+                ).then(buffer => {
+                    this.soundEngineSource = this.soundEngine.createBufferSource();
+                    this.soundEngineSource.buffer = buffer;
+                    this.soundEngineSource.loop = true;
+                    this.soundEngineSource.connect(this.soundEngine.destination);
+                    this.soundEngineSource.start();
+                });
+            }, 1300);
+            
+        }
     }
 
 
@@ -49,6 +67,7 @@ export default class CarEngine{
     accelerate(valueClutch, valueAccelerator, shiftBox){
         let rpmReturn = this.engineState.accelerate(valueAccelerator, this.currentRPM, this.currentXInRPMCurve);
         this.currentRPM = rpmReturn[0];
+        if (this.soundEngineSource) this.soundEngineSource.playbackRate.value = 1.1 + this.currentRPM/MAX_RPM * 2.0;
         this.currentXInRPMCurve = rpmReturn[1];
         this.handleEngineShutdown(valueClutch,shiftBox);
     }
@@ -57,6 +76,7 @@ export default class CarEngine{
     brake(valueClutch, valueBrake,shiftBox){
         let rpmReturn = this.engineState.brake(valueBrake, this.currentRPM, this.currentXInRPMCurve);
         this.currentRPM = rpmReturn[0];
+        if (this.soundEngineSource) this.soundEngineSource.playbackRate.value = 1.1 + this.currentRPM/MAX_RPM * 2.0;
         this.currentXInRPMCurve = rpmReturn[1];
         this.handleEngineShutdown(valueClutch,shiftBox);
     }
