@@ -221,7 +221,8 @@ class LogitechG29Controller{
 
 
         if (this.gamepad.buttons[this.buttonR3].pressed && !this.buttonsPressed[this.buttonR3]) {
-        this.buttonsPressed[this.buttonR3] = true;
+            this.globalControllerHandler.doHorn();
+            this.buttonsPressed[this.buttonR3] = true;
         }else if(!this.gamepad.buttons[this.buttonR3].pressed){
             this.buttonsPressed[this.buttonR3] = false;
         }
