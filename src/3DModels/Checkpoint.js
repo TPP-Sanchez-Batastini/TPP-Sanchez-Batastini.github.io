@@ -15,17 +15,26 @@ export default class Checkpoint extends VisualEntity{
     } 
 
     animate(){
+        if(this.observedState != null){
+            this.threeDModel.position.set(
+                this.observedState["position"].x, 
+                this.observedState["position"].y, 
+                this.observedState["position"].z
+            );
+            
+            this.threeDModel.quaternion.set(
+                this.observedState["rotation"].x, 
+                this.observedState["rotation"].y, 
+                this.observedState["rotation"].z, 
+                this.observedState["rotation"].w
+            );
+        }
         const currentOpacity = this.threeDModel.children[0].material.opacity;
         const newOpacity = currentOpacity - this.stepHeartbeat;
         this.threeDModel.children[0].material.opacity = newOpacity;
         if(newOpacity <= this.LEAST_OPACITY || newOpacity >= this.MAX_OPACITY){
             this.stepHeartbeat *= -1;
         }
-        // TODO:
-        // if colission with player --> cambio mi pos a la proxima pos --> Si no hay proxima pos, fin si hay un bool? Sino desaparezco?
-        //  Ademas, llamar al sistema de puntos y sumar una cantidad constante de puntos
-        //  ESO SE GUARDA EN CHECKPOINTS DATA
-        //  VER COMO LLEGA AL PLAYER HASTA ACA
     }
 
     

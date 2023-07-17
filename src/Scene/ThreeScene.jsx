@@ -183,9 +183,8 @@ export default class ThreeScene extends Component {
       ) {
         cp = Ammo.wrapPointer(cp, Ammo.btManifoldPoint);
         const userPersistentData = cp.get_m_userPersistentData();
-        console.log("User persistent data: ", userPersistentData);
         if (userPersistentData === 0) {
-            console.log("Begin colission between objects", obj0, obj1);
+            obj0.onCollide ? obj0.onCollide() : obj1.onCollide();
             //Se cambia el contactId para denotar que la colision es constante. Para no restar puntos infinitamente.
             const collisionContactID = 1; 
             cp.set_m_userPersistentData(collisionContactID);
@@ -201,36 +200,6 @@ export default class ThreeScene extends Component {
     this.renderer.render(this.scene, this.camera.getCameraInstance());
   }
 
-  async detectColissionsWithPlayer() {
-    /*const dispatcher = this.physicsWorld.getDispatcher();
-        let numManifolds = dispatcher.getNumManifolds();
-        let Ammo = await AmmoInstance.getInstance();
-        for ( let i = 0; i < numManifolds; i++ ) {
-            let contactManifold = dispatcher.getManifoldByIndexInternal( i );
-            let rb0 = Ammo.castObject( contactManifold.getBody0(), Ammo.btRigidBody );
-            if (rb0.threeObject && rb0.threeObject.threeDModel.name === "driverCar"){
-                let numContacts = contactManifold.getNumContacts();
-                console.log(numContacts)
-                for ( let j = 0; j < numContacts; j++){
-                    let contactPoint = contactManifold.getContactPoint(j);
-                    //let distance = contactPoint.getDistance();
-                    //if (distance > 0.0 ){
-                    
-                        
-                        
-                    let rb1 = Ammo.castObject( contactManifold.getBody1(), Ammo.btRigidBody );
-                    console.log(rb1);
-                    if (rb1.threeObject){
-                        console.log({manifoldIndex: i, contactIndex: j});
-                        console.log("OBJECT!");
-                        console.log(rb0.threeObject, rb1.threeObject);
-                    }
-                    //}
-                }
-            }
-        }*/
-  }
-
   animation() {
     this.stats.begin();
     let deltaTime = this.clock.getDelta();
@@ -241,7 +210,6 @@ export default class ThreeScene extends Component {
     this.physicsToUpdate.forEach(function (phys) {
       phys.updatePhysics();
     });
-    this.detectColissionsWithPlayer();
     this.camera.setPositionRelativeToObject();
     XboxControllerSingleton.getInstance(this.carLogic).checkEvents();
     this.setState({

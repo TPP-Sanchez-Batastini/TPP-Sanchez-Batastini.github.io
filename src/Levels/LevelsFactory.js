@@ -9,11 +9,18 @@ import Intersection from "../3DModels/Intersection";
 import Curve from "../3DModels/Curve";
 import TStreet from "../3DModels/TStreet";
 import Checkpoint from "../3DModels/Checkpoint";
+import LevelScore from "./LevelScore";
+
+
+const SUM_FOR_CHECKPOINT = 1000;
+const SUB_FOR_CONE = -100;
+const INITIAL_SCORE = 0;
 
 export default class LevelFactory {
   constructor(scene, physicsWorld) {
     this.scene = scene;
     this.physicsWorld = physicsWorld;
+    this.levelScore = new LevelScore(INITIAL_SCORE);
     this.physicsToUpdate = [];
     this.objectsToAnimate = [];
     this.STREET_TYPES = {
@@ -103,30 +110,12 @@ export default class LevelFactory {
       this.physicsWorld,
       1000
     );
-    // let coneGeometry = {
-    //   attributes: {...cone.threeDModel.children[0].geometry.attributes},
-    //   getAttribute: (attr) => {
-    //     return coneGeometry.attributes[attr];
-    //   }
-    // };
-    // let conePhysics = new CustomGeometryPhysics(
-    //   new THREE.Vector3(
-    //     position[0],
-    //     position[1],
-    //     position[2],
-    //   ),
-    //   new THREE.Quaternion().setFromAxisAngle(
-    //     new THREE.Vector3(0, 1, 0),
-    //     rotationY
-    //   ),
-    //   new Ammo.btVector3(0, 0, 0),
-    //   10,
-    //   coneGeometry,
-    //   this.physicsWorld,
-    //   1000
-    // );
     await conePhysics.buildAmmoPhysics();
     conePhysics.rigidBody.threeObject = cone;
+    conePhysics.rigidBody.onCollide = () => {
+      this.levelScore.alterScore(SUB_FOR_CONE);
+      console.log("New score: ", this.levelScore.getCurrentScore());
+    };
     this.physicsToUpdate.push(conePhysics);
     conePhysics.attachObserver(cone);
     this.objectsToAnimate.push(cone);
@@ -443,9 +432,40 @@ export default class LevelFactory {
   }
 
 
-  async createCheckpoint(position, Ammo, checkpoints){
+  async createCheckpoint(position, checkpoints){
     let checkpoint = new Checkpoint(checkpoints);
+    let Ammo = await AmmoInstance.getInstance();
     await checkpoint.addToScene(this.scene, "checkpoint", position, [1,1,1]);
+    let checkpointPhysics = new CylinderPhysics(
+      new THREE.Vector3(position[0], position[1], position[2]), //Position
+      new THREE.Quaternion().identity(),
+      new Ammo.btVector3(0, 0, 0),
+      1,
+      new THREE.Vector3(
+        checkpoint.RADIUS,
+        checkpoint.HEIGHT / 2,
+        checkpoint.RADIUS
+      ),
+      this.physicsWorld,
+      1000
+    );
+    this.physicsToUpdate.push(checkpointPhysics);
+    await checkpointPhysics.buildAmmoPhysics();
+    checkpointPhysics.rigidBody.threeObject = checkpoint;
+    checkpointPhysics.rigidBody.onCollide = async () => {
+      this.physicsWorld.removeRigidBody( checkpointPhysics.rigidyBody );
+      this.physicsWorld.removeCollisionObject( checkpointPhysics.rigidBody );
+      this.levelScore.alterScore(SUM_FOR_CHECKPOINT);
+      console.log("New score: ", this.levelScore.getCurrentScore());
+      this.scene.remove( checkpoint.threeDModel );
+      const lastElemUsed = checkpoints.shift();
+      if (lastElemUsed.end){
+        //TODO: Fin?
+      } else if(checkpoints.length > 0){
+        await this.createCheckpoint([checkpoints[0].position_x, 1, checkpoints[0].position_y], checkpoints);
+      }
+    };
+    checkpointPhysics.attachObserver(checkpoint);
     this.objectsToAnimate.push(checkpoint);
   }
 
@@ -519,10 +539,9 @@ export default class LevelFactory {
       );
     }
     await this.createCheckpoint(
-      [15,1,30],
-      0,
+      [json.checkpoints[0].position_x, 1, json.checkpoints[0].position_y],
       json.checkpoints
-    )
+    );
     return {
       physicsToUpdate: this.physicsToUpdate,
       objectsToAnimate: this.objectsToAnimate
@@ -530,7 +549,5 @@ export default class LevelFactory {
     // json.checkpoints.forEach --> Instancio y guardo en un array
     // onCollide de un checkpoint --> saco ese de la escena y agrego uno nuevo (El que le sigue)
     // Si el checkpoint es el ultimo --> Fin de nivel? Solo si esta marcado con un bool de fin nivel o algo asi
-
-    
   }
 }
