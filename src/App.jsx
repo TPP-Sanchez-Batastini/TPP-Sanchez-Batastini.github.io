@@ -16,7 +16,7 @@ function App() {
 
   useEffect(() => {
     document.title = "Driving Simulator";
-    fetch("./invert.json")
+    fetch("./levels/basics.json")
       .then((response) => response.json())
       .then((data) => {
         setJson(data);
