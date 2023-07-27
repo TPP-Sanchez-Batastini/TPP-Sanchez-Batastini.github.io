@@ -109,7 +109,6 @@ export default class TrafficModel {
     update(){
         this.updateTraffic();
         Object.values(this.currentTraffic).forEach(carObject => {
-            
             carObject.object3D.animate();
         });
         
