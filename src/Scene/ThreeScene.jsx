@@ -103,7 +103,7 @@ export default class ThreeScene extends Component {
   }
 
   async addPlayerCar() {
-    this.carLogic = new Car(this.physicsWorld, [15,1,15]);
+    this.carLogic = new Car(this.physicsWorld, [15,1,15], true);
     await this.carLogic.carPhysics.buildAmmoPhysics();
     let carModel = new CarModel();
     this.carLogic.carPhysics.rigidBody.threeObject = carModel;

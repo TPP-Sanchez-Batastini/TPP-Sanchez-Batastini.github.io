@@ -9,7 +9,6 @@ export default class TrafficModel {
 
     constructor(scene, physicsWorld){
         this.SIZE_OF_TRAFFIC = 1;
-        this.TIME_FOR_UPDATE_MS = 100;
         this.timeSinceLastUpdate = Date.now();
         this.trafficWorker = new Worker("./workers/TrafficWorker.js");
         this.currentTraffic = {};
@@ -34,7 +33,7 @@ export default class TrafficModel {
 
     async generateCar(){
         
-        let carLogic = new Car(this.physicsWorld, [18,2,15]);
+        let carLogic = new Car(this.physicsWorld, [18,2,15], false);
         await carLogic.carPhysics.buildAmmoPhysics(); 
         
         let carModel = new CarModel();
@@ -108,12 +107,9 @@ export default class TrafficModel {
 
 
     update(){
-        if(Date.now() - this.timeSinceLastUpdate > this.TIME_FOR_UPDATE_MS){
-            this.timeSinceLastUpdate = Date.now();
-            this.updateTraffic();
-        }
+        this.updateTraffic();
         Object.values(this.currentTraffic).forEach(carObject => {
-            carObject.engine.update();
+            
             carObject.object3D.animate();
         });
         

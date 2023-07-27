@@ -8,32 +8,34 @@ const MIN_VALUE_CLUTCH_TO_AVOID_SHUTDOWN = 0.25;
 export default class CarEngine{
 
 
-    constructor(){
+    constructor(useAudio){
         this.engineState = new TurnedOffEngine();
         this.currentRPM = 0;
         this.currentXInRPMCurve = 0;
         this.playbackRate = 1.1;
+        this.useAudio = useAudio;
     }
 
 
     turnOn(){
         if(this.engineState instanceof TurnedOffEngine){
-            new Audio('./sounds/encendido.wav').play();
             this.engineState = new TurnedOnEngine();
-            setTimeout(() => {
-                this.soundEngine = new (window.AudioContext || window.webkitAudioContext)();
-                fetch("./sounds/engine.wav").then(
-                    response => response.arrayBuffer()
-                ).then(buffer => this.soundEngine.decodeAudioData(buffer)
-                ).then(buffer => {
-                    this.soundEngineSource = this.soundEngine.createBufferSource();
-                    this.soundEngineSource.buffer = buffer;
-                    this.soundEngineSource.loop = true;
-                    this.soundEngineSource.connect(this.soundEngine.destination);
-                    this.soundEngineSource.start();
-                });
-            }, 1300);
-            
+            if (this.useAudio){
+                new Audio('./sounds/encendido.wav').play();
+                setTimeout(() => {
+                    this.soundEngine = new (window.AudioContext || window.webkitAudioContext)();
+                    fetch("./sounds/engine.wav").then(
+                        response => response.arrayBuffer()
+                    ).then(buffer => this.soundEngine.decodeAudioData(buffer)
+                    ).then(buffer => {
+                        this.soundEngineSource = this.soundEngine.createBufferSource();
+                        this.soundEngineSource.buffer = buffer;
+                        this.soundEngineSource.loop = true;
+                        this.soundEngineSource.connect(this.soundEngine.destination);
+                        this.soundEngineSource.start();
+                    });
+                }, 1300);
+            }            
         }
     }
 

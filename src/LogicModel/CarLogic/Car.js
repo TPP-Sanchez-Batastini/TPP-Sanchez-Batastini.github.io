@@ -9,9 +9,9 @@ import SemiAutomaticBox from './ShiftBoxTypes/SemiAutomaticBox';
 const FACTOR_BRAKE_TO_FORCE = 300;
 export default class Car extends Observable{
 
-    constructor(physicsWorld, initialPosition){
+    constructor(physicsWorld, initialPosition, useAudio = true){
         super();
-        this.carEngine = new CarEngine();
+        this.carEngine = new CarEngine(useAudio);
         this.shiftBox = new SemiAutomaticBox(this.carEngine);
         this.currentDirectionTurn = 0; //in rads
         this.currentTireRotation = 0;
