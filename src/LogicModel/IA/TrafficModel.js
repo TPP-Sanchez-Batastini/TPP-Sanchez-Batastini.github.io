@@ -75,11 +75,6 @@ export default class TrafficModel extends Observer {
     }
 
     updateTraffic(){
-        /*  
-            * Estado observado del auto del jugador (Podemos hacer que implemente observer y hacemos attach del carLogic).
-            * JSON del nivel
-            * El state de cada auto (Posicion, velocidad, RPM, y rotacion)
-        */
         const trafficCars = [];
         Object.entries(this.currentTraffic).forEach(entry => {
             const [carId, value] = entry;
@@ -98,9 +93,6 @@ export default class TrafficModel extends Observer {
             streets: this.levelStreets,
             trafficCars
         });
-            //Puede devolverme ids que se desinstancian
-            //Y otros ids que tengan que acelerar/frenar, hacer un steer del volante particular
-            //Los cambios los manejamos nosotros en base a la velocidad y las RPM ponele... Automatico
     }
 
 
