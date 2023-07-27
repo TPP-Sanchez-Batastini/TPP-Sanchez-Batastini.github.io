@@ -76,8 +76,8 @@ export const SignUpForm = () => {
     if (!validateFields()){
       return;
     }
+    // eslint-disable-next-line
     const res = await postSignUp();
-    console.log(res);
     /*TODO: Mostrar dialog de creado exitoso, y despues mandarlo al login...*/
   }
 

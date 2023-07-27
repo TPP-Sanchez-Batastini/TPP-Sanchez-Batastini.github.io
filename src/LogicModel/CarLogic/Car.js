@@ -6,17 +6,16 @@ import ManualBox from './ShiftBoxTypes/ManualBox';
 import SemiAutomaticBox from './ShiftBoxTypes/SemiAutomaticBox';
 
 
-const POSITION = [0,1,0];
 const FACTOR_BRAKE_TO_FORCE = 300;
 export default class Car extends Observable{
 
-    constructor(physicsWorld){
+    constructor(physicsWorld, initialPosition, useAudio = true){
         super();
-        this.carEngine = new CarEngine();
+        this.carEngine = new CarEngine(useAudio);
         this.shiftBox = new SemiAutomaticBox(this.carEngine);
         this.currentDirectionTurn = 0; //in rads
         this.currentTireRotation = 0;
-        this.position = new Vector3(POSITION[0], POSITION[1], POSITION[2]);
+        this.position = new Vector3(initialPosition[0], initialPosition[1], initialPosition[2]);
         this.rotationQuaternion = new Vector4(0,0,0,1);
         this.mass = 1000;
         this.physicsShape = new Vector3(2,1.3,5);
@@ -24,7 +23,7 @@ export default class Car extends Observable{
         this.inertia = new Vector3(1,0,1);
 
         this.carPhysics = new CarPhysics(this.position, this.rotationQuaternion, this.inertia, this.mass, this.physicsShape, physicsWorld, 0);
-        this.carPhysics.buildAmmoPhysics();
+        // this.carPhysics.buildAmmoPhysics();
         
     }
 
@@ -43,6 +42,10 @@ export default class Car extends Observable{
         this.carEngine.brake(valueClutch, valueBrake,this.shiftBox);
         //Mapping [-1;1] to [0;1]
         this.carPhysics.brake(valueBrake*FACTOR_BRAKE_TO_FORCE);
+    }
+
+    doHorn(){
+        new Audio("./sounds/bocina.wav").play();
     }
 
 
@@ -91,6 +94,7 @@ export default class Car extends Observable{
             "direction": this.currentDirectionTurn, 
             "velocity": this.carPhysics.getVelocity(), 
             "lastRotationWheel": this.currentTireRotation,
+            "dirVector": new Vector3(0,0,1).applyQuaternion(this.rotation),
             "position": this.position,
             "rotation": this.rotation,
             "physicsBody": this.carPhysics,

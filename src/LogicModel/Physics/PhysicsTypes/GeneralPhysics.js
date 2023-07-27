@@ -40,7 +40,6 @@ export default class GeneralPhysics extends Observable{
         let motionState = new Ammo.btDefaultMotionState(transform);
 
         let shape = await this.generateShape();
-        shape.setMargin(0.05);
         shape.calculateLocalInertia(this.mass, this.inertia);
 
         let rigidBodyInfo = new Ammo.btRigidBodyConstructionInfo(this.mass, motionState, shape, this.inertia);

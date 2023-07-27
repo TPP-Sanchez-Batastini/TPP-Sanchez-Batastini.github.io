@@ -9,6 +9,8 @@ export default class ConePhysics extends GeneralPhysics{
 
     async generateShape(){
         let Ammo = await AmmoInstance.getInstance();
-        return new Ammo.btConeShape(new Ammo.btVector3(this.shape.x, this.shape.y, this.shape.z));
+        const shape = new Ammo.btConeShape(new Ammo.btVector3(this.shape.x, this.shape.y, this.shape.z));
+        shape.setMargin(0.05);
+        return shape;
     }
 }

@@ -174,6 +174,7 @@ class XboxController{
         }
 
         if (this.gamepad.buttons[this.buttonR3].pressed && !this.buttonPressed[this.buttonR3]) {
+            this.globalControllerHandler.doHorn();
             this.buttonPressed[this.buttonR3] = true;
         }else if(!this.gamepad.buttons[this.buttonR3].pressed){
             this.buttonPressed[this.buttonR3] = false;

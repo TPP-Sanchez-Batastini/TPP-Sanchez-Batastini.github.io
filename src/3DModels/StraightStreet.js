@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import VisualEntity from "./VisualEntity";
 import Models from './Models';
 
-const SEPARATION_BETWEEN_BUILDINGS = 7;
+const SEPARATION_BETWEEN_BUILDINGS = 7.5;
 
 export default class StraightStreet extends VisualEntity{
     constructor(pathToTexture){
@@ -35,15 +35,8 @@ export default class StraightStreet extends VisualEntity{
         const texture = new THREE.TextureLoader().load("textures/pavimento.jpg");
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
-        texture.repeat.set( 3, 2*scale );
-        let normalTexture = new THREE.TextureLoader().load(
-            this.pathToNormalMap
-        );
-        normalTexture.repeat.set( 3, 2*scale );
-        normalTexture.wrapS = THREE.RepeatWrapping;
-        normalTexture.wrapT = THREE.RepeatWrapping;
-        const materialSidewalk = new THREE.MeshStandardMaterial( {map: texture,  side: THREE.DoubleSide} );
-        materialSidewalk.normalMap = normalTexture;
+        texture.repeat.set( 3, 10*scale );
+        const materialSidewalk = new THREE.MeshPhongMaterial( {map: texture,  side: THREE.DoubleSide} );
         const geometrySidewalk = new THREE.BoxGeometry(7*this.SIZE/24, this.SIDEWALK_HEIGHT, this.SIZE);
         return new THREE.Mesh( geometrySidewalk, materialSidewalk );
     }
@@ -55,15 +48,10 @@ export default class StraightStreet extends VisualEntity{
         texture.repeat.set( 1, 2*scale );
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
-        let normalTexture = new THREE.TextureLoader().load(
-            this.pathToNormalMap
-        );
-        normalTexture.repeat.set( 1, 2*scale );
-        normalTexture.wrapS = THREE.RepeatWrapping;
-        normalTexture.wrapT = THREE.RepeatWrapping;
-        const material = new THREE.MeshStandardMaterial( {map: texture,  side: THREE.DoubleSide} );
-        material.normalMap = normalTexture;
-        return new THREE.Mesh( geometry, material );
+        const material = new THREE.MeshPhongMaterial( {map: texture,  side: THREE.DoubleSide} );
+        const mesh = new THREE.Mesh( geometry, material );
+        mesh.receiveShadow = true;
+        return mesh;
     }
 
     async loadBuildingBlock(id){
@@ -75,9 +63,9 @@ export default class StraightStreet extends VisualEntity{
     async createBuildings(position, iter){
         let model3D = await this.loadBuildingBlock(1+(parseInt(Math.random()*4)));
         model3D.name = "buildingsRight_"+iter;
-        model3D.position.x = position[0]+10*this.SIZE/24;
-        model3D.position.y = position[1]+this.SIDEWALK_HEIGHT+0.05;
-        model3D.position.z = position[2]-this.LONG/2+4+iter*SEPARATION_BETWEEN_BUILDINGS;
+        model3D.position.x = 10*this.SIZE/24;
+        model3D.position.y = this.SIDEWALK_HEIGHT+0.05;
+        model3D.position.z = -this.LONG/2+4+iter*SEPARATION_BETWEEN_BUILDINGS;
         model3D.scale.x = 0.8;
         model3D.scale.y = 1;
         model3D.scale.z = 0.6;
@@ -87,9 +75,9 @@ export default class StraightStreet extends VisualEntity{
         model3D.matrixAutoUpdate = false;
         let secondModel3D = await this.loadBuildingBlock(1+(parseInt(Math.random()*4)));
         secondModel3D.name = "buildingsLeft_"+iter;
-        secondModel3D.position.x = position[0]-10*this.SIZE/24;
-        secondModel3D.position.y = position[1]+this.SIDEWALK_HEIGHT+0.05;
-        secondModel3D.position.z = position[2]-this.LONG/2+4+iter*SEPARATION_BETWEEN_BUILDINGS;
+        secondModel3D.position.x = -10*this.SIZE/24;
+        secondModel3D.position.y = this.SIDEWALK_HEIGHT+0.05;
+        secondModel3D.position.z = -this.LONG/2+4+iter*SEPARATION_BETWEEN_BUILDINGS;
         secondModel3D.scale.x = 0.8;
         secondModel3D.scale.y = 1;
         secondModel3D.scale.z = 0.6;
@@ -100,7 +88,7 @@ export default class StraightStreet extends VisualEntity{
         this.threeDModel.add(model3D, secondModel3D);
     }
 
-    async addToScene(scene, objectName, position, scale){
+    async addToScene(scene, objectName, position, scale, rotationY){
         if(!this.threeDModel){
             const baseStreet = this.createStreetMesh(scale);
             const leftSidewalk = this.createSidewalkMesh(scale);
@@ -115,6 +103,7 @@ export default class StraightStreet extends VisualEntity{
             }
             this.threeDModel.name = objectName;
             this.threeDModel.position.set(position[0], position[1], position[2]);
+            this.threeDModel.rotateOnAxis(new THREE.Vector3(0,1,0), rotationY);
             baseStreet.scale.set(1.0, 1.0, scale);
             leftSidewalk.scale.set(1.0, 1.0, scale);
             rightSidewalk.scale.set(1.0, 1.0, scale);
@@ -127,6 +116,8 @@ export default class StraightStreet extends VisualEntity{
             rightSidewalk.updateMatrix();
             rightSidewalk.updateMatrixWorld();
             rightSidewalk.matrixAutoUpdate = false;
+            this.threeDModel.updateMatrix();
+            this.threeDModel.updateMatrixWorld();
             this.threeDModel.matrixAutoUpdate = false;
             this.LONG = this.SIZE*scale;
             scene.add(this.threeDModel);

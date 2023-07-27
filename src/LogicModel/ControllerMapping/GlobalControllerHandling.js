@@ -15,6 +15,10 @@ export default class GlobalControllerHandling{
         this.car.brake(valueClutch, valueBrake);
     }
 
+    doHorn(){
+        this.car.doHorn();
+    }
+
 
     changeShift(valueClutch, valueShift){
         this.car.changeShift(valueClutch, valueShift);

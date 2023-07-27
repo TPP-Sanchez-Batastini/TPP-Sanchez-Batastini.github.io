@@ -45,7 +45,7 @@ export class StraightStreetLinker{
         //Sort de array por idx creciente... CREEMOS que ya viene sorteado - VERIFICAR.
         for ( let i=0; i<array.length; i++){
             //Primer elemento, o no son lindantes
-            if( i === 0 || (array[i]["idx"] - array[i-1]["idx"] > 1)){
+            if( i === 0 || (Math.abs(array[i]["idx"] - array[i-1]["idx"]) > 1)){
                 finalArray.push([array[i]["street"]]);
             }else{
                 finalArray[finalArray.length - 1].push(array[i]["street"]);
@@ -59,10 +59,9 @@ export class StraightStreetLinker{
         const sectionsJSON = [];
         for(let i = 0; i < this.sections.length; i++){
             //Rotation is the same for all of them
-            console.log(this.sections[i]);
             const jsonForStreet = {
                 "position_x": this.sections[i].reduce((acum, elem) => acum + elem.getPositionX(), 0)/this.sections[i].length,
-                "position_y": this.sections[i].reduce((acum, elem) => acum + elem.getPositionY(), 0)/this.sections[i].length,
+                "position_y": this.sections[i].reduce((acum, elem) => acum + elem.getPositionY(), 0)/this.sections[i].length ,
                 "rotation": this.sections[i][0].rotation,
                 "long_x": this.sections[i][0].isHorizontal() ? this.sections[i].reduce((acum, elem) => acum + elem.getLongX(), 0) : this.sections[i][0].getLongX(),
                 "long_y": !this.sections[i][0].isHorizontal() ? this.sections[i].reduce((acum, elem) => acum + elem.getLongY(), 0) : this.sections[i][0].getLongY(),
