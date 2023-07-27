@@ -94,6 +94,7 @@ export default class Car extends Observable{
             "direction": this.currentDirectionTurn, 
             "velocity": this.carPhysics.getVelocity(), 
             "lastRotationWheel": this.currentTireRotation,
+            "dirVector": new Vector3(0,0,1).applyQuaternion(this.rotation),
             "position": this.position,
             "rotation": this.rotation,
             "physicsBody": this.carPhysics,

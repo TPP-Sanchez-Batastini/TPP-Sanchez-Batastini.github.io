@@ -115,7 +115,8 @@ export default class ThreeScene extends Component {
 
 
   async createTraffic(){
-    this.trafficModel = new TrafficModel(this.scene, this.physicsWorld);
+    this.trafficModel = new TrafficModel(this.scene, this.physicsWorld, this.jsonLevel.streets);
+    this.carLogic.attachObserver(this.trafficModel);
     await this.trafficModel.generateInitialTraffic();
   }
 
@@ -212,7 +213,7 @@ export default class ThreeScene extends Component {
     this.stats.begin();
     let deltaTime = this.clock.getDelta();
     this.physicsWorld.stepSimulation(deltaTime, 10);
-    this.trafficModel.update();
+    this.trafficModel.animate();
     this.objectsToAnimate.forEach(function (object) {
       object.animate();
     });

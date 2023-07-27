@@ -1,19 +1,22 @@
 import CarModel from "../../3DModels/CarModel";
+import Observer from "../../ObserverPattern/Observer";
 import Car from "../CarLogic/Car.js";
 
 const CLUTCH_PRESSED = 0;
 const CLUTCH_NOT_PRESSED = 1;
 
 
-export default class TrafficModel {
+export default class TrafficModel extends Observer {
 
-    constructor(scene, physicsWorld){
-        this.SIZE_OF_TRAFFIC = 1;
+    constructor(scene, physicsWorld, streets){
+        super();
+        this.SIZE_OF_TRAFFIC = 2;
         this.timeSinceLastUpdate = Date.now();
         this.trafficWorker = new Worker("./workers/TrafficWorker.js");
         this.currentTraffic = {};
         this.scene = scene;
         this.physicsWorld = physicsWorld;
+        this.levelStreets = streets;
         this.lastID = 0;
         
         this.trafficWorker.onmessage = (message) => {
@@ -27,13 +30,13 @@ export default class TrafficModel {
 
 
     async onCollideWithCarOfTraffic () {
-        console.log("CHOCASTE AL AUTO RE LOCO");
+        console.log("CHOCASTE AL AUTO");
     }
 
 
     async generateCar(){
         
-        let carLogic = new Car(this.physicsWorld, [18,2,15], false);
+        let carLogic = new Car(this.physicsWorld, [18 ,2,15 + this.lastID * 5], false);
         await carLogic.carPhysics.buildAmmoPhysics(); 
         
         let carModel = new CarModel();
@@ -77,7 +80,24 @@ export default class TrafficModel {
             * JSON del nivel
             * El state de cada auto (Posicion, velocidad, RPM, y rotacion)
         */
-        this.trafficWorker.postMessage(["HELLO"]);
+        const trafficCars = [];
+        Object.entries(this.currentTraffic).forEach(entry => {
+            const [carId, value] = entry;
+            const carData = value.engine.getDataToAnimate();
+            carData.carId = carId;
+            delete carData.physicsBody;
+            delete carData.wheelsData;
+            trafficCars.push(carData);
+        });
+        if (this.observedState){
+            delete this.observedState.physicsBody;
+            delete this.observedState.wheelsData;
+        }
+        this.trafficWorker.postMessage({
+            playersCar: this.observedState,
+            streets: this.levelStreets,
+            trafficCars
+        });
             //Puede devolverme ids que se desinstancian
             //Y otros ids que tengan que acelerar/frenar, hacer un steer del volante particular
             //Los cambios los manejamos nosotros en base a la velocidad y las RPM ponele... Automatico
@@ -106,11 +126,10 @@ export default class TrafficModel {
     }
 
 
-    update(){
+    animate(){
         this.updateTraffic();
         Object.values(this.currentTraffic).forEach(carObject => {
             carObject.object3D.animate();
         });
-        
     }
 }
