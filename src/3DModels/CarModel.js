@@ -100,10 +100,11 @@ export default class CarModel extends VisualEntity{
         this.generateRightMirror();
     }
 
-    async addToScene(scene){
+    async addToScene(scene, name="driverCar", hasMirrors = true){
         const models = await Models.getInstance();
         this.threeDModel = await models.carModel;
-        this.threeDModel.name = "driverCar";
+        this.threeDModel = this.threeDModel.clone();
+        this.threeDModel.name = name;
         this.threeDModel.position.x = POSITION[0];
         this.threeDModel.position.y = POSITION[1];
         this.threeDModel.position.z = POSITION[2];
@@ -111,7 +112,9 @@ export default class CarModel extends VisualEntity{
         this.threeDModel.scale.y = SCALE[1];
         this.threeDModel.scale.z = SCALE[2];
         scene.add(this.threeDModel);
-        this.generateMirrors();
+        if(hasMirrors){
+            this.generateMirrors();
+        }
         return this;
     }
 

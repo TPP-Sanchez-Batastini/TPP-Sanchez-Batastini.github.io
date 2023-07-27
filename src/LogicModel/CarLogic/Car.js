@@ -6,17 +6,16 @@ import ManualBox from './ShiftBoxTypes/ManualBox';
 import SemiAutomaticBox from './ShiftBoxTypes/SemiAutomaticBox';
 
 
-const POSITION = [15,1,15];
 const FACTOR_BRAKE_TO_FORCE = 300;
 export default class Car extends Observable{
 
-    constructor(physicsWorld){
+    constructor(physicsWorld, initialPosition){
         super();
         this.carEngine = new CarEngine();
         this.shiftBox = new SemiAutomaticBox(this.carEngine);
         this.currentDirectionTurn = 0; //in rads
         this.currentTireRotation = 0;
-        this.position = new Vector3(POSITION[0], POSITION[1], POSITION[2]);
+        this.position = new Vector3(initialPosition[0], initialPosition[1], initialPosition[2]);
         this.rotationQuaternion = new Vector4(0,0,0,1);
         this.mass = 1000;
         this.physicsShape = new Vector3(2,1.3,5);

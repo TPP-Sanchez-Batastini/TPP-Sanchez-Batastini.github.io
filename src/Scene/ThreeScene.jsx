@@ -12,6 +12,7 @@ import { Vector3 } from "three";
 import LevelFactory from "../Levels/LevelsFactory";
 import { VRButton } from "../addons/VRbutton";
 import Stats from "stats.js";
+import TrafficModel from "../LogicModel/IA/TrafficModel";
 
 export default class ThreeScene extends Component {
   constructor() {
@@ -52,6 +53,7 @@ export default class ThreeScene extends Component {
     await this.addGeneralLights();
     await this.generateLevel();
     await this.addPlayerCar();
+    await this.createTraffic();
     this.generateEvents();
     this.addVR();
     this.renderer.setAnimationLoop(this.animation);
@@ -101,7 +103,7 @@ export default class ThreeScene extends Component {
   }
 
   async addPlayerCar() {
-    this.carLogic = new Car(this.physicsWorld);
+    this.carLogic = new Car(this.physicsWorld, [15,1,15]);
     await this.carLogic.carPhysics.buildAmmoPhysics();
     let carModel = new CarModel();
     this.carLogic.carPhysics.rigidBody.threeObject = carModel;
@@ -109,6 +111,12 @@ export default class ThreeScene extends Component {
     this.carLogic.attachObserver(this.camera);
     this.objectsToAnimate.push(await carModel.addToScene(this.scene));
     this.carLogic.notifyObservers();
+  }
+
+
+  async createTraffic(){
+    this.trafficModel = new TrafficModel(this.scene, this.physicsWorld);
+    await this.trafficModel.generateInitialTraffic();
   }
 
   generateEvents() {
@@ -204,6 +212,7 @@ export default class ThreeScene extends Component {
     this.stats.begin();
     let deltaTime = this.clock.getDelta();
     this.physicsWorld.stepSimulation(deltaTime, 10);
+    this.trafficModel.update();
     this.objectsToAnimate.forEach(function (object) {
       object.animate();
     });
