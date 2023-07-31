@@ -16,7 +16,7 @@ function App() {
 
   useEffect(() => {
     document.title = "Driving Simulator";
-    fetch("./levels/basics.json")
+    fetch("./levels/estacionamiento.json")
       .then((response) => response.json())
       .then((data) => {
         setJson(data);

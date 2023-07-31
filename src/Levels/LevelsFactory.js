@@ -96,7 +96,7 @@ export default class LevelFactory {
 
   async createCone(position, Ammo, rotationY) {
     let cone = new TrafficCone("textures/coneTexture.jpg");
-    cone = await cone.addToScene(this.scene, "trafficCone", position, [0.5, 0.5, 0.5]);
+    cone = await cone.addToScene(this.scene, "trafficCone", position, [0.5, 1, 0.5]);
     let conePhysics = new CylinderPhysics(
       new THREE.Vector3(position[0], position[1], position[2]), //Position
       new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), rotationY),
