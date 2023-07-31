@@ -14,6 +14,10 @@ import { VRButton } from "../addons/VRbutton";
 import Stats from "stats.js";
 import TrafficModel from "../LogicModel/IA/TrafficModel";
 
+
+const MAXIMUM_DISTANCE_FROM_PLAYER_TO_RENDER = 200;
+const SEGMENT_SIZE = 50;
+
 export default class ThreeScene extends Component {
   constructor() {
     super();
@@ -53,7 +57,9 @@ export default class ThreeScene extends Component {
     await this.addGeneralLights();
     await this.generateLevel();
     await this.addPlayerCar();
-    await this.createTraffic();
+    if(this.jsonLevel["has-traffic"]){
+      await this.createTraffic();
+    }
     this.generateEvents();
     this.addVR();
     this.renderer.setAnimationLoop(this.animation);
@@ -85,6 +91,7 @@ export default class ThreeScene extends Component {
     texture.wrapT = THREE.RepeatWrapping;
     const matField = new THREE.MeshBasicMaterial({ map: texture });
     const meshField = new THREE.Mesh(geomField, matField);
+    meshField.name = "GREEN_FIELD";
     meshField.position.set(0, -1, 0);
     meshField.rotateOnAxis(new THREE.Vector3(1, 0, 0), Math.PI / 2);
     this.scene.add(meshField);
@@ -103,7 +110,12 @@ export default class ThreeScene extends Component {
   }
 
   async addPlayerCar() {
-    this.carLogic = new Car(this.physicsWorld, [15,1,15], true);
+    this.carLogic = new Car(
+      this.physicsWorld, 
+      [this.jsonLevel.initial_position[0],1,this.jsonLevel.initial_position[1]], //Initial Position
+      true, // Use Engine Audio
+      new THREE.Quaternion().setFromAxisAngle( new THREE.Vector3( 0, 1, 0 ), this.jsonLevel.initial_rotation ) // Initial Rotation
+    );
     await this.carLogic.carPhysics.buildAmmoPhysics();
     let carModel = new CarModel();
     this.carLogic.carPhysics.rigidBody.threeObject = carModel;
@@ -209,11 +221,69 @@ export default class ThreeScene extends Component {
     this.renderer.render(this.scene, this.camera.getCameraInstance());
   }
 
+  vecDistance(vectorA, vectorB){
+    return vectorA.distanceTo(vectorB);
+  }
+
+  getMaxSizeStreets(){
+    let maxX = 0, maxZ = 0;
+    for (let i=0; i< this.jsonLevel.streets.length; i++){
+      const street = this.jsonLevel.streets[i];
+      if ( maxX < street.position_x + street.long_x/2 ) {
+        maxX = street.position_x + street.long_x/2;
+      }
+      if ( maxZ < street.position_y + street.long_y/2 ) {
+        maxZ = street.position_y + street.long_y/2;
+      }
+    }
+    return [maxX, maxZ];
+  }
+
+  
+  generateSegmentedScenesChildren(){
+    const [maxX, maxZ] = this.getMaxSizeStreets();
+    this.segmentedScenes = [];
+    for (let i=0; i< parseInt(maxX/SEGMENT_SIZE) + 1; i++){
+      this.segmentedScenes.push([]);
+      for (let j=0; j<parseInt(maxZ/SEGMENT_SIZE) + 1; j++){
+        const segmentPosition = new THREE.Vector3(
+          i*SEGMENT_SIZE,
+          0,
+          j*SEGMENT_SIZE
+        );
+        this.segmentedScenes[i].push(this.scene.children.filter(
+          object => object.isLight || 
+                      object.name === "GREEN_FIELD" || 
+                      object.name.includes("traffic_car") ||
+                      object.name === "driverCar" ||
+                      this.vecDistance(object.position, segmentPosition) <= MAXIMUM_DISTANCE_FROM_PLAYER_TO_RENDER
+        ));
+      }
+    }
+    
+  }
+
+
+  getReducedScene() {
+    const cloneScene = new THREE.Scene();
+    if(this.segmentedScenes.length === 0){
+      this.generateSegmentedScenesChildren();
+    }
+    cloneScene.children = this.segmentedScenes
+    [
+      parseInt(this.lastPlayerPos.x/SEGMENT_SIZE)
+    ]
+    [
+      parseInt(this.lastPlayerPos.z/SEGMENT_SIZE)
+    ]
+    return cloneScene;
+  }
+
   animation() {
     this.stats.begin();
     let deltaTime = this.clock.getDelta();
     this.physicsWorld.stepSimulation(deltaTime, 10);
-    this.trafficModel.animate();
+    this.jsonLevel["has-traffic"] && this.trafficModel.animate();
     this.objectsToAnimate.forEach(function (object) {
       object.animate();
     });
@@ -227,6 +297,9 @@ export default class ThreeScene extends Component {
       currentRPM: this.carLogic.getCurrentRPM(),
       currentShift: this.carLogic.getCurrentShift(),
     });
+    // this.lastPlayerPos = this.carLogic.getDataToAnimate()["position"];
+    // this.lastRenderScene = this.getReducedScene();
+    // this.renderer.render(this.lastRenderScene, this.camera.getCameraInstance());
     this.renderer.render(this.scene, this.camera.getCameraInstance());
     this.stats.end();
   }

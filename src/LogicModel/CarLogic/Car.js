@@ -1,4 +1,4 @@
-import { Vector3, Vector4 } from 'three';
+import { Vector3, Vector4, Quaternion } from 'three';
 import Observable from '../../ObserverPattern/Observable';
 import CarPhysics from '../Physics/PhysicsTypes/CarPhysics';
 import CarEngine from './CarEngine';
@@ -9,22 +9,19 @@ import SemiAutomaticBox from './ShiftBoxTypes/SemiAutomaticBox';
 const FACTOR_BRAKE_TO_FORCE = 300;
 export default class Car extends Observable{
 
-    constructor(physicsWorld, initialPosition, useAudio = true){
+    constructor(physicsWorld, initialPosition, useAudio = true, initialRotation = new Quaternion().identity()){
         super();
         this.carEngine = new CarEngine(useAudio);
         this.shiftBox = new SemiAutomaticBox(this.carEngine);
         this.currentDirectionTurn = 0; //in rads
         this.currentTireRotation = 0;
         this.position = new Vector3(initialPosition[0], initialPosition[1], initialPosition[2]);
-        this.rotationQuaternion = new Vector4(0,0,0,1);
+        this.rotationQuaternion = initialRotation;
         this.mass = 1000;
         this.physicsShape = new Vector3(2,1.3,5);
         this.rotation = new Vector4(0,0,0,1);
         this.inertia = new Vector3(1,0,1);
-
         this.carPhysics = new CarPhysics(this.position, this.rotationQuaternion, this.inertia, this.mass, this.physicsShape, physicsWorld, 0);
-        // this.carPhysics.buildAmmoPhysics();
-        
     }
 
 

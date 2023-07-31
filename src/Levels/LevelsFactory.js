@@ -538,10 +538,12 @@ export default class LevelFactory {
         obj.type
       );
     }
-    await this.createCheckpoint(
-      [json.checkpoints[0].position_x, 1, json.checkpoints[0].position_y],
-      json.checkpoints
-    );
+    if (json.checkpoints.length > 0){
+      await this.createCheckpoint(
+        [json.checkpoints[0].position_x, 1, json.checkpoints[0].position_y],
+        json.checkpoints
+      );
+    }
     return {
       physicsToUpdate: this.physicsToUpdate,
       objectsToAnimate: this.objectsToAnimate
