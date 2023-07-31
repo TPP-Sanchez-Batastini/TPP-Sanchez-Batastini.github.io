@@ -100,6 +100,38 @@ export default class CarModel extends VisualEntity{
         this.generateRightMirror();
     }
 
+    generateSpotlights(){
+        this.rightSpotlight = new THREE.SpotLight(0xffffff);
+        this.leftSpotlight = new THREE.SpotLight(0xffffff);
+        this.targetRight = new Object3D();
+        this.targetLeft = new Object3D();
+        this.targetRight.position.set(-0.8, 0.05, 3.0);
+        this.targetLeft.position.set(0.8, 0.05, 3.0);
+        this.rightSpotlight.position.set(-0.8, 0.3, 2.6);
+        this.leftSpotlight.position.set(0.8, 0.3, 2.6);
+        this.rightSpotlight.target = this.targetRight;
+        this.leftSpotlight.target = this.targetLeft;
+        this.leftSpotlight.castShadow = true;
+        this.rightSpotlight.castShadow = true;
+        this.rightSpotlight.shadow.mapSize.width = 1024;
+        this.leftSpotlight.shadow.mapSize.height = 1024;
+        this.rightSpotlight.shadow.camera.near = 0.1;
+        this.leftSpotlight.shadow.camera.near = 0.1;
+        this.rightSpotlight.shadow.camera.far = 2;
+        this.leftSpotlight.shadow.camera.far = 2;
+        this.rightSpotlight.shadow.camera.fov = 10;
+        this.leftSpotlight.shadow.camera.fov = 10;
+        this.rightSpotlight.intensity = 0.5;
+        this.leftSpotlight.intensity = 0.5;
+        this.rightSpotlight.angle = Math.PI/5;
+        this.leftSpotlight.angle = Math.PI/5;
+        this.threeDModel.add(this.leftSpotlight);
+        this.threeDModel.add(this.rightSpotlight);
+        this.threeDModel.add(this.targetLeft);
+        this.threeDModel.add(this.targetRight);
+    }
+
+
     async addToScene(scene, name="driverCar", hasMirrors = true){
         const models = await Models.getInstance();
         this.threeDModel = await models.carModel;
@@ -115,6 +147,7 @@ export default class CarModel extends VisualEntity{
         if(hasMirrors){
             this.generateMirrors();
         }
+        this.generateSpotlights();
         return this;
     }
 
