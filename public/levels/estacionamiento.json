@@ -92,5 +92,7 @@
   "minimum-to-win": 4900,
   "initial_position":[15,15],
   "initial_rotation": 0,
-  "description": "¡En este nivel podrás practicar tu estacionamiento en paralelo!"
+  "description": "¡En este nivel podrás practicar tu estacionamiento en paralelo!",
+  "title": "Estacionamiento en Paralelo",
+  "image": "estacionamiento.jpeg"
 }

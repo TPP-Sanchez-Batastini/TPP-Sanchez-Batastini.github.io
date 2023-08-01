@@ -132,5 +132,7 @@
   "has-traffic": false,
   "initial_position":[15,15],
   "initial_rotation": 0,
-  "description": "¡En este nivel podrás practicar la marcha básica haciendo ZigZag y doblando!"
+  "description": "¡En este nivel podrás practicar la marcha básica haciendo ZigZag y doblando!",
+  "title": "Principios Básicos",
+  "image": "basics.jpeg"
 }

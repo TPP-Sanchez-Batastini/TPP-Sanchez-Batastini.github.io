@@ -131,5 +131,7 @@
   "has-traffic": false,
   "initial_position":[75,15],
   "initial_rotation": 3.14159,
-  "description": "¡En este nivel podrás practicar tu reversa haciendo ZigZag con conos!"
+  "description": "¡En este nivel podrás practicar tu reversa haciendo ZigZag con conos!",
+  "title": "Reversa",
+  "image": "reversa.jpeg"
 }

@@ -10,6 +10,7 @@ import {
 import { LoginForm } from "./Menus/Components/LoginForm";
 import { SignUpForm } from "./Menus/Components/SignUpForm";
 import { SessionProvider } from "./Menus/Sessions/SessionProvider";
+import { LevelsList } from "./Menus/LevelsList";
 
 function App() {
   const [json, setJson] = useState(null);
@@ -28,6 +29,7 @@ function App() {
       childElement={
         <Router>
           <Switch>
+            <Route exact path="/levels" element={<LevelsList/>} />
             <Route exact path="/scene" element={json && <ThreeScene jsonLevel={json} />} />
             <Route exact path="/" element={<MainMenu />} />
             <Route exact path="/level-editor" element={<LevelEditor />} />
