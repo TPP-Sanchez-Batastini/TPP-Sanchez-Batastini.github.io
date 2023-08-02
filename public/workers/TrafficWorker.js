@@ -7,6 +7,12 @@ const PRESS_ACCEL = 1;
 const NOT_PRESS = 0;
 const PRESS_BRAKE = 0.5;
 const MINIMA_DISTANCIA_ENTRE_AUTOS = 10;
+const UMBRAL_INICIO_TIPO_CALLE = 0.2;
+const STREET_SIZE = 30;
+const RIGHT = 0.48;
+const LEFT = -0.351;
+const STEER_RIGHT = 0.3;
+const STEER_LEFT = -0.3;
 
 const productoVectorial = (vectorA,vectorB) => {
     
@@ -42,7 +48,7 @@ const distanciaVectorial = (vectorA, vectorB) => {
 
 const filterCars = (car, trafficCars) => {
     const nearCars = trafficCars.filter(elem => (
-        car.carId !== elem.carId &&
+        (!(elem.hasOwnProperty("carId")) ||  car.carId !== elem.carId) &&
         distanciaVectorial(elem.position, car.position) <= 15)
     );
     const possibleColissions = nearCars.filter(elem => (
@@ -62,8 +68,73 @@ const filterCars = (car, trafficCars) => {
     };
 }
 
-const getStreetSteering = (car, streets) => {
+
+const defineSideOfCurve = (carPosition, carDirection, street) => {
+    return LEFT;
+}
+
+const round = (floatVal) => {
+    const roundVal = Math.abs(floatVal) >= 0.5 ? Math.sign(floatVal) : 0;
+    return roundVal;
+}
+
+
+const rectifyStraightDirection = (carDirection) => {
+    const idealDirection = [round(carDirection.x), round(carDirection.y), round(carDirection.z)];
+    if (Math.abs(idealDirection[0]) === 1){
+        if(idealDirection[0] * idealDirection[2] < 0){
+            return STEER_RIGHT;
+        }else if (idealDirection[0] * idealDirection[2] > 0){
+            return STEER_LEFT;
+        }
+        return 0;
+    }else if (Math.abs(idealDirection[2]) === 1){
+        if(idealDirection[2] * idealDirection[0] < 0){
+            return STEER_LEFT;
+        }else if (idealDirection[2] * idealDirection[0] > 0){
+            return STEER_RIGHT;
+        }
+        return 0;
+    }
     return 0;
+}
+
+
+const getStreetSteering = (car, streets) => {
+    let street = null;
+    for ( let i=0; i < streets.length; i++){
+        if (
+            car.position.x < (streets[i].position_x + (streets[i].long_y/2)) && car.position.x >= (streets[i].position_x - (streets[i].long_y/2)) &&
+            car.position.z < (streets[i].position_y + (streets[i].long_x/2)) && car.position.z >= (streets[i].position_y - (streets[i].long_x/2))
+        ){
+            street = streets[i];
+            break;
+        }
+    }
+    if (street.type === "STRAIGHT"){
+        return rectifyStraightDirection(car.dirVector);
+    }
+    const pos_z = car.position.z  % STREET_SIZE; 
+    const pos_x = car.position.x  % STREET_SIZE; 
+
+    if(pos_z < UMBRAL_INICIO_TIPO_CALLE || pos_x < UMBRAL_INICIO_TIPO_CALLE){
+        const shouldTurn = Math.random() < 0.5;
+        if (street.type !== "CURVE" && !shouldTurn){
+            return 0;
+        }
+        let sideOfCurve = null;
+        if (street.type === "INTERSECTION"){
+            //Giro al azar
+            sideOfCurve = Math.random() < 0.5 ? RIGHT : LEFT;
+        }else{
+            //Giro para el unico lado posible (Calle T o calle Curva).
+            sideOfCurve = defineSideOfCurve(car.position, car.dirVector, street);
+        }
+        return sideOfCurve;
+    }
+    //Mantiene la rotacion hasta el final de la calle...
+    return car.lastRotationWheel;
+
 }
 
 const getAccelerationBasedOnFrontCars = (car, frontCars) => {
@@ -95,6 +166,11 @@ const getAccelerationBasedOnFrontCars = (car, frontCars) => {
                 brake: PRESS_BRAKE
             };
         }
+    }else{
+        return {
+            accelerate: NOT_PRESS, 
+            brake: PRESS_BRAKE
+        };
     }
 }
 
@@ -105,8 +181,11 @@ onmessage = (message) => {
     //   Si es T o Interseccion -> Random de si giro o sigo derecho, y para que lado giro en caso de interseccion
     const { playersCar, trafficCars, streets } = message.data;
     const returnMessage = {};
+    const compareCars = [...trafficCars];
+    if (playersCar)
+        compareCars.push(playersCar);
     trafficCars.forEach(car => {
-        const {possibleColissions, frontCars} = filterCars(car, trafficCars);
+        const {possibleColissions, frontCars} = filterCars(car, compareCars);
         const steering = getStreetSteering(car, streets);
         if(possibleColissions.length > 0){
             //Freno por posibilidad de colision

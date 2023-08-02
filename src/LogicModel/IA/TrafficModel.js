@@ -36,7 +36,7 @@ export default class TrafficModel extends Observer {
 
     async generateCar(){
         
-        let carLogic = new Car(this.physicsWorld, [18 ,2,15 + this.lastID * 5], false);
+        let carLogic = new Car(this.physicsWorld, [12 ,2,15 + this.lastID * 5], false);//12
         await carLogic.carPhysics.buildAmmoPhysics(); 
         
         let carModel = new CarModel();

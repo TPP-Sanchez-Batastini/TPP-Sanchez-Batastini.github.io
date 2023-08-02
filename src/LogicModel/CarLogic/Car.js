@@ -6,7 +6,7 @@ import ManualBox from './ShiftBoxTypes/ManualBox';
 import SemiAutomaticBox from './ShiftBoxTypes/SemiAutomaticBox';
 
 
-const FACTOR_BRAKE_TO_FORCE = 300;
+const FACTOR_BRAKE_TO_FORCE = 180;
 export default class Car extends Observable{
 
     constructor(physicsWorld, initialPosition, useAudio = true, initialRotation = new Quaternion().identity()){
