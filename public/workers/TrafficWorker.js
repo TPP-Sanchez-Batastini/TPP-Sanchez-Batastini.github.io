@@ -11,8 +11,8 @@ const UMBRAL_INICIO_TIPO_CALLE = 0.2;
 const STREET_SIZE = 30;
 const RIGHT = 0.48;
 const LEFT = -0.351;
-const STEER_RIGHT = 0.3;
-const STEER_LEFT = -0.3;
+const STEER_RIGHT = 0.05;
+const STEER_LEFT = -0.05;
 
 const productoVectorial = (vectorA,vectorB) => {
     
@@ -82,16 +82,16 @@ const round = (floatVal) => {
 const rectifyStraightDirection = (carDirection) => {
     const idealDirection = [round(carDirection.x), round(carDirection.y), round(carDirection.z)];
     if (Math.abs(idealDirection[0]) === 1){
-        if(idealDirection[0] * idealDirection[2] < 0){
+        if(idealDirection[0] * (carDirection.z-idealDirection[2]) < 0){
             return STEER_RIGHT;
-        }else if (idealDirection[0] * idealDirection[2] > 0){
+        }else if (idealDirection[0] * (carDirection.z - idealDirection[2]) > 0){
             return STEER_LEFT;
         }
         return 0;
     }else if (Math.abs(idealDirection[2]) === 1){
-        if(idealDirection[2] * idealDirection[0] < 0){
+        if(idealDirection[2] * (carDirection.x-idealDirection[0]) < 0){
             return STEER_LEFT;
-        }else if (idealDirection[2] * idealDirection[0] > 0){
+        }else if (idealDirection[2] * (carDirection.x - idealDirection[0]) > 0){
             return STEER_RIGHT;
         }
         return 0;
@@ -112,6 +112,7 @@ const getStreetSteering = (car, streets) => {
         }
     }
     if (street.type === "STRAIGHT"){
+        console.log("RECTIFIER: ",rectifyStraightDirection(car.dirVector))
         return rectifyStraightDirection(car.dirVector);
     }
     const pos_z = car.position.z  % STREET_SIZE; 
