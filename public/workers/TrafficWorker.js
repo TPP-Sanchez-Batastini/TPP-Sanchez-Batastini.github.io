@@ -11,8 +11,11 @@ const UMBRAL_INICIO_TIPO_CALLE = 0.2;
 const STREET_SIZE = 30;
 const RIGHT = 0.48;
 const LEFT = -0.351;
-const STEER_RIGHT = 0.05;
-const STEER_LEFT = -0.05;
+const STEER_RIGHT = 0.03;
+const STEER_LEFT = -0.03;
+const UMBRAL_ACOMODAR_CARRIL = 0.2;
+const CARRIL_OFFSET = 2.5;
+const DISTANCIA_CENTRO_FRENTE_AUTO = 2.5;
 
 const productoVectorial = (vectorA,vectorB) => {
     
@@ -79,23 +82,26 @@ const round = (floatVal) => {
 }
 
 
-const rectifyStraightDirection = (carDirection) => {
+const rectifyStraightDirection = (carDirection, carPos, streetPos) => {
     const idealDirection = [round(carDirection.x), round(carDirection.y), round(carDirection.z)];
+    //Posicion con Offset para tomar la trompa del auto y no el centro como tal (Permite ajustar mejor la dirección).
+    const frontCarPos = {
+        x: carPos.x + carDirection.x * DISTANCIA_CENTRO_FRENTE_AUTO,
+        y: carPos.y,
+        z: carPos.z + carDirection.z * DISTANCIA_CENTRO_FRENTE_AUTO
+    };
     if (Math.abs(idealDirection[0]) === 1){
-        if(idealDirection[0] * (carDirection.z-idealDirection[2]) < 0){
-            return STEER_RIGHT;
-        }else if (idealDirection[0] * (carDirection.z - idealDirection[2]) > 0){
-            return STEER_LEFT;
-        }
-        return 0;
+        //Va transitando en eje Z, acomoda el eje X y se posiciona al centro del carril
+        const sideMoveWithSign = CARRIL_OFFSET * idealDirection[0];
+        const sign = ((streetPos.z + sideMoveWithSign) - frontCarPos.z) * idealDirection[0];
+        return sign * ((((streetPos.z + sideMoveWithSign) - frontCarPos.z) * idealDirection[0] / CARRIL_OFFSET)**2);
     }else if (Math.abs(idealDirection[2]) === 1){
-        if(idealDirection[2] * (carDirection.x-idealDirection[0]) < 0){
-            return STEER_LEFT;
-        }else if (idealDirection[2] * (carDirection.x - idealDirection[0]) > 0){
-            return STEER_RIGHT;
-        }
-        return 0;
+        //Va transitando en eje X, acomoda el eje Z y se posiciona al centro del carril
+        const sideMoveWithSign = CARRIL_OFFSET * idealDirection[2];
+        const sign = Math.sign((frontCarPos.x - (streetPos.x - sideMoveWithSign))* idealDirection[2])
+        return sign * (((frontCarPos.x - (streetPos.x - sideMoveWithSign)) * idealDirection[2] / CARRIL_OFFSET)**2);
     }
+    //Si está perfectamente alineado, no debe rotar.
     return 0;
 }
 
@@ -112,8 +118,8 @@ const getStreetSteering = (car, streets) => {
         }
     }
     if (street.type === "STRAIGHT"){
-        console.log("RECTIFIER: ",rectifyStraightDirection(car.dirVector))
-        return rectifyStraightDirection(car.dirVector);
+        const streetPos = {x:street.position_x, y:0, z:street.position_y};
+        return rectifyStraightDirection(car.dirVector, car.position, streetPos);
     }
     const pos_z = car.position.z  % STREET_SIZE; 
     const pos_x = car.position.x  % STREET_SIZE; 
