@@ -7,7 +7,7 @@ const PRESS_ACCEL = 1;
 const NOT_PRESS = 0;
 const PRESS_BRAKE = 0.5;
 const MINIMA_DISTANCIA_ENTRE_AUTOS = 10;
-const UMBRAL_INICIO_TIPO_CALLE = 0.2;
+const UMBRAL_INICIO_TIPO_CALLE = 0.3;
 const STREET_SIZE = 30;
 const RIGHT = 0.48;
 const LEFT = -0.351;
@@ -124,7 +124,11 @@ const getStreetSteering = (car, streets) => {
     const pos_z = car.position.z  % STREET_SIZE; 
     const pos_x = car.position.x  % STREET_SIZE; 
 
-    if(pos_z < UMBRAL_INICIO_TIPO_CALLE || pos_x < UMBRAL_INICIO_TIPO_CALLE){
+    if(
+        pos_z <= UMBRAL_INICIO_TIPO_CALLE || pos_x <= UMBRAL_INICIO_TIPO_CALLE ||
+        pos_z >= STREET_SIZE - UMBRAL_INICIO_TIPO_CALLE || pos_x >= STREET_SIZE - UMBRAL_INICIO_TIPO_CALLE
+
+    ){
         const shouldTurn = Math.random() < 0.5;
         if (street.type !== "CURVE" && !shouldTurn){
             return 0;
