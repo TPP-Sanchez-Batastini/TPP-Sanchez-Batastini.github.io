@@ -7,6 +7,15 @@ const PRESS_ACCEL = 1;
 const NOT_PRESS = 0;
 const PRESS_BRAKE = 0.5;
 const MINIMA_DISTANCIA_ENTRE_AUTOS = 10;
+const UMBRAL_INICIO_TIPO_CALLE = 0.3;
+const STREET_SIZE = 30;
+const RIGHT = 0.48;
+const LEFT = -0.351;
+const STEER_RIGHT = 0.03;
+const STEER_LEFT = -0.03;
+const UMBRAL_ACOMODAR_CARRIL = 0.2;
+const CARRIL_OFFSET = 2.5;
+const DISTANCIA_CENTRO_FRENTE_AUTO = 2.5;
 
 const productoVectorial = (vectorA,vectorB) => {
     
@@ -42,7 +51,7 @@ const distanciaVectorial = (vectorA, vectorB) => {
 
 const filterCars = (car, trafficCars) => {
     const nearCars = trafficCars.filter(elem => (
-        car.carId !== elem.carId &&
+        (!(elem.hasOwnProperty("carId")) ||  car.carId !== elem.carId) &&
         distanciaVectorial(elem.position, car.position) <= 15)
     );
     const possibleColissions = nearCars.filter(elem => (
@@ -62,8 +71,81 @@ const filterCars = (car, trafficCars) => {
     };
 }
 
-const getStreetSteering = (car, streets) => {
+
+const defineSideOfCurve = (carPosition, carDirection, street) => {
+    return LEFT;
+}
+
+const round = (floatVal) => {
+    const roundVal = Math.abs(floatVal) >= 0.5 ? Math.sign(floatVal) : 0;
+    return roundVal;
+}
+
+
+const rectifyStraightDirection = (carDirection, carPos, streetPos) => {
+    const idealDirection = [round(carDirection.x), round(carDirection.y), round(carDirection.z)];
+    //Posicion con Offset para tomar la trompa del auto y no el centro como tal (Permite ajustar mejor la dirección).
+    const frontCarPos = {
+        x: carPos.x + carDirection.x * DISTANCIA_CENTRO_FRENTE_AUTO,
+        y: carPos.y,
+        z: carPos.z + carDirection.z * DISTANCIA_CENTRO_FRENTE_AUTO
+    };
+    if (Math.abs(idealDirection[0]) === 1){
+        //Va transitando en eje Z, acomoda el eje X y se posiciona al centro del carril
+        const sideMoveWithSign = CARRIL_OFFSET * idealDirection[0];
+        const sign = ((streetPos.z + sideMoveWithSign) - frontCarPos.z) * idealDirection[0];
+        return sign * ((((streetPos.z + sideMoveWithSign) - frontCarPos.z) * idealDirection[0] / CARRIL_OFFSET)**2);
+    }else if (Math.abs(idealDirection[2]) === 1){
+        //Va transitando en eje X, acomoda el eje Z y se posiciona al centro del carril
+        const sideMoveWithSign = CARRIL_OFFSET * idealDirection[2];
+        const sign = Math.sign((frontCarPos.x - (streetPos.x - sideMoveWithSign))* idealDirection[2])
+        return sign * (((frontCarPos.x - (streetPos.x - sideMoveWithSign)) * idealDirection[2] / CARRIL_OFFSET)**2);
+    }
+    //Si está perfectamente alineado, no debe rotar.
     return 0;
+}
+
+
+const getStreetSteering = (car, streets) => {
+    let street = null;
+    for ( let i=0; i < streets.length; i++){
+        if (
+            car.position.x < (streets[i].position_x + (streets[i].long_y/2)) && car.position.x >= (streets[i].position_x - (streets[i].long_y/2)) &&
+            car.position.z < (streets[i].position_y + (streets[i].long_x/2)) && car.position.z >= (streets[i].position_y - (streets[i].long_x/2))
+        ){
+            street = streets[i];
+            break;
+        }
+    }
+    if (street.type === "STRAIGHT"){
+        const streetPos = {x:street.position_x, y:0, z:street.position_y};
+        return rectifyStraightDirection(car.dirVector, car.position, streetPos);
+    }
+    const pos_z = car.position.z  % STREET_SIZE; 
+    const pos_x = car.position.x  % STREET_SIZE; 
+
+    if(
+        pos_z <= UMBRAL_INICIO_TIPO_CALLE || pos_x <= UMBRAL_INICIO_TIPO_CALLE ||
+        pos_z >= STREET_SIZE - UMBRAL_INICIO_TIPO_CALLE || pos_x >= STREET_SIZE - UMBRAL_INICIO_TIPO_CALLE
+
+    ){
+        const shouldTurn = Math.random() < 0.5;
+        if (street.type !== "CURVE" && !shouldTurn){
+            return 0;
+        }
+        let sideOfCurve = null;
+        if (street.type === "INTERSECTION"){
+            //Giro al azar
+            sideOfCurve = Math.random() < 0.5 ? RIGHT : LEFT;
+        }else{
+            //Giro para el unico lado posible (Calle T o calle Curva).
+            sideOfCurve = defineSideOfCurve(car.position, car.dirVector, street);
+        }
+        return sideOfCurve;
+    }
+    //Mantiene la rotacion hasta el final de la calle...
+    return car.lastRotationWheel;
+
 }
 
 const getAccelerationBasedOnFrontCars = (car, frontCars) => {
@@ -95,6 +177,11 @@ const getAccelerationBasedOnFrontCars = (car, frontCars) => {
                 brake: PRESS_BRAKE
             };
         }
+    }else{
+        return {
+            accelerate: NOT_PRESS, 
+            brake: PRESS_BRAKE
+        };
     }
 }
 
@@ -105,8 +192,11 @@ onmessage = (message) => {
     //   Si es T o Interseccion -> Random de si giro o sigo derecho, y para que lado giro en caso de interseccion
     const { playersCar, trafficCars, streets } = message.data;
     const returnMessage = {};
+    const compareCars = [...trafficCars];
+    if (playersCar)
+        compareCars.push(playersCar);
     trafficCars.forEach(car => {
-        const {possibleColissions, frontCars} = filterCars(car, trafficCars);
+        const {possibleColissions, frontCars} = filterCars(car, compareCars);
         const steering = getStreetSteering(car, streets);
         if(possibleColissions.length > 0){
             //Freno por posibilidad de colision

@@ -1,0 +1,102 @@
+{
+  "streets": [
+    {
+      "position_x": 75,
+      "position_y": 15,
+      "rotation": 1.5707963267948966,
+      "long_x": 30,
+      "long_y": 30,
+      "type": "CURVE"
+    },
+    {
+      "position_x": 75,
+      "position_y": 105,
+      "rotation": 0,
+      "long_x": 30,
+      "long_y": 30,
+      "type": "CURVE"
+    },
+    {
+      "position_x": 15,
+      "position_y": 15,
+      "rotation": 3.141592653589793,
+      "long_x": 30,
+      "long_y": 30,
+      "type": "CURVE"
+    },
+    {
+      "position_x": 15,
+      "position_y": 105,
+      "rotation": 4.71238898038469,
+      "long_x": 30,
+      "long_y": 30,
+      "type": "CURVE"
+    },
+    {
+      "position_x": 15,
+      "position_y": 60,
+      "rotation": 0,
+      "long_x": 60,
+      "long_y": 30,
+      "type": "STRAIGHT"
+    },
+    {
+      "position_x": 75,
+      "position_y": 60,
+      "rotation": 0,
+      "long_x": 60,
+      "long_y": 30,
+      "type": "STRAIGHT"
+    },
+    {
+      "position_x": 45,
+      "position_y": 15,
+      "rotation": 1.5707963267948966,
+      "long_x": 30,
+      "long_y": 30,
+      "type": "STRAIGHT"
+    },
+    {
+      "position_x": 45,
+      "position_y": 105,
+      "rotation": 1.5707963267948966,
+      "long_x": 30,
+      "long_y": 30,
+      "type": "STRAIGHT"
+    }
+  ],
+  "objects":[
+    {"position_x":18.5,"position_y":45, "rotation":0, "type":"CONE"},
+    {"position_x":17.5,"position_y":45, "rotation":0, "type":"CONE"},
+    {"position_x":16.5,"position_y":45, "rotation":0, "type":"CONE"},
+    {"position_x":15.5,"position_y":45, "rotation":0, "type":"CONE"},
+    {"position_x":14.5,"position_y":45, "rotation":0, "type":"CONE"},
+    {"position_x":13.5,"position_y":45, "rotation":0, "type":"CONE"},
+    {"position_x":12.5,"position_y":45, "rotation":0, "type":"CONE"},
+    {"position_x":11.5,"position_y":45, "rotation":0, "type":"CONE"},
+    {"position_x":14,"position_y":38, "rotation":0, "type":"CONE"},
+    {"position_x":15,"position_y":38, "rotation":0, "type":"CONE"},
+    {"position_x":16,"position_y":38, "rotation":0, "type":"CONE"}
+  ],
+  "checkpoints":[
+    {"position_x":11.5, "position_y":40, "end":false},
+    {"position_x":13, "position_y":41, "end":false},
+    {"position_x":14.5, "position_y":42, "end":false},
+    {"position_x":16, "position_y":43, "end":false},
+    {"position_x":17, "position_y":42, "end":false},
+    {"position_x":18, "position_y":41, "end":false},
+    {"position_x":19, "position_y":40, "end":false},
+    {"position_x":13.5, "position_y":41, "end":false},
+    {"position_x":11, "position_y":42, "end":false},
+    {"position_x":17.5, "position_y":38, "end":false},
+    {"position_x":17.5, "position_y":36, "end":false},
+    {"position_x":17.5, "position_y":34, "end":true}
+  ],
+  "has-traffic": false,
+  "minimum-to-win":11700,
+  "initial_position":[15,15],
+  "initial_rotation": 0,
+  "description": "¡En este nivel podrás practicar la mecánica de giro en U!",
+  "title": "Giro en U",
+  "image": "giro_en_u.jpeg"
+}
