@@ -54,17 +54,24 @@ const filterCars = (car, trafficCars) => {
         (!(elem.hasOwnProperty("carId")) ||  car.carId !== elem.carId) &&
         distanciaVectorial(elem.position, car.position) <= 15)
     );
-    const possibleColissions = nearCars.filter(elem => (
-        Math.abs(productoEscalar(elem.dirVector, car.dirVector)) <= UMBRAL_DETECCION_POSIBLE_COLISION
-    ));
-    const frontCars = nearCars.filter(elem => (
-        (
-            car.dirVector.x * (elem.position.x - car.position.x) > INCERTEZA_DIRECCION || 
-                car.dirVector.z * (elem.position.z - car.position.z) > INCERTEZA_DIRECCION
-        ) &&
-        Math.abs(productoEscalar(elem.dirVector, car.dirVector)) <= MISMA_DIRECCION + UMBRAL_ESTA_DELANTE &&
-        Math.abs(productoEscalar(elem.dirVector, car.dirVector)) >= MISMA_DIRECCION - UMBRAL_ESTA_DELANTE
-    ));
+    const possibleColissions = nearCars.filter(elem => {
+        const arcCos = productoEscalar(elem.dirVector, car.dirVector);
+        return (
+            arcCos <= UMBRAL_DETECCION_POSIBLE_COLISION &&
+                arcCos >= 0
+        );
+    });
+    const frontCars = nearCars.filter(elem => {
+        const arcCos = productoEscalar(elem.dirVector, car.dirVector);
+        return(
+            (
+                car.dirVector.x * (elem.position.x - car.position.x) > INCERTEZA_DIRECCION || 
+                    car.dirVector.z * (elem.position.z - car.position.z) > INCERTEZA_DIRECCION
+            ) &&
+            arcCos <= MISMA_DIRECCION + UMBRAL_ESTA_DELANTE &&
+            arcCos >= MISMA_DIRECCION - UMBRAL_ESTA_DELANTE 
+        );
+    });
     return {
         possibleColissions,
         frontCars
