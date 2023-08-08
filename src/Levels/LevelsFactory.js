@@ -414,19 +414,19 @@ export default class LevelFactory {
   }
 
   async createIntersection(position, Ammo) {
-    let intersection = new Intersection("textures/CleanRoadNoBorder.jpg");
+    let intersection = new Intersection("textures/roadWithCrossWalk.jpg");
     await intersection.addToScene(this.scene, "intersection", position);
     await this.buildIntersectionPhysics(position, Ammo, intersection);
   }
 
   async createCurve(position, Ammo, rotationY) {
-    let curve = new Curve("textures/CleanRoadNoBorder.jpg");
+    let curve = new Curve("textures/roadWithCrossWalk.jpg");
     await curve.addToScene(this.scene, "curve", position, rotationY);
     await this.buildCurvePhysics(position, Ammo, curve, rotationY);
   }
 
   async createTStreet(position, Ammo, rotationY) {
-    let tStreet = new TStreet("textures/CleanRoadNoBorder.jpg");
+    let tStreet = new TStreet("textures/roadWithCrossWalk.jpg");
     await tStreet.addToScene(this.scene, "tStreet", position, rotationY);
     await this.buildTStreetPhysics(position, Ammo, tStreet, rotationY);
   }
