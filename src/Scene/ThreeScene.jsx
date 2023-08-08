@@ -291,7 +291,7 @@ export default class ThreeScene extends Component {
       phys.updatePhysics();
     });
     this.camera.setPositionRelativeToObject();
-    XboxControllerSingleton.getInstance(this.carLogic).checkEvents();
+    XboxControllerSingleton.getInstance(this.carLogic, this.camera).checkEvents();
     this.setState({
       velocity: this.carLogic.getSpeed(),
       currentRPM: this.carLogic.getCurrentRPM(),

@@ -15,6 +15,7 @@ export default class Camera extends Observer{
         this.group180Rot = new THREE.Object3D().add(this.camera);
         this.group.add(this.group180Rot);
         this.renderer = renderer;
+        this.rotation = 0;
     }
 
 
@@ -39,7 +40,7 @@ export default class Camera extends Observer{
                 this.camera.lookAt(new Vector3(0,0,5));
             }else{
                 const rotationQuat = new THREE.Quaternion(this.observedState.rotation.x, this.observedState.rotation.y, this.observedState.rotation.z, this.observedState.rotation.w).normalize();
-                this.group180Rot.setRotationFromAxisAngle(new Vector3(0,1,0), -5*Math.PI/180); //SUMAR ROTACION EXTRA SI USAMOS EL JOYSTICK DERECHO
+                this.group180Rot.setRotationFromAxisAngle(new Vector3(0,1,0), -5*Math.PI/180 + this.rotation); //SUMAR ROTACION EXTRA SI USAMOS EL JOYSTICK DERECHO
                 this.group.quaternion.copy(rotationQuat);
             }
         }else{
@@ -55,5 +56,9 @@ export default class Camera extends Observer{
     
     addContainerToScene(scene){
         scene.add(this.group);
+    }
+
+    rotate(rotation){
+        this.rotation = rotation;
     }
 }
