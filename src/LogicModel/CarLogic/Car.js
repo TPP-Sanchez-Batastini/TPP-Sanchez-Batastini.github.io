@@ -22,6 +22,9 @@ export default class Car extends Observable{
         this.rotation = new Vector4(0,0,0,1);
         this.inertia = new Vector3(1,0,1);
         this.carPhysics = new CarPhysics(this.position, this.rotationQuaternion, this.inertia, this.mass, this.physicsShape, physicsWorld, 0);
+        this.turnRigthLigth = false;
+        this.turnLeftLigth = false;
+
     }
 
 
@@ -51,13 +54,29 @@ export default class Car extends Observable{
     }
 
 
-    turnOnRightLight(){
-        //PRENDER EL INTERMITENTE DERECHO
+    turnRightLight(){
+        if(!this.turnRigthLigth && this.turnLeftLigth){
+            this.turnLeftLigth = false;
+        } 
+        this.turnRigthLigth = !this.turnRigthLigth;
     }
 
 
-    turnOnLeftLight(){
-        //PRENDER EL INTERMITENTE DERECHO
+    turnLeftLight(){
+        if(!this.turnLeftLigth && this.turnRigthLigth){
+            this.turnRigthLigth = false;
+        } 
+        this.turnLeftLigth = !this.turnLeftLigth;
+    }
+
+    turnParkingLight(){
+        if(this.turnLeftLigth && this.turnRigthLigth){
+            this.turnLeftLigth = !this.turnLeftLigth;
+            this.turnRigthLigth = !this.turnRigthLigth;
+        }else{
+            this.turnRigthLigth = true;
+            this.turnLeftLigth = true;
+        }
     }
 
     
@@ -96,7 +115,9 @@ export default class Car extends Observable{
             "rotation": this.rotation,
             "physicsBody": this.carPhysics,
             "wheelsData": this.wheelsData,
-            "rpm": this.getCurrentRPM()
+            "rpm": this.getCurrentRPM(),
+            "turnRigthLigth": this.turnRigthLigth,
+            "turnLeftLigth": this.turnLeftLigth,
         };
     }
 

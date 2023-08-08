@@ -15,6 +15,8 @@ const STEERING_WHEEL_INITIAL_ROTATION_ON_X = 0.13
 const MAX_VELOCITY_SHOWN = 240;
 const MAX_RPM_SHOWN = 6000;
 
+const LIGTH_TIC = 1000;
+
 export default class CarModel extends VisualEntity{
     
     
@@ -29,6 +31,7 @@ export default class CarModel extends VisualEntity{
         this.lastSteeringRotation = 0;
         this.lastVelocityRotation = 0;
         this.lastRPMRotation = 0;
+        this.lastTurnOff = new Date();
     }
 
 
@@ -37,6 +40,8 @@ export default class CarModel extends VisualEntity{
         //path.absellipse(0,0,0.15,0.075,0, Math.PI*2, false,0);
         //const ellipseGeometry = new THREE.ShapeBufferGeometry( path );
         const plane = new THREE.PlaneGeometry(0.145, 0.085);
+
+
         const retrovisor = new Reflector(
             plane,
             //ellipseGeometry,
@@ -56,11 +61,14 @@ export default class CarModel extends VisualEntity{
 
     generateLeftMirror(){
         const leftMirrorGeometry = new THREE.PlaneGeometry(0.19, 0.10);
+        //const radius = 2
+        //const leftMirrorGeometry = new THREE.CylinderGeometry( radius, radius, 0.10, 512, 512,true,0.18,0.15 ); 
+
         const leftMirror = new Reflector(
             leftMirrorGeometry, 
             {
-                textureWidth: window.innerWidth,//512
-                textureHeight: window.innerHeight,//512
+                textureWidth:2* window.innerWidth,//512
+                textureHeight:2* window.innerHeight,//512
                 clipBias: 0,
                 multisample: 4
             }
@@ -68,7 +76,9 @@ export default class CarModel extends VisualEntity{
         let container = new Object3D();
         container.add(leftMirror);
         container.position.set(0.96, 0.345, 0.62);
+        //container.position.set(0.4, 0.345,0.5+  radius);
         container.rotateX(-Math.PI+0.13);
+        //container.rotateX(-Math.PI);
         leftMirror.rotateY(-18*Math.PI/180);
         this.threeDModel.add(container);
     }
@@ -125,10 +135,96 @@ export default class CarModel extends VisualEntity{
         this.leftSpotlight.intensity = 0.5;
         this.rightSpotlight.angle = Math.PI/5;
         this.leftSpotlight.angle = Math.PI/5;
+
         this.threeDModel.add(this.leftSpotlight);
         this.threeDModel.add(this.rightSpotlight);
         this.threeDModel.add(this.targetLeft);
         this.threeDModel.add(this.targetRight);
+
+        this.rightTurnlight = new THREE.SpotLight(0xDB8A10);
+        this.targetTurnRight = new Object3D();
+        this.targetTurnRight.position.set(-0.85, 0.05, 3.0);
+        this.rightTurnlight.position.set(-0.8, 0.3, 2.6);
+        this.rightTurnlight.target = this.targetTurnRight;
+        this.rightTurnlight.castShadow = false;
+        this.rightTurnlight.intensity = 0;
+        this.rightTurnlight.angle = Math.PI/5;
+        this.threeDModel.add(this.targetTurnRight);
+        this.threeDModel.add(this.rightTurnlight);
+
+        this.leftTurnlight = new THREE.SpotLight(0xDB8A10);
+        this.targetTurnLeft = new Object3D();
+        this.targetTurnLeft.position.set(0.85, 0.05, 3.0);
+        this.leftTurnlight.position.set(0.8, 0.3, 2.6);
+        this.leftTurnlight.target = this.targetTurnLeft;
+        this.leftTurnlight.castShadow = false;
+        this.leftTurnlight.intensity = 0;
+        this.leftTurnlight.angle = Math.PI/5;
+        this.threeDModel.add(this.targetTurnLeft);
+        this.threeDModel.add(this.leftTurnlight);
+
+
+        this.rightTurnlightBack = new THREE.SpotLight(0xDB8A10);
+        this.targetTurnRightBack = new Object3D();
+        this.targetTurnRightBack.position.set(-0.85, 3, -3.0);
+        this.rightTurnlightBack.position.set(-0.8, 3.2, 2.6);
+        this.rightTurnlightBack.target = this.targetTurnRightBack;
+        this.rightTurnlightBack.castShadow = false;
+        this.rightTurnlightBack.intensity = 0;
+        this.rightTurnlightBack.angle = Math.PI/5;
+        this.threeDModel.add(this.targetTurnRightBack);
+        this.threeDModel.add(this.rightTurnlightBack);
+
+        this.leftTurnlightBack = new THREE.SpotLight(0xDB8A10);
+        this.targetTurnLeftBack = new Object3D();
+        this.targetTurnLeftBack.position.set(0.85, 3, -3.0);
+        this.leftTurnlightBack.position.set(0.8, 3.2, 2.6);
+        this.leftTurnlightBack.target = this.targetTurnLeftBack;
+        this.leftTurnlightBack.castShadow = false;
+        this.leftTurnlightBack.intensity = 0;
+        this.leftTurnlightBack.angle = Math.PI/5;
+        this.threeDModel.add(this.targetTurnLeftBack);
+        this.threeDModel.add(this.leftTurnlightBack);
+        
+    }
+
+    turnRigth(){
+        let time = new Date();
+        if(this.observedState["turnRigthLigth"]  ){
+            let timePassed = time - this.lastTurnOff;
+            if( timePassed < LIGTH_TIC ){
+                this.rightTurnlight.intensity = 0.5;
+                this.rightTurnlightBack.intensity = 0.5;
+            }else if(timePassed < 2*LIGTH_TIC){
+                
+                this.rightTurnlight.intensity = 0;
+                this.rightTurnlightBack.intensity = 0;
+            }else{
+                this.lastTurnOff = new Date();
+            }
+        }else{
+            this.rightTurnlight.intensity = 0;
+            this.rightTurnlightBack.intensity = 0;
+        }
+    }
+
+    turnLeft(){
+        let time = new Date();
+        if(this.observedState["turnLeftLigth"]  ){
+            let timePassed = time - this.lastTurnOff;
+            if( timePassed < LIGTH_TIC ){
+                this.leftTurnlight.intensity = 0.5;
+                this.leftTurnlightBack.intensity = 0.5;
+            }else if(timePassed < 2*LIGTH_TIC){
+                this.leftTurnlight.intensity = 0;
+                this.leftTurnlightBack.intensity = 0;
+            }else{
+                this.lastTurnOff = new Date();
+            }
+        }else{
+            this.leftTurnlight.intensity = 0;
+            this.leftTurnlightBack.intensity = 0;
+        }
     }
 
 
@@ -273,6 +369,8 @@ export default class CarModel extends VisualEntity{
             this.rotateWheels();
             this.rotateSteeringWheel();
             this.rotateVelocityAndRPM();
+            this.turnRigth();
+            this.turnLeft();
         }
     }
 
