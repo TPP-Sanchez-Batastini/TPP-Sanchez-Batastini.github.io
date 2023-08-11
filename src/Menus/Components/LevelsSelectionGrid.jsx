@@ -3,7 +3,6 @@ import { Card, CardActions, Grid } from '@mui/material';
 import { LevelCard } from './CardLevel/LevelCardContent';
 import Carousel from 'react-material-ui-carousel';
 import { useNavigate } from "react-router-dom";
-import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 
 export const LevelsSelectionGrid = () => {
 
