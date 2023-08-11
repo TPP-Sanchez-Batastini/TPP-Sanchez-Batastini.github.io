@@ -1,5 +1,4 @@
 import ThreeScene from "./Scene/ThreeScene";
-import { useEffect, useState } from "react";
 import { MainMenu } from "./Menus/MainMenu";
 import { LevelEditor } from "./Menus/LevelEditor";
 import {
@@ -13,16 +12,6 @@ import { SessionProvider } from "./Menus/Sessions/SessionProvider";
 import { LevelsList } from "./Menus/LevelsList";
 
 function App() {
-  const [json, setJson] = useState(null);
-
-  useEffect(() => {
-    document.title = "Driving Simulator";
-    fetch("./levels/estacionamiento.json")
-      .then((response) => response.json())
-      .then((data) => {
-        setJson(data);
-      });
-  }, []);
 
   return (
     <SessionProvider
@@ -30,7 +19,7 @@ function App() {
         <Router>
           <Switch>
             <Route exact path="/levels" element={<LevelsList/>} />
-            <Route exact path="/scene" element={json && <ThreeScene jsonLevel={json} />} />
+            <Route exact path="/scene" element={<ThreeScene/>} />
             <Route exact path="/" element={<MainMenu />} />
             <Route exact path="/level-editor" element={<LevelEditor />} />
             <Route exact path="/login" element={<LoginForm />} />

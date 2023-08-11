@@ -27,7 +27,7 @@ export const MainMenu = () => {
           <div className={"buttonWrapperMainMenu"}>
             <button 
               className={"buttonMainMenu"}
-              onClick={() => navigate("/scene")}
+              onClick={() => navigate("/levels")}
             >
               Iniciar
             </button>

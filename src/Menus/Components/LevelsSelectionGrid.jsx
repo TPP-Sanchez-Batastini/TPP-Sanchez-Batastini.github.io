@@ -1,12 +1,21 @@
 import React from 'react'
 import { Card, CardActions, Grid } from '@mui/material';
-import { CardContentHover } from './CardLevel/CardContentHover';
-import { CardContentNotHover } from './CardLevel/CardContentNotHover';
+import { LevelCard } from './CardLevel/LevelCardContent';
+import Carousel from 'react-material-ui-carousel';
+import { useNavigate } from "react-router-dom";
+import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 
 export const LevelsSelectionGrid = () => {
 
   const [levels, setLevels] = React.useState([]);
-  const [cardHovers, setCardHovers] = React.useState([]);
+  const navigate = useNavigate();
+
+  React.useEffect(() => {
+    if(localStorage.getItem("VR") !== null){
+        localStorage.removeItem("VR");
+        window.location.reload();
+    }
+  }, []);
 
   React.useEffect(() => {
     const levelsEffect = [];
@@ -34,42 +43,41 @@ export const LevelsSelectionGrid = () => {
                         .then((response) => response.json())
                         .then((data) => {
                             levelsEffect.push(data);
-                            const hovers = {};
-                            for (let i=0; i<levelsEffect.length; i++){
-                                hovers[levelsEffect[i].title] = false;
-                            }
                             setLevels(levelsEffect);
-                            setCardHovers(hovers);
                         });
                     });
                 });
             });
         });
     });
-    
-    
-    
-    
   }, []);
 
+
+  const seleccionarNivel = (level) => {
+    navigate("/scene", { state: { jsonLevel: level } });
+  }
+
   return (
-    <Grid container spacing={4} rowSpacing={4} alignContent="center" justifyContent="space-around" sx={{padding:"2rem"}}>
-        {levels.map(level => 
-            <Grid item xs={12} md={6} lg={4} key={level.title}>
-                <Card sx={{height:400}}>
-                    <CardActions  
-                        onMouseOver={ () => setCardHovers({...cardHovers, [level.title]:true}) }
-                        onMouseOut={ () => setCardHovers({...cardHovers, [level.title]:false}) }
-                    >
-                        {cardHovers[level.title] ?
-                            <CardContentHover level={level}/>
-                        :
-                            <CardContentNotHover level={level}/>
-                        }
-                    </CardActions>
-                </Card>
-            </Grid>
-        )}
+    <Grid container justifyContent={"center"} alignItems={"center"} alignContent={"center"}>
+        <Grid item xs={12} md={9} lg={6} alignContent={"center"} justifyContent={"center"} alignItems={"center"}>
+            <Carousel
+                sx={{width:"100%", boxShadow:"2px 2px 10px gray", padding:"20px"}}
+                autoPlay={false}
+                navButtonsAlwaysVisible={true}
+                navButtonsProps={{
+                    style: {"opacity":"40%"}
+                }}
+                swipe={true}
+            >
+                {levels.map(level => 
+                    <Card key={level.title} sx={{height:500, width:"90%", margin:"auto"}} onClick={() => {seleccionarNivel(level)}}>
+                        <CardActions>
+                            <LevelCard level={level}/>
+                        </CardActions>
+                    </Card>
+                )}
+            </Carousel>
+        </Grid>
     </Grid>
   );
 }

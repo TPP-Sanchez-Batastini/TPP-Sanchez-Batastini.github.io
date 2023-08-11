@@ -13,13 +13,25 @@ import LevelFactory from "../Levels/LevelsFactory";
 import { VRButton } from "../addons/VRbutton";
 import Stats from "stats.js";
 import TrafficModel from "../LogicModel/IA/TrafficModel";
+import { useLocation } from "react-router-dom";
 
 
 const MAXIMUM_DISTANCE_FROM_PLAYER_TO_RENDER = 200;
 const SEGMENT_SIZE = 50;
 
-export default class ThreeScene extends Component {
+export default function ThreeSceneWrapper(){
+  const {state} = useLocation();
+  const {jsonLevel} = state;
+
+  return (
+    <ThreeScene jsonLevel = {jsonLevel}/>
+  );
+}
+
+
+export class ThreeScene extends Component {
   constructor() {
+    console.log("Constructing");
     super();
     this.state = {
       currentRPM: 0,
@@ -40,9 +52,11 @@ export default class ThreeScene extends Component {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.shadowMap.enabled = true;
     this.clock = new THREE.Clock();
+    console.log("Constructed");
   }
 
   async componentDidMount() {
+    console.log("didMount");
     this.jsonLevel = this.props.jsonLevel;
     this.generateGeneralElements = this.generateGeneralElements.bind(this);
     this.animation = this.animation.bind(this);
@@ -63,6 +77,24 @@ export default class ThreeScene extends Component {
     this.generateEvents();
     this.addVR();
     this.renderer.setAnimationLoop(this.animation);
+  }
+
+  componentWillUnmount() {
+    this.renderer.setAnimationLoop(null);
+    delete this.scene;
+    delete this.objectsToAnimate;
+    delete this.physicsToUpdate;
+    delete this.physicsWorld;
+    this.stats.dom.remove();
+    delete this.stats;
+    delete this.level;
+    delete this.carLogic;
+    delete this.carModel;
+    delete this.trafficModel;
+    delete this.jsonLevel;
+    delete this.camera;
+    document.getElementById("VRButton").remove();
+    delete this.renderer;
   }
 
   async addVR() {
