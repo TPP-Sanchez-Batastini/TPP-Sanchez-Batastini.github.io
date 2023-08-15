@@ -67,6 +67,7 @@ export const LevelsSelectionGrid = () => {
                     style: {"opacity":"40%"}
                 }}
                 swipe={true}
+                className={"levelsCarousel"}
             >
                 {levels.map(level => 
                     <Card key={level.title} sx={{height:500, width:"90%", margin:"auto"}} onClick={() => {seleccionarNivel(level)}}>

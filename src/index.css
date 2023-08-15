@@ -84,6 +84,14 @@ code {
   width: 20vw;
 }
 
+.levelsCarousel{
+  background-color: lightgray;
+}
+.levelsCarousel:hover{
+  cursor: pointer;
+  background-color: #fcb900;
+}
+
 @media (max-width: 1024px) {
   .containerMainMenu{
     align-content: center;
