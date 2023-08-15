@@ -19,7 +19,8 @@ code {
 }
 
 .buttonMainMenu{
-  min-width: 300px;
+  min-width: 250px;
+  min-height: 90px;
   width: 20vw;
   height: 10vh;
   background-color: black;
@@ -37,29 +38,15 @@ code {
   cursor: pointer;
 }
 
-
-.buttonWrapperMainMenu{
-  margin-bottom: 4vh;
-  display:flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.buttonWrapperMainMenu:last-child{
-  margin-bottom: 0;
-}
-
 .MainMenuTitle{
-  padding-bottom: 5px;
   background-color:rgba(250, 194, 72, 0.7);
   border: 5px solid rgba(250, 194, 72, 0.7);
   border-radius: 10px;
-  margin-bottom: 2vh;
 }
 
 .MainMenuTitle h1{
   padding: 0;
-  margin: 5px;
+  /*margin: 5px;*/
 }
 
 .imageLevelEditor{
@@ -80,4 +67,30 @@ code {
 .imageLevelEditor.selected{
   opacity: 75%;
   background-color: #fcb900;
+}
+
+.containerMainMenu{
+  margin-top:0 !important;
+  align-content: flex-end;
+  padding-right: 5vw;
+  min-width: 100vw;
+  min-height: 100vh;
+}
+
+.titleMainMenu{
+  text-align:center;
+  font-size:4rem;
+  min-width: 300px;
+  width: 20vw;
+}
+
+@media (max-width: 1024px) {
+  .containerMainMenu{
+    align-content: center;
+    padding-right: 0;
+  }
+  .titleMainMenu{
+    font-size:3rem;
+    
+  }
 }

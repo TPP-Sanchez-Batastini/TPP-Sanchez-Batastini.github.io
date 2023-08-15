@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from "react-router-dom";
+import { Grid } from "@mui/material";
 
 
 const styleMenu = {
@@ -18,37 +19,44 @@ export const MainMenu = () => {
   return (
     <>
       <div style={styleMenu}>
-        <div id="button-box" style={{position:"absolute", top:"5%", right:"5%"}}>
-          <div className={"MainMenuTitle"}>
-            <h1 style={{textAlign:"center", fontSize:"7rem"}}>
+        <Grid 
+          container 
+          rowSpacing={2} 
+          justifyContent="center"
+          alignItems={"center"} 
+          flexDirection={"column"} 
+          className={"containerMainMenu"}
+        >
+          <Grid item xs={12} className={"MainMenuTitle"}>
+            <h1 className={"titleMainMenu"}>
               Driving<br/>Simulator
             </h1>
-          </div>
-          <div className={"buttonWrapperMainMenu"}>
+          </Grid>
+          <Grid item xs={12} className={"buttonWrapperMainMenu"}>
             <button 
               className={"buttonMainMenu"}
               onClick={() => navigate("/levels")}
             >
               Iniciar
             </button>
-          </div>
-          <div className={"buttonWrapperMainMenu"}>
+          </Grid>
+          <Grid item xs={12} className={"buttonWrapperMainMenu"}>
           <button 
               className={"buttonMainMenu"}
               onClick={() => navigate("/level-editor")}
             >
               Editor de Niveles
             </button>
-          </div>
-          <div className={"buttonWrapperMainMenu"}>
+          </Grid>
+          <Grid item xs={12} className={"buttonWrapperMainMenu"}>
             <button 
               className={"buttonMainMenu"}
               onClick={() => navigate("/configs")}
             >
               Configuración
             </button>
-          </div>
-        </div>
+          </Grid>
+        </Grid>
       </div>
     </>
   );
