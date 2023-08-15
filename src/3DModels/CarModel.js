@@ -136,6 +136,9 @@ export default class CarModel extends VisualEntity{
         this.rightSpotlight.angle = Math.PI/5;
         this.leftSpotlight.angle = Math.PI/5;
 
+        this.rightSpotlight.distance = 15;
+        this.leftSpotlight.distance = 15;
+
         this.threeDModel.add(this.leftSpotlight);
         this.threeDModel.add(this.rightSpotlight);
         this.threeDModel.add(this.targetLeft);
@@ -149,8 +152,10 @@ export default class CarModel extends VisualEntity{
         this.rightTurnlight.castShadow = false;
         this.rightTurnlight.intensity = 0;
         this.rightTurnlight.angle = Math.PI/5;
+        this.rightTurnlight.distance = 10;
         this.threeDModel.add(this.targetTurnRight);
         this.threeDModel.add(this.rightTurnlight);
+        
 
         this.leftTurnlight = new THREE.SpotLight(0xDB8A10);
         this.targetTurnLeft = new Object3D();
@@ -160,6 +165,7 @@ export default class CarModel extends VisualEntity{
         this.leftTurnlight.castShadow = false;
         this.leftTurnlight.intensity = 0;
         this.leftTurnlight.angle = Math.PI/5;
+        this.leftTurnlight.distance = 10;
         this.threeDModel.add(this.targetTurnLeft);
         this.threeDModel.add(this.leftTurnlight);
 
@@ -172,6 +178,7 @@ export default class CarModel extends VisualEntity{
         this.rightTurnlightBack.castShadow = false;
         this.rightTurnlightBack.intensity = 0;
         this.rightTurnlightBack.angle = Math.PI/5;
+        this.rightTurnlightBack.distance = 10;
         this.threeDModel.add(this.targetTurnRightBack);
         this.threeDModel.add(this.rightTurnlightBack);
 
@@ -183,6 +190,7 @@ export default class CarModel extends VisualEntity{
         this.leftTurnlightBack.castShadow = false;
         this.leftTurnlightBack.intensity = 0;
         this.leftTurnlightBack.angle = Math.PI/5;
+        this.leftTurnlightBack.distance = 10;
         this.threeDModel.add(this.targetTurnLeftBack);
         this.threeDModel.add(this.leftTurnlightBack);
         
@@ -193,8 +201,8 @@ export default class CarModel extends VisualEntity{
         if(this.observedState["turnRigthLigth"]  ){
             let timePassed = time - this.lastTurnOff;
             if( timePassed < LIGTH_TIC ){
-                this.rightTurnlight.intensity = 0.5;
-                this.rightTurnlightBack.intensity = 0.5;
+                this.rightTurnlight.intensity = 1;
+                this.rightTurnlightBack.intensity = 1;
             }else if(timePassed < 2*LIGTH_TIC){
                 
                 this.rightTurnlight.intensity = 0;
@@ -213,8 +221,8 @@ export default class CarModel extends VisualEntity{
         if(this.observedState["turnLeftLigth"]  ){
             let timePassed = time - this.lastTurnOff;
             if( timePassed < LIGTH_TIC ){
-                this.leftTurnlight.intensity = 0.5;
-                this.leftTurnlightBack.intensity = 0.5;
+                this.leftTurnlight.intensity = 1;
+                this.leftTurnlightBack.intensity = 1;
             }else if(timePassed < 2*LIGTH_TIC){
                 this.leftTurnlight.intensity = 0;
                 this.leftTurnlightBack.intensity = 0;

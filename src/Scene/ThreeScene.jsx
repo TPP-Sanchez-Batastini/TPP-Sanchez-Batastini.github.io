@@ -31,7 +31,6 @@ export default function ThreeSceneWrapper(){
 
 export class ThreeScene extends Component {
   constructor() {
-    console.log("Constructing");
     super();
     this.state = {
       currentRPM: 0,
@@ -52,11 +51,10 @@ export class ThreeScene extends Component {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.shadowMap.enabled = true;
     this.clock = new THREE.Clock();
-    console.log("Constructed");
   }
 
   async componentDidMount() {
-    console.log("didMount");
+    console.log(this.props.jsonLevel);
     this.jsonLevel = this.props.jsonLevel;
     this.generateGeneralElements = this.generateGeneralElements.bind(this);
     this.animation = this.animation.bind(this);
@@ -159,6 +157,7 @@ export class ThreeScene extends Component {
 
 
   async createTraffic(){
+    console.log("JSON LEVEL EN TRAFFIC: ", this.jsonLevel);
     this.trafficModel = new TrafficModel(this.scene, this.physicsWorld, this.jsonLevel.streets);
     this.carLogic.attachObserver(this.trafficModel);
     await this.trafficModel.generateInitialTraffic();

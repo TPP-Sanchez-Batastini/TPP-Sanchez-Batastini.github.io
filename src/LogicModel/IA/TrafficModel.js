@@ -1,6 +1,7 @@
 import CarModel from "../../3DModels/CarModel";
 import Observer from "../../ObserverPattern/Observer";
 import Car from "../CarLogic/Car.js";
+import * as THREE from "three";
 
 const CLUTCH_PRESSED = 0;
 const CLUTCH_NOT_PRESSED = 1;
@@ -36,7 +37,7 @@ export default class TrafficModel extends Observer {
 
     async generateCar(){
         
-        let carLogic = new Car(this.physicsWorld, [12 ,2,15 + this.lastID * 5], false);//12
+        let carLogic = new Car(this.physicsWorld, [12+this.lastID*5 ,2,30 + this.lastID * 5], false, new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0), Math.PI*this.lastID));//12
         await carLogic.carPhysics.buildAmmoPhysics(); 
         
         let carModel = new CarModel();

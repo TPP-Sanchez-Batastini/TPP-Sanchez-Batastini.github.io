@@ -17,6 +17,62 @@ const UMBRAL_ACOMODAR_CARRIL = 0.2;
 const CARRIL_OFFSET = 2.5;
 const DISTANCIA_CENTRO_FRENTE_AUTO = 2.5;
 
+
+const ROTATIONS_FOR_CURVE = {
+    0: {
+        "0,0,1" : RIGHT,
+        "1,0,0" : LEFT
+    },
+    [Math.PI/2]: {
+        "0,0,-1" : LEFT,
+        "1,0,0": RIGHT
+    },
+    [Math.PI]: {
+        "0,0,-1" : RIGHT,
+        "-1,0,0" : LEFT
+    },
+    [Math.PI*3/2]: {
+        "0,0,1" : LEFT,
+        "-1,0,0" : RIGHT
+    }
+}
+
+
+const ROTATIONS_FOR_T_STREET = {
+    0: {
+        "0,0,1" : RIGHT,
+        "0,0,-1" : LEFT
+    },
+    [Math.PI/2]: {
+        "1,0,0" : RIGHT,
+        "-1,0,0": LEFT
+    },
+    [Math.PI]: {
+        "0,0,1" : LEFT,
+        "0,0,-1" : RIGHT
+    },
+    [Math.PI*3/2]: {
+        "1,0,0" : LEFT,
+        "-1,0,0" : RIGHT
+    }
+}
+
+
+const SHOULD_ROTATE_T_STREET = {
+    0: {
+        "1,0,0" : "RANDOM",
+    },
+    [Math.PI/2]: {
+        "0,0,-1": "RANDOM"
+    },
+    [Math.PI]: {
+        "-1,0,0" : "RANDOM"
+    },
+    [Math.PI*3/2]: {
+        "0,0,1" : "RANDOM"
+    }
+}
+
 const productoVectorial = (vectorA,vectorB) => {
     
         const a1 = vectorA.x;
@@ -80,7 +136,16 @@ const filterCars = (car, trafficCars) => {
 
 
 const defineSideOfCurve = (carPosition, carDirection, street) => {
-    return LEFT;
+    const idealDirection = [round(carDirection.x), round(carDirection.y), round(carDirection.z)];
+    if (street.type === "CURVE"){
+        const rotationToDo = ROTATIONS_FOR_CURVE[street.rotation][`${idealDirection[0]},${idealDirection[1]},${idealDirection[2]}`];
+        return rotationToDo ? rotationToDo : 0;
+    }
+    if (street.type === "T_STREET"){
+        const rotationToDo = ROTATIONS_FOR_T_STREET[street.rotation][`${idealDirection[0]},${idealDirection[1]},${idealDirection[2]}`];
+        return rotationToDo ? rotationToDo : 0;
+    }
+    return RIGHT;
 }
 
 const round = (floatVal) => {
@@ -124,6 +189,7 @@ const getStreetSteering = (car, streets) => {
             break;
         }
     }
+    console.log("sel street: ", street, car);
     if (street.type === "STRAIGHT"){
         const streetPos = {x:street.position_x, y:0, z:street.position_y};
         return rectifyStraightDirection(car.dirVector, car.position, streetPos);
@@ -137,6 +203,14 @@ const getStreetSteering = (car, streets) => {
 
     ){
         const shouldTurn = Math.random() < 0.5;
+        if (street.type === "T_STREET"){
+            const idealDirection = [round(car.dirVector.x), round(car.dirVector.y), round(car.dirVector.z)];
+            const stringDir = `${idealDirection[0]},${idealDirection[1]},${idealDirection[2]}`;
+            //Debe rotar si o si para alguno de los 2 lados
+            if(SHOULD_ROTATE_T_STREET[street.rotation][stringDir]){
+                return Math.random() < 0.5 ? RIGHT : LEFT;
+            }
+        }
         if (street.type !== "CURVE" && !shouldTurn){
             return 0;
         }
