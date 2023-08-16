@@ -1,0 +1,44 @@
+.accept_button{
+    background-color: #5DB1EE !important;
+    color: white !important;
+    border-radius: 10px !important;
+    padding: 10px !important;
+    border: 1px solid #5DB1EE !important;
+    font-weight: bold !important;
+}
+
+.accept_button:hover{
+    opacity: 70% !important;
+}
+
+.level_info{
+    background-color: #D9D9D9;
+    border-radius: 20;
+}
+
+.background{
+    min-height: 100vh;
+    min-width: 100%;
+    margin-top: 0px !important;
+    background-color: #B1E6F2;
+    background-size:"cover";
+    background-repeat:repeat;
+}
+
+.card_text_wrapper{
+    margin-top: 2rem !important;
+    padding: 0;
+    background: lightgray;
+    border-radius: 20px;
+    padding:1rem;
+}
+
+.p_button{
+    color: blue;
+    text-decoration: underline;
+}
+
+.p_button:hover{
+    cursor: pointer;
+    opacity:80%;
+}

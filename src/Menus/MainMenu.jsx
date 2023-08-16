@@ -1,14 +1,15 @@
 import React from 'react';
 import { useNavigate } from "react-router-dom";
 import { Grid } from "@mui/material";
-
+import './styles.css'
 
 const styleMenu = {
   width:"100vw", 
   height:"100vh", 
   backgroundImage:`url("DrivingSimMenuNoTitle.png")`, 
   backgroundSize:"cover", 
-  backgroundRepeat: "no-repeat"
+  backgroundRepeat: "no-repeat",
+  backgroundColor: "#B1E6F2"
 }
 
 

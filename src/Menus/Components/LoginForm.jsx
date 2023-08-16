@@ -2,14 +2,13 @@ import React from 'react'
 import {API_URL} from '../Constants/Constants'
 import { SessionHooks } from '../Sessions/SessionHooks';
 import { Alert, Button, TextField, InputAdornment, IconButton } from "@mui/material"
-import { Link } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { VALID_REGEX_EMAIL } from '../Constants/Constants';
 import { hash } from '../Resources/Hasher';
 import { useNavigate } from "react-router-dom";
 
-export const LoginForm = () => {
+export const LoginForm = ( {setLogin} ) => {
 
   const navigate = useNavigate();
   const [email, setEmail] = React.useState("");
@@ -123,8 +122,7 @@ export const LoginForm = () => {
             flexDirection:"column", 
             textAlign:"center",
             margin: "auto",
-            marginTop:40,
-            padding: 30,
+            padding:30,
             border: "2px solid black",
             borderRadius: 20,
             maxWidth:400
@@ -138,9 +136,6 @@ export const LoginForm = () => {
                 </Alert>
             }
             <h1>Iniciar Sesión</h1>
-            <div style={{display:"flex", justifyContent:"center"}}>
-                <img src="logo_transp.png" width="25%" alt="Driving Simulator Logo"/>
-            </div>
             <div style={{marginTop:20}}>
                 <TextField 
                     style={{width:"80%"}}
@@ -178,7 +173,7 @@ export const LoginForm = () => {
                 <Button variant="contained" type="submit">Iniciar Sesión</Button>
             </div>
             <div style={{marginTop:20}}>
-                <Link to={"/signup"}>¿No posees una cuenta? Registrate aquí...</Link>
+                <p className={"p_button"} onClick={() => {setLogin(false);}}>¿No posees una cuenta? Registrate aqu&iacute;...</p>
             </div>
             <div style={{marginTop:20, display:"flex", justifyContent:"center", textAlign:"center", alignContent:"center"}}>
                 <GoogleLogin

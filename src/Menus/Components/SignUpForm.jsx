@@ -1,13 +1,12 @@
 import React from 'react'
 import {API_URL} from '../Constants/Constants';
 import { Alert, Button, TextField, InputAdornment, IconButton } from "@mui/material"
-import { Link } from 'react-router-dom';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { VALID_REGEX_EMAIL } from '../Constants/Constants';
 import { hash } from '../Resources/Hasher';
 
 
-export const SignUpForm = () => {
+export const SignUpForm = ( {setLogin} ) => {
 
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -91,8 +90,7 @@ export const SignUpForm = () => {
             flexDirection:"column", 
             textAlign:"center",
             margin: "auto",
-            marginTop:40,
-            padding: 30,
+            padding:30,
             border: "2px solid black",
             borderRadius: 20,
             maxWidth:400
@@ -106,9 +104,6 @@ export const SignUpForm = () => {
                 </Alert>
             }
             <h1>Crea tu cuenta</h1>
-            <div style={{display:"flex", justifyContent:"center"}}>
-                <img src="logo_transp.png" width="25%" alt="Driving Simulator Logo"/>
-            </div>
             <div style={{marginTop:20}}>
                 <TextField 
                   style={{width:"80%"}}
@@ -166,7 +161,7 @@ export const SignUpForm = () => {
                 <Button variant="contained" type="submit">CREAR CUENTA</Button>
             </div>
             <div style={{marginTop:20}}>
-                <Link to={"/login"}>¿Ya poses una cuenta? Inicia sesión...</Link>
+                <p className={"p_button"} onClick={() => {setLogin(true)}}>¿Ya poses una cuenta? Inicia sesión...</p>
             </div>
         </div>
     </form>
