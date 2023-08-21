@@ -14,6 +14,8 @@ import { VRButton } from "../addons/VRbutton";
 import Stats from "stats.js";
 import TrafficModel from "../LogicModel/IA/TrafficModel";
 import { useLocation } from "react-router-dom";
+import { Modal } from "@mui/material";
+import { EndOfLevelModal } from "../Menus/Components/EndOfLevelModal";
 
 
 const MAXIMUM_DISTANCE_FROM_PLAYER_TO_RENDER = 200;
@@ -30,6 +32,7 @@ export default function ThreeSceneWrapper(){
 
 
 export class ThreeScene extends Component {
+
   constructor() {
     super();
     this.state = {
@@ -51,6 +54,9 @@ export class ThreeScene extends Component {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.shadowMap.enabled = true;
     this.clock = new THREE.Clock();
+    this.finishedLevel = false;
+    this.score = 0;
+    this.time = 0;
   }
 
   async componentDidMount() {
@@ -63,6 +69,7 @@ export class ThreeScene extends Component {
     this.addPlayerCar = this.addPlayerCar.bind(this);
     this.generateLevel = this.generateLevel.bind(this);
     this.addVR = this.addVR.bind(this);
+    this.endLevel = this.endLevel.bind(this);
 
     await this.generateGeneralElements();
     await this.createAmmo();
@@ -104,7 +111,7 @@ export class ThreeScene extends Component {
   }
 
   async generateLevel() {
-    this.level = new LevelFactory(this.scene, this.physicsWorld);
+    this.level = new LevelFactory(this.scene, this.physicsWorld, this.endLevel);
     let updateDataLevel = await this.level.createLevelCustom(this.jsonLevel);
     this.objectsToAnimate = [
       ...this.objectsToAnimate,
@@ -324,9 +331,12 @@ export class ThreeScene extends Component {
     this.camera.setPositionRelativeToObject();
     XboxControllerSingleton.getInstance(this.carLogic, this.camera).checkEvents();
     this.setState({
+      ...this.state,
       velocity: this.carLogic.getSpeed(),
       currentRPM: this.carLogic.getCurrentRPM(),
       currentShift: this.carLogic.getCurrentShift(),
+      score: this.level.getScore(),
+      time: this.level.getTime()
     });
     // this.lastPlayerPos = this.carLogic.getDataToAnimate()["position"];
     // this.lastRenderScene = this.getReducedScene();
@@ -334,6 +344,16 @@ export class ThreeScene extends Component {
     this.renderer.render(this.scene, this.camera.getCameraInstance());
     this.stats.end();
   }
+
+  endLevel(score ,time){
+    this.finishedLevel = true;
+    console.log("fin de nnivbel" , this.finishedLevel);
+    this.score = score;
+    this.time = time;
+    this.setState({...this.state, endScore: score, endTime: time, finishedLevel: true});
+  }
+
+  
 
   render() {
     return (
@@ -351,12 +371,26 @@ export class ThreeScene extends Component {
           <p style={{ zIndex: 20, display: "float", fontWeight: "bold" }}>
             Cambio Actual: {parseInt(this.state.currentShift)}
           </p>
+          <p style={{ zIndex: 20, display: "float", fontWeight: "bold" }}>
+            Puntaje Actual: {this.state.score}
+          </p>
+          <p style={{ zIndex: 20, display: "float", fontWeight: "bold" }}>
+            Tiempo Actual: {this.state.time}
+          </p>
         </div>
         <div
           ref={(mount) => {
             this.mount = mount;
           }}
         ></div>
+        
+        <EndOfLevelModal 
+           endLevel={this.state.finishedLevel ? this.state.finishedLevel : this.finishedLevel} 
+          score={this.state.endScore} 
+          time = {this.state.endTime}
+          minScore={this.jsonLevel ? this.jsonLevel["minimum-to-win"] : 0}
+        />
+
       </div>
     );
   }
