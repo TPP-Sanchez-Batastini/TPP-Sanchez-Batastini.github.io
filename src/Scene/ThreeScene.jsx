@@ -69,7 +69,7 @@ export class ThreeScene extends Component {
     await this.addGeneralLights();
     await this.generateLevel();
     await this.addPlayerCar();
-    if(this.jsonLevel["has-traffic"]){
+    if(this.jsonLevel["has_traffic"]){
       await this.createTraffic();
     }
     this.generateEvents();
@@ -314,7 +314,7 @@ export class ThreeScene extends Component {
     this.stats.begin();
     let deltaTime = this.clock.getDelta();
     this.physicsWorld.stepSimulation(deltaTime, 10);
-    this.jsonLevel["has-traffic"] && this.trafficModel.animate();
+    this.jsonLevel["has_traffic"] && this.trafficModel.animate();
     this.objectsToAnimate.forEach(function (object) {
       object.animate();
     });
