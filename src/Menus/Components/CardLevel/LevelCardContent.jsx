@@ -70,6 +70,7 @@ export const LevelCard = ({level}) => {
     if (session && session.user){
       fetchUserProgress();
     }
+    // eslint-disable-next-line
   }, []);
 
   return (
