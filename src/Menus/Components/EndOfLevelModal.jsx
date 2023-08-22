@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { SessionContext } from '../Sessions/SessionContext';
 import {API_URL} from '../Constants/Constants'
 
-export const EndOfLevelModal = ({endLevel, score, time, minScore, levelId}) => {
+export const EndOfLevelModal = ({endLevel, score, time, minScore, levelId, timeInMs}) => {
 
   const [openModal, setOpenModal] = React.useState(endLevel);
   const navigate = useNavigate();
@@ -24,7 +24,7 @@ export const EndOfLevelModal = ({endLevel, score, time, minScore, levelId}) => {
             userId: session.user.id,
             levelId: levelId,
             score: score,
-            time: time
+            time: timeInMs
           })
         }
       );

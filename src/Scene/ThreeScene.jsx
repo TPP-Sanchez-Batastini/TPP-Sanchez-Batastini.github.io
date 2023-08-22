@@ -30,6 +30,12 @@ export default function ThreeSceneWrapper(){
 }
 
 
+
+const getTimeAsMs = (timeStr) => {
+  const [hours, minutes, seconds] = timeStr.split(":");
+  return parseInt(hours)*60*60*1000+parseInt(minutes)*60*1000+parseInt(seconds)*1000;
+}
+
 export class ThreeScene extends Component {
 
   constructor() {
@@ -386,6 +392,7 @@ export class ThreeScene extends Component {
           time = {this.state.endTime}
           minScore={this.jsonLevel ? this.jsonLevel["minimum_to_win"] : 0}
           levelId={this.jsonLevel ? this.jsonLevel.id : undefined}
+          timeInMs= {this.state.endTime ? getTimeAsMs( this.state.endTime) : 0}
         />
 
       </div>
