@@ -1,17 +1,52 @@
-import { Box, Modal, But, Buttonton, Button } from '@mui/material';
+import { Box, Modal, Button } from '@mui/material';
 import React from 'react';
 import { useNavigate } from "react-router-dom";
+import { SessionContext } from '../Sessions/SessionContext';
+import {API_URL} from '../Constants/Constants'
 
-export const EndOfLevelModal = ({endLevel, score, time, minScore}) => {
+export const EndOfLevelModal = ({endLevel, score, time, minScore, levelId}) => {
 
   const [openModal, setOpenModal] = React.useState(endLevel);
   const navigate = useNavigate();
+  const {session} = React.useContext(SessionContext);
+
+
+  const postEndOfLevel = async () => {
+    try{
+      const APIResponse = await fetch(
+        `${API_URL}/user_progress/end_of_level`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            userId: session.user.id,
+            levelId: levelId,
+            score: score,
+            time: time
+          })
+        }
+      );
+      const json = await APIResponse.json();
+      if (APIResponse.status !== 200){
+        const endMSG = json.detail[0].msg ? json.detail[0].msg : json.detail;
+        let error_msg = APIResponse.status + " - " + APIResponse.statusText + " - " + endMSG;
+        throw new Error(error_msg);
+      }
+    }catch(e){
+      throw new Error(e);
+    }
+  }
+
 
   React.useEffect(() => {
     setOpenModal(endLevel);
-    if(endLevel){
-      console.log("TODO: Post to API: Submit LEVEL if user is logged in");
+    console.log(session);
+    if(endLevel && session.user){
+      postEndOfLevel();
     }
+    // eslint-disable-next-line
   }, [endLevel]);
   
   const reloadTab = () => {

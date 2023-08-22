@@ -6,11 +6,8 @@ import { GoogleLogin } from '@react-oauth/google';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { VALID_REGEX_EMAIL } from '../Constants/Constants';
 import { hash } from '../Resources/Hasher';
-import { useNavigate } from "react-router-dom";
 
 export const LoginForm = ( {setLogin} ) => {
-
-  const navigate = useNavigate();
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [showPassword, setShowPassword] = React.useState(false);
@@ -75,7 +72,6 @@ export const LoginForm = ( {setLogin} ) => {
         const loginResponse = await postLogin();
         setSessionWithResponse(loginResponse);
         /*TODO: DAR UN FEEDBACK DE SESION INICIADA CORRECTAMENTE ANTES DE REDIR*/
-        navigate("/");
     }catch(e){
         setError([e.toString().replaceAll("Error: ", "")]);
     }

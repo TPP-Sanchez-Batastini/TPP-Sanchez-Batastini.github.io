@@ -7,8 +7,14 @@ export const SessionHooks = () => {
 
 
     const setSessionWithResponse = (loginResponse) => {
+        localStorage.setItem("session", JSON.stringify({
+            user: loginResponse.user,
+            exp: loginResponse.exp,
+            jwt: loginResponse.jwt
+        }));
         setSession({
             user: loginResponse.user,
+            exp: loginResponse.exp,
             jwt: loginResponse.jwt
         });
     }

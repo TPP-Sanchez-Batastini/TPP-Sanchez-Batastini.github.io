@@ -115,7 +115,6 @@ export default class LevelFactory {
     conePhysics.rigidBody.threeObject = cone;
     conePhysics.rigidBody.onCollide = () => {
       this.levelScore.alterScore(SUB_FOR_CONE);
-      console.log("New score: ", this.levelScore.getCurrentScore());
     };
     this.physicsToUpdate.push(conePhysics);
     conePhysics.attachObserver(cone);
@@ -459,7 +458,6 @@ export default class LevelFactory {
       this.levelScore.alterScore(SUM_FOR_CHECKPOINT);
       this.scene.remove( checkpoint.threeDModel );
       const lastElemUsed = checkpoints.shift();
-      console.log("Last elem used: ",lastElemUsed);
       if (lastElemUsed.end){
         this.endLevel(this.levelScore.getCurrentScore(), this.levelScore.getCurrentTime() );
       } else if(checkpoints.length > 0){

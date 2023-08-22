@@ -14,7 +14,6 @@ import { VRButton } from "../addons/VRbutton";
 import Stats from "stats.js";
 import TrafficModel from "../LogicModel/IA/TrafficModel";
 import { useLocation } from "react-router-dom";
-import { Modal } from "@mui/material";
 import { EndOfLevelModal } from "../Menus/Components/EndOfLevelModal";
 
 
@@ -60,7 +59,6 @@ export class ThreeScene extends Component {
   }
 
   async componentDidMount() {
-    console.log(this.props.jsonLevel);
     this.jsonLevel = this.props.jsonLevel;
     this.generateGeneralElements = this.generateGeneralElements.bind(this);
     this.animation = this.animation.bind(this);
@@ -164,7 +162,6 @@ export class ThreeScene extends Component {
 
 
   async createTraffic(){
-    console.log("JSON LEVEL EN TRAFFIC: ", this.jsonLevel);
     this.trafficModel = new TrafficModel(this.scene, this.physicsWorld, this.jsonLevel.streets);
     this.carLogic.attachObserver(this.trafficModel);
     await this.trafficModel.generateInitialTraffic();
@@ -347,7 +344,6 @@ export class ThreeScene extends Component {
 
   endLevel(score ,time){
     this.finishedLevel = true;
-    console.log("fin de nnivbel" , this.finishedLevel);
     this.score = score;
     this.time = time;
     this.setState({...this.state, endScore: score, endTime: time, finishedLevel: true});
@@ -385,10 +381,11 @@ export class ThreeScene extends Component {
         ></div>
         
         <EndOfLevelModal 
-           endLevel={this.state.finishedLevel ? this.state.finishedLevel : this.finishedLevel} 
+          endLevel={this.state.finishedLevel ? this.state.finishedLevel : this.finishedLevel} 
           score={this.state.endScore} 
           time = {this.state.endTime}
           minScore={this.jsonLevel ? this.jsonLevel["minimum_to_win"] : 0}
+          levelId={this.jsonLevel ? this.jsonLevel.id : undefined}
         />
 
       </div>
