@@ -388,7 +388,7 @@ export class ThreeScene extends Component {
            endLevel={this.state.finishedLevel ? this.state.finishedLevel : this.finishedLevel} 
           score={this.state.endScore} 
           time = {this.state.endTime}
-          minScore={this.jsonLevel ? this.jsonLevel["minimum-to-win"] : 0}
+          minScore={this.jsonLevel ? this.jsonLevel["minimum_to_win"] : 0}
         />
 
       </div>

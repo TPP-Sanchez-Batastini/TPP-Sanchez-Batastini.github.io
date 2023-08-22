@@ -1231,7 +1231,7 @@
   "initial_rotation": 0,
   "has_traffic": true,
   "description": "¡Pon tus habilidades de manejo en práctica al transitar sobre este nivel libre, sin puntos ni temporizadores! Simplemente manejo libre...",
-  "minimum-to-win": null,
+  "minimum_to_win": null,
   "title": "Manejo Libre",
   "image": "manejo_libre.jpeg"
 

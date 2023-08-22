@@ -93,7 +93,7 @@
     {"position_x":17.5, "position_y":34, "end":true}
   ],
   "has_traffic": false,
-  "minimum-to-win":11700,
+  "minimum_to_win":11700,
   "initial_position":[15,15],
   "initial_rotation": 0,
   "description": "¡En este nivel podrás practicar la mecánica de giro en U!",
