@@ -127,8 +127,8 @@
     {"position_x":12.5,"position_y":60,"end":false},
     {"position_x":12.5,"position_y":30,"end":true}
   ],
-  "minimum-to-win":35000,
-  "has-traffic": false,
+  "minimum_to_win":35000,
+  "has_traffic": false,
   "initial_position":[75,15],
   "initial_rotation": 3.14159,
   "description": "¡En este nivel podrás practicar tu reversa haciendo ZigZag con conos!",

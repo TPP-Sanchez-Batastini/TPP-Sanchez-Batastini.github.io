@@ -88,8 +88,8 @@
     {"position_x":10.25, "position_y":40, "end":false},
     {"position_x":10, "position_y":43, "end":true}
   ],
-  "has-traffic": false,
-  "minimum-to-win": 4900,
+  "has_traffic": false,
+  "minimum_to_win": 4900,
   "initial_position":[15,15],
   "initial_rotation": 0,
   "description": "¡En este nivel podrás practicar tu estacionamiento en paralelo!",

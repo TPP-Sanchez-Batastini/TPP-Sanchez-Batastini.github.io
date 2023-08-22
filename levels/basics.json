@@ -128,8 +128,8 @@
     {"position_x":75,"position_y":60,"end":false},
     {"position_x":75,"position_y":30,"end":true}
   ],
-  "minimum-to-win":35000,
-  "has-traffic": false,
+  "minimum_to_win":35000,
+  "has_traffic": false,
   "initial_position":[15,15],
   "initial_rotation": 0,
   "description": "¡En este nivel podrás practicar la marcha básica haciendo ZigZag y doblando!",

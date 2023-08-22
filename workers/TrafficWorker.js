@@ -189,7 +189,6 @@ const getStreetSteering = (car, streets) => {
             break;
         }
     }
-    console.log("sel street: ", street, car);
     if (street.type === "STRAIGHT"){
         const streetPos = {x:street.position_x, y:0, z:street.position_y};
         return rectifyStraightDirection(car.dirVector, car.position, streetPos);
