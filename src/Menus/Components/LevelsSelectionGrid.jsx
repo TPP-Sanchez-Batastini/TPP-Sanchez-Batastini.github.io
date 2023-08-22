@@ -2,7 +2,7 @@ import React from 'react'
 import { Card, CardActions, Grid } from '@mui/material';
 import { LevelCard } from './CardLevel/LevelCardContent';
 import Carousel from 'react-material-ui-carousel';
-
+import {API_URL} from '../Constants/Constants'
 
 export const LevelsSelectionGrid = () => {
 
@@ -16,39 +16,38 @@ export const LevelsSelectionGrid = () => {
     }
   }, []);
 
+
+  const fetchLevels = async () => {
+    try{
+      const levelsJSONs = [];
+      const APIResponse = await fetch(
+        `${API_URL}/levels/`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json"
+          },
+        }
+      );
+      const json = await APIResponse.json();
+      json.forEach(level => {
+        level.level_json = JSON.parse(level.level_json);
+        level.level_json.id = level.id;
+        levelsJSONs.push(level.level_json);
+      });
+      if (APIResponse.status !== 200){
+        const endMSG = json.detail[0].msg ? json.detail[0].msg : json.detail;
+        let error_msg = APIResponse.status + " - " + APIResponse.statusText + " - " + endMSG;
+        throw new Error(error_msg);
+      }
+      setLevels(levelsJSONs);
+    }catch(e){
+      throw new Error(e);
+    }
+  }
+
   React.useEffect(() => {
-    const levelsEffect = [];
-    fetch("./levels/basics.json")
-    .then((response) => response.json())
-    .then((data) => {
-      levelsEffect.push(data);
-      fetch("./levels/reversa.json")
-        .then((response) => response.json())
-        .then((data) => {
-            levelsEffect.push(data);
-            fetch("./levels/adelanto.json")
-            .then((response) => response.json())
-            .then((data) => {
-                levelsEffect.push(data);
-                fetch("./levels/giro_en_u.json")
-                .then((response) => response.json())
-                .then((data) => {
-                    levelsEffect.push(data);
-                    fetch("./levels/estacionamiento.json")
-                    .then((response) => response.json())
-                    .then((data) => {
-                        levelsEffect.push(data);
-                        fetch("./levels/manejo_libre.json")
-                        .then((response) => response.json())
-                        .then((data) => {
-                            levelsEffect.push(data);
-                            setLevels(levelsEffect);
-                        });
-                    });
-                });
-            });
-        });
-    });
+    fetchLevels();
   }, []);
 
 
