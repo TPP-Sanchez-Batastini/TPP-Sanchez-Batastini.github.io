@@ -70,7 +70,7 @@ export const EndOfLevelModal = ({endLevel, score, time, minScore, levelId, timeI
                 <h1>
                   ¡Nivel Superado!
                 </h1> 
-                <p style={{color:"green"}}><strong>Tu punta final es</strong>: {score}</p>
+                <p style={{color:"green"}}><strong>Tu puntaje final es</strong>: {score}</p>
               </>
           }
           
