@@ -6,7 +6,7 @@ const CLUTCH_PRESED = 0;
 const CLUTCH_NOT_PRESED = 1;
 
 class XboxController{
-    constructor(auto, camera){
+    constructor(auto, camera, pause){
         const gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads() : []);
         this.gamepad = null;
         for (let i = 0; i < gamepads.length; i++) {
@@ -45,6 +45,7 @@ class XboxController{
         this.yRightAxe = 3;
         this.globalControllerHandler = new GlobalControllerHandling(auto);
         this.camera = camera;
+        this.pause = pause;
     }
 
     checkGamepadChanges(){
@@ -125,6 +126,7 @@ class XboxController{
         }
         
         if (this.gamepad.buttons[this.shareButton].pressed && !this.buttonPressed[this.shareButton]) {
+            this.pause();
             this.buttonPressed[this.shareButton] = true;
         }else if(!this.gamepad.buttons[this.shareButton].pressed){
             this.buttonPressed[this.shareButton] = false;
@@ -199,6 +201,7 @@ class XboxController{
         
         if (this.gamepad.buttons[this.buttomHome].pressed && !this.buttonPressed[this.buttomHome]) {
             this.globalControllerHandler.changeShiftBox("semi-auto");
+            this.pause();
             this.buttonPressed[this.buttomHome] = true;
         }else if(!this.gamepad.buttons[this.buttomHome].pressed){
             this.buttonPressed[this.buttomHome] = false;
@@ -228,9 +231,9 @@ export default class XboxControllerSingleton{
         throw new Error('Can not construct singleton. Call get instance instead.');
     }
 
-    static getInstance(auto, camera) {
+    static getInstance(auto, camera, pause) {
         if (!XboxControllerSingleton.instance) {
-            XboxControllerSingleton.instance = new XboxController(auto, camera);
+            XboxControllerSingleton.instance = new XboxController(auto, camera, pause);
         }
         return XboxControllerSingleton.instance;
     }

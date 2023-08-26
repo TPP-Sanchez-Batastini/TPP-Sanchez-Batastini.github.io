@@ -99,6 +99,16 @@ code {
   transform: translate(-50%, -50%);
   padding: 0px 20px 20px 20px;
 }
+.pause_menu{
+  background-color: #dadada; 
+  vertical-align:center; 
+  position:absolute; 
+  left:50%; 
+  top:50%;
+  transform: translate(-50%, -50%);
+  padding: 0px 20px 20px 20px;
+}
+
 
 @media (max-width: 1024px) {
   .containerMainMenu{

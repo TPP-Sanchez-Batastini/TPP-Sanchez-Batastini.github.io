@@ -15,6 +15,7 @@ import Stats from "stats.js";
 import TrafficModel from "../LogicModel/IA/TrafficModel";
 import { useLocation } from "react-router-dom";
 import { EndOfLevelModal } from "../Menus/Components/EndOfLevelModal";
+import { PauseModal } from "../Menus/Components/PauseModal";
 
 
 const MAXIMUM_DISTANCE_FROM_PLAYER_TO_RENDER = 200;
@@ -60,6 +61,7 @@ export class ThreeScene extends Component {
     this.renderer.shadowMap.enabled = true;
     this.clock = new THREE.Clock();
     this.finishedLevel = false;
+    this.levelPaused = false;
     this.score = 0;
     this.time = 0;
   }
@@ -74,7 +76,7 @@ export class ThreeScene extends Component {
     this.generateLevel = this.generateLevel.bind(this);
     this.addVR = this.addVR.bind(this);
     this.endLevel = this.endLevel.bind(this);
-
+    this.pauseLevel = this.pauseLevel.bind(this);
     await this.generateGeneralElements();
     await this.createAmmo();
     await this.addGeneralLights();
@@ -182,9 +184,15 @@ export class ThreeScene extends Component {
     document.addEventListener(
       "keydown",
       (event) => {
-        var numCamera = event.key;
-        this.carLogic.removeObserver(this.camera);
-        switch (numCamera) {
+        console.log(event.key);
+        var keyPressed = event.key;
+        if (!isNaN(keyPressed) && parseInt(keyPressed) >= 1 && parseInt(keyPressed) <= 5){
+          console.log("ENTRE IF");
+          this.carLogic.removeObserver(this.camera);
+        }else{
+          console.log("ELSE");
+        }
+        switch (keyPressed) {
           case "1":
             this.camera = new Camera(this.renderer);
             this.camera.addContainerToScene(this.scene);
@@ -201,11 +209,16 @@ export class ThreeScene extends Component {
           case "5":
             this.camera = new CarOffsetCamera(new Vector3(0.0, 3.0, -5.0));
             break;
+          case "Escape":
+            this.pauseLevel();
+            break;
           default:
             break;
         }
-        this.carLogic.attachObserver(this.camera);
-        this.carLogic.notifyObservers();
+        if (!isNaN(keyPressed) && parseInt(keyPressed) >= 1 && parseInt(keyPressed) <= 5){
+          this.carLogic.attachObserver(this.camera);
+          this.carLogic.notifyObservers();
+        }
       },
       false
     );
@@ -322,29 +335,31 @@ export class ThreeScene extends Component {
 
   animation() {
     this.stats.begin();
-    let deltaTime = this.clock.getDelta();
-    this.physicsWorld.stepSimulation(deltaTime, 10);
-    this.jsonLevel["has_traffic"] && this.trafficModel.animate();
-    this.objectsToAnimate.forEach(function (object) {
-      object.animate();
-    });
-    this.physicsToUpdate.forEach(function (phys) {
-      phys.updatePhysics();
-    });
-    this.camera.setPositionRelativeToObject();
-    XboxControllerSingleton.getInstance(this.carLogic, this.camera).checkEvents();
-    this.setState({
-      ...this.state,
-      velocity: this.carLogic.getSpeed(),
-      currentRPM: this.carLogic.getCurrentRPM(),
-      currentShift: this.carLogic.getCurrentShift(),
-      score: this.level.getScore(),
-      time: this.level.getTime()
-    });
-    // this.lastPlayerPos = this.carLogic.getDataToAnimate()["position"];
-    // this.lastRenderScene = this.getReducedScene();
-    // this.renderer.render(this.lastRenderScene, this.camera.getCameraInstance());
-    this.renderer.render(this.scene, this.camera.getCameraInstance());
+    if(!this.levelPaused){
+      let deltaTime = this.clock.getDelta();
+      this.physicsWorld.stepSimulation(deltaTime, 10);
+      this.jsonLevel["has_traffic"] && this.trafficModel.animate();
+      this.objectsToAnimate.forEach(function (object) {
+        object.animate();
+      });
+      this.physicsToUpdate.forEach(function (phys) {
+        phys.updatePhysics();
+      });
+      this.camera.setPositionRelativeToObject();
+      XboxControllerSingleton.getInstance(this.carLogic, this.camera,this.pauseLevel).checkEvents();
+      this.setState({
+        ...this.state,
+        velocity: this.carLogic.getSpeed(),
+        currentRPM: this.carLogic.getCurrentRPM(),
+        currentShift: this.carLogic.getCurrentShift(),
+        score: this.level.getScore(),
+        time: this.level.getTime()
+      });
+      // this.lastPlayerPos = this.carLogic.getDataToAnimate()["position"];
+      // this.lastRenderScene = this.getReducedScene();
+      // this.renderer.render(this.lastRenderScene, this.camera.getCameraInstance());
+      this.renderer.render(this.scene, this.camera.getCameraInstance());
+    }
     this.stats.end();
   }
 
@@ -353,6 +368,11 @@ export class ThreeScene extends Component {
     this.score = score;
     this.time = time;
     this.setState({...this.state, endScore: score, endTime: time, finishedLevel: true});
+  }
+
+  pauseLevel(){
+    this.levelPaused = !this.levelPaused ;
+    this.setState({...this.state, paused: this.levelPaused});
   }
 
   
@@ -393,6 +413,11 @@ export class ThreeScene extends Component {
           minScore={this.jsonLevel ? this.jsonLevel["minimum_to_win"] : 0}
           levelId={this.jsonLevel ? this.jsonLevel.id : undefined}
           timeInMs= {this.state.endTime ? getTimeAsMs( this.state.endTime) : 0}
+        />
+
+        <PauseModal
+          pausedLevel={this.state.paused}
+          pause={this.pauseLevel}
         />
 
       </div>
