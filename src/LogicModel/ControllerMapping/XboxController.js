@@ -154,7 +154,6 @@ class XboxController{
         }
 
         if (this.gamepad.buttons[this.padRight].pressed && !this.buttonPressed[this.padRight]) {
-            
             this.globalControllerHandler.turnRightLight();
             this.buttonPressed[this.padRight] = true;
         }else if(!this.gamepad.buttons[this.padRight].pressed){

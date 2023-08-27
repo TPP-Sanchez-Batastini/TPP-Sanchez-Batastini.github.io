@@ -17,9 +17,6 @@ import { useLocation } from "react-router-dom";
 import { EndOfLevelModal } from "../Menus/Components/EndOfLevelModal";
 import { PauseModal } from "../Menus/Components/PauseModal";
 
-
-const MAXIMUM_DISTANCE_FROM_PLAYER_TO_RENDER = 100;
-
 export default function ThreeSceneWrapper(){
   const {state} = useLocation();
   const {jsonLevel} = state;
@@ -57,7 +54,6 @@ export class ThreeScene extends Component {
       powerPreference: "high-performance",
       antialias: true,
     });
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.shadowMap.enabled = true;
     this.clock = new THREE.Clock();
     this.finishedLevel = false;
@@ -65,6 +61,12 @@ export class ThreeScene extends Component {
     this.score = 0;
     this.time = 0;
     this.initializedReducedScene = false;
+    this.checkpointUpdate = false;
+  }
+
+
+  updateCheckpoint(){
+    this.checkpointUpdate = true;
   }
 
   async componentDidMount() {
@@ -78,6 +80,7 @@ export class ThreeScene extends Component {
     this.addVR = this.addVR.bind(this);
     this.endLevel = this.endLevel.bind(this);
     this.pauseLevel = this.pauseLevel.bind(this);
+    this.updateCheckpoint = this.updateCheckpoint.bind(this);
     await this.generateGeneralElements();
     await this.createAmmo();
     await this.addGeneralLights();
@@ -87,7 +90,10 @@ export class ThreeScene extends Component {
       await this.createTraffic();
     }
     this.generateEvents();
-    this.addVR();
+    await this.addVR();
+    const resMult = JSON.parse(localStorage.getItem("graphic_config")).ResMultiplier;
+    this.renderer.setPixelRatio(window.devicePixelRatio * resMult);
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.setAnimationLoop(this.animation);
   }
 
@@ -112,7 +118,8 @@ export class ThreeScene extends Component {
   async addVR() {
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.xr.enabled = true;
-    this.renderer.xr.setFramebufferScaleFactor(0.75);
+    const VRScale = JSON.parse(localStorage.getItem("graphic_config")).VRResMultiplier
+    this.renderer.xr.setFramebufferScaleFactor(VRScale);
     this.mount.appendChild(this.renderer.domElement);
     document.body.appendChild(VRButton.createButton(this.renderer));
   }
@@ -123,7 +130,7 @@ export class ThreeScene extends Component {
   }
 
   async generateLevel() {
-    this.level = new LevelFactory(this.scene, this.physicsWorld, this.endLevel);
+    this.level = new LevelFactory(this.scene, this.physicsWorld, this.endLevel, this.updateCheckpoint);
     let updateDataLevel = await this.level.createLevelCustom(this.jsonLevel);
     this.objectsToAnimate = [
       ...this.objectsToAnimate,
@@ -152,6 +159,23 @@ export class ThreeScene extends Component {
     this.camera.addContainerToScene(this.scene);
     this.stats.showPanel(0);
     document.body.appendChild(this.stats.dom);
+    if (!localStorage.getItem("graphic_config")){
+      localStorage.setItem("graphic_config", JSON.stringify({
+        "VRResMultiplier": 0.75,
+        "ResMultiplier": 1,
+        "AAEspejos": 4,
+        "MirrorResMultiplier": 1,
+        "CreateMirrors": true,
+        "ViewDistance": 100,
+        "lightsOn": true,
+        "indexEspejos": 3,
+        "indexRes": 3,
+        "indexVR": 2,
+      }));
+    }
+    if (!localStorage.getItem("controller")){
+      localStorage.setItem("controller", "G29");
+    }
   }
 
   async addGeneralLights() {
@@ -199,6 +223,7 @@ export class ThreeScene extends Component {
         switch (keyPressed) {
           case "1":
             this.camera = new Camera(this.renderer);
+            this.camera.addContainerToScene(this.reducedScene);
             this.camera.addContainerToScene(this.scene);
             break;
           case "2":
@@ -298,12 +323,17 @@ export class ThreeScene extends Component {
   }
 
   async getReducedScene(playersPosition) {
+    const viewDistance = JSON.parse(localStorage.getItem("graphic_config")).ViewDistance;
     const newChildren = this.scene.children.filter(
       object => (
           object.name === "GREEN_FIELD" || 
           object.name === "AmbientLight" ||
           object.name === "driverCar" ||
-          this.vecDistance(object.position, playersPosition) <= MAXIMUM_DISTANCE_FROM_PLAYER_TO_RENDER
+          this.vecDistance(object.position, playersPosition) <= viewDistance ||
+          //Si es una calle recta, esto ayuda a que se vea aunque el centro este mas lejos que la viewDistance
+          (object.LONG && 
+            this.vecDistance(object.position, playersPosition) <= viewDistance + object.LONG
+          )
       )
     );
     this.reducedScene.children = newChildren;
@@ -323,7 +353,11 @@ export class ThreeScene extends Component {
         phys.updatePhysics();
       });
       this.camera.setPositionRelativeToObject();
-      XboxControllerSingleton.getInstance(this.carLogic, this.camera,this.pauseLevel).checkEvents();
+      if (localStorage.getItem("controller") === "XInput"){
+        XboxControllerSingleton.getInstance(this.carLogic, this.camera,this.pauseLevel).checkEvents();
+      }else{
+        LogitechG29ControllerSingleton.getInstance(this.carLogic, this.camera, this.pauseLevel).checkEvents();
+      }
       this.setState({
         ...this.state,
         velocity: this.carLogic.getSpeed(),
@@ -333,8 +367,9 @@ export class ThreeScene extends Component {
         time: this.level.getTime()
       });
       const currentPos = this.carLogic.getDataToAnimate()["position"];
-      if (!this.lastPlayerPos || this.vecDistance(this.lastPlayerPos, currentPos) >= 30){
+      if (!this.lastPlayerPos || this.checkpointUpdate || this.vecDistance(this.lastPlayerPos, currentPos) >= 30){
         this.lastPlayerPos = currentPos;
+        this.checkpointUpdate = false;
         this.getReducedScene(this.lastPlayerPos);
       }
       if (this.initializedReducedScene){

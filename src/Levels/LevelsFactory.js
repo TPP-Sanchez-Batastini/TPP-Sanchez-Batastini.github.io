@@ -17,13 +17,14 @@ const SUB_FOR_CONE = -100;
 const INITIAL_SCORE = 0;
 
 export default class LevelFactory {
-  constructor(scene, physicsWorld, endLevel) {
+  constructor(scene, physicsWorld, endLevel, checkpointUpdate) {
     this.scene = scene;
     this.physicsWorld = physicsWorld;
     this.levelScore = new LevelScore(INITIAL_SCORE);
     this.physicsToUpdate = [];
     this.objectsToAnimate = [];
     this.endLevel = endLevel;
+    this.notifyCheckpointUpdate = checkpointUpdate;
     this.STREET_TYPES = {
       "STRAIGHT": this.createStreet.bind(this),
       "CURVE": this.createCurve.bind(this),
@@ -462,6 +463,7 @@ export default class LevelFactory {
         this.endLevel(this.levelScore.getCurrentScore(), this.levelScore.getCurrentTime() );
       } else if(checkpoints.length > 0){
         await this.createCheckpoint([checkpoints[0].position_x, 1, checkpoints[0].position_y], checkpoints);
+        this.notifyCheckpointUpdate();
       }
     };
     checkpointPhysics.attachObserver(checkpoint);

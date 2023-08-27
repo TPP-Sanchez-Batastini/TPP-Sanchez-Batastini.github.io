@@ -12,7 +12,7 @@ const DPAD_RIGHT_PRESSED = 3;
 
 
 class LogitechG29Controller{
-    constructor(carLogic){
+    constructor(carLogic,camera, pause){
         this.carLogic = carLogic;
         const gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads() : []);
         this.gamepad = null;
@@ -65,6 +65,9 @@ class LogitechG29Controller{
         this.valueDpadDOWN = DPAD_DOWN;
         this.valueDpadLEFT = DPAD_LEFT;
         this.valueDpadRIGHT = DPAD_RIGHT;
+
+        this.camera = camera;
+        this.pause = pause;
 
         this.dpadPressed = [];
         for(let i=0; i <= 3; i++){
@@ -122,19 +125,17 @@ class LogitechG29Controller{
                 this.dpadPressed[DPAD_DOWN_PRESSED] = false;
             }
 
-            if(this.gamepad.axes[this.DPad] === this.valueDpadLEFT && !this.dpadPressed[DPAD_LEFT_PRESSED]){
-                this.dpadPressed[DPAD_LEFT_PRESSED] = true;
-            }else if (this.gamepad.axes[this.DPad] !== this.valueDpadLEFT){
-                this.dpadPressed[DPAD_LEFT_PRESSED] = false;
-            }
 
-            if(this.gamepad.axes[this.DPad] === this.valueDpadRIGHT && !this.dpadPressed[DPAD_RIGHT_PRESSED]){
-                this.dpadPressed[DPAD_RIGHT_PRESSED] = true;
-            }else if (this.gamepad.axes[this.DPad] !== this.valueDpadRIGHT){
-                this.dpadPressed[DPAD_RIGHT_PRESSED] = false;
-            }
+            if(this.gamepad.axes[this.DPad] === this.valueDpadRIGHT){
+                this.camera.rotate(-1);
+                
+            }else if (this.gamepad.axes[this.DPad] === this.valueDpadLEFT){
+                this.camera.rotate(1);
+            };
+
 
             if(this.gamepad.axes[this.DPad] === this.valueDpadUP && !this.dpadPressed[DPAD_UP_PRESSED]){
+                this.globalControllerHandler.turnParkingLight();
                 this.dpadPressed[DPAD_UP_PRESSED] = true;
             }else if (this.gamepad.axes[this.DPad] !== this.valueDpadUP){
                 this.dpadPressed[DPAD_UP_PRESSED] = false;
@@ -143,6 +144,7 @@ class LogitechG29Controller{
             for(let i = 0; i < this.dpadPressed.length; i++){
                 this.dpadPressed[i] = false;
             }
+            this.camera.rotate(0);
         }
     }
 
@@ -171,6 +173,7 @@ class LogitechG29Controller{
 
 
         if (this.gamepad.buttons[this.buttonSquare].pressed && !this.buttonsPressed[this.buttonSquare]) {
+            this.globalControllerHandler.doHorn();
             this.buttonsPressed[this.buttonSquare] = true;
         }else if(!this.gamepad.buttons[this.buttonSquare].pressed){
             this.buttonsPressed[this.buttonSquare] = false;
@@ -221,7 +224,7 @@ class LogitechG29Controller{
 
 
         if (this.gamepad.buttons[this.buttonR3].pressed && !this.buttonsPressed[this.buttonR3]) {
-            this.globalControllerHandler.doHorn();
+            
             this.buttonsPressed[this.buttonR3] = true;
         }else if(!this.gamepad.buttons[this.buttonR3].pressed){
             this.buttonsPressed[this.buttonR3] = false;
@@ -230,6 +233,7 @@ class LogitechG29Controller{
 
         if (this.gamepad.buttons[this.enter].pressed && !this.buttonsPressed[this.enter]) {
             this.buttonsPressed[this.enter] = true;
+            this.pause();
         }else if(!this.gamepad.buttons[this.enter].pressed){
             this.buttonsPressed[this.enter] = false;
         }
@@ -243,6 +247,7 @@ class LogitechG29Controller{
 
 
         if (this.gamepad.buttons[this.optionsButton].pressed && !this.buttonsPressed[this.optionsButton]) {
+            
             this.buttonsPressed[this.optionsButton] = true;
         }else if(!this.gamepad.buttons[this.optionsButton].pressed){
             this.buttonsPressed[this.optionsButton] = false;
@@ -250,6 +255,7 @@ class LogitechG29Controller{
 
 
         if (this.gamepad.buttons[this.bumperLeft].pressed && !this.buttonsPressed[this.bumperLeft]) {
+            this.globalControllerHandler.turnLeftLight();
             this.buttonsPressed[this.bumperLeft] = true;
         }else if(!this.gamepad.buttons[this.bumperLeft].pressed){
             this.buttonsPressed[this.bumperLeft] = false;
@@ -257,6 +263,7 @@ class LogitechG29Controller{
 
 
         if (this.gamepad.buttons[this.bumperRight].pressed && !this.buttonsPressed[this.bumperRight]) {
+            this.globalControllerHandler.turnRightLight();
             this.buttonsPressed[this.bumperRight] = true;
         }else if(!this.gamepad.buttons[this.bumperRight].pressed){
             this.buttonsPressed[this.bumperRight] = false;
@@ -349,9 +356,9 @@ export default class LogitechG29ControllerSingleton{
         throw new Error('Can not construct singleton. Call get instance instead.');
     }
 
-    static getInstance(carLogic) {
+    static getInstance(carLogic,camera, pause) {
         if (!LogitechG29ControllerSingleton.instance) {
-            LogitechG29ControllerSingleton.instance = new LogitechG29Controller(carLogic);
+            LogitechG29ControllerSingleton.instance = new LogitechG29Controller(carLogic,camera, pause);
         }
         return LogitechG29ControllerSingleton.instance;
     }

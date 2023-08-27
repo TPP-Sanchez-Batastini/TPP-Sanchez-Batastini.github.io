@@ -38,15 +38,14 @@ export default class CarModel extends VisualEntity{
 
     generateRetrovisor(){
         const plane = new THREE.PlaneGeometry(0.145, 0.085);
-
-
+        const graphSettings = JSON.parse(localStorage.getItem("graphic_config"));
         const retrovisor = new Reflector(
             plane,
             {
-                textureWidth: window.innerWidth,
-                textureHeight: window.innerHeight,
+                textureWidth: window.innerWidth * graphSettings.MirrorResMultiplier,
+                textureHeight: window.innerHeight * graphSettings.MirrorResMultiplier,
                 clipBias: 0.35,
-                multisample: 4
+                multisample: graphSettings.AAEspejos
             }
         );
         retrovisor.rotateX( Math.PI-0.04 );
@@ -58,14 +57,14 @@ export default class CarModel extends VisualEntity{
 
     generateLeftMirror(){
         const leftMirrorGeometry = new THREE.PlaneGeometry(0.19, 0.10);
-
+        const graphSettings = JSON.parse(localStorage.getItem("graphic_config"));
         const leftMirror = new Reflector(
             leftMirrorGeometry, 
             {
-                textureWidth:2* window.innerWidth,
-                textureHeight:2* window.innerHeight,
+                textureWidth: window.innerWidth * graphSettings.MirrorResMultiplier,
+                textureHeight: window.innerHeight * graphSettings.MirrorResMultiplier,
                 clipBias: 0,
-                multisample: 4
+                multisample: graphSettings.AAEspejos
             }
         );
         let container = new Object3D();
@@ -78,14 +77,15 @@ export default class CarModel extends VisualEntity{
 
 
     generateRightMirror(){
+        const graphSettings = JSON.parse(localStorage.getItem("graphic_config"));
         const rightMirrorGeometry = new THREE.PlaneGeometry(0.19, 0.10);
         const rightMirror = new Reflector(
             rightMirrorGeometry, 
             {
-                textureWidth: window.innerWidth,
-                textureHeight: window.innerHeight,
+                textureWidth: window.innerWidth * graphSettings.MirrorResMultiplier,
+                textureHeight: window.innerHeight * graphSettings.MirrorResMultiplier,
                 clipBias: 0,
-                multisample: 4
+                multisample: graphSettings.AAEspejos
             }
         );
         let container = new Object3D();
@@ -98,7 +98,8 @@ export default class CarModel extends VisualEntity{
 
 
     generateMirrors(){
-        if (!this.isIA){
+        const graphSettings = JSON.parse(localStorage.getItem("graphic_config"));
+        if (!this.isIA && graphSettings.CreateMirrors) {
             this.generateRetrovisor();
             this.generateLeftMirror();
             this.generateRightMirror();
@@ -106,7 +107,8 @@ export default class CarModel extends VisualEntity{
     }
 
     generateSpotlights(){
-        if(!this.isIA){
+        const shouldTurnLightsOn = JSON.parse(localStorage.getItem("graphic_config")).lightsOn;
+        if(!this.isIA && shouldTurnLightsOn){
             this.rightSpotlight = new THREE.SpotLight(0xffffff);
             this.leftSpotlight = new THREE.SpotLight(0xffffff);
             this.targetRight = new Object3D();
@@ -197,8 +199,8 @@ export default class CarModel extends VisualEntity{
     }
 
     turnRigth(){
-
-        if (this.isIA)
+        const shouldTurnLightsOn = JSON.parse(localStorage.getItem("graphic_config")).lightsOn;
+        if (this.isIA || !shouldTurnLightsOn)
             return;
         let time = new Date();
         if(this.observedState["turnRigthLigth"]  ){
@@ -220,7 +222,8 @@ export default class CarModel extends VisualEntity{
     }
 
     turnLeft(){
-        if (this.isIA)
+        const shouldTurnLightsOn = JSON.parse(localStorage.getItem("graphic_config")).lightsOn;
+        if (this.isIA || !shouldTurnLightsOn)
             return;
         let time = new Date();
         if(this.observedState["turnLeftLigth"]  ){
