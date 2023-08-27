@@ -54,7 +54,6 @@ export const LevelCard = ({level}) => {
         let error_msg = APIResponse.status + " - " + APIResponse.statusText + " - " + endMSG;
         throw new Error(error_msg);
       }
-      console.log(json);
       setIsCompleted(json.completed);
       setCompletedData({
         score: json.best_score,

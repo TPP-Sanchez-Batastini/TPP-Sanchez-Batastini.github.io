@@ -12,7 +12,7 @@ export default class TrafficModel extends Observer {
 
     constructor(scene, physicsWorld, streets){
         super();
-        this.SIZE_OF_TRAFFIC = 6;
+        this.SIZE_OF_TRAFFIC = 10;
         this.timeSinceLastUpdate = Date.now();
         this.trafficWorker = new Worker("./workers/TrafficWorker.js");
         this.currentTraffic = {};

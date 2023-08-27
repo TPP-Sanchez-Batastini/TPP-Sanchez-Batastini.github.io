@@ -18,8 +18,7 @@ import { EndOfLevelModal } from "../Menus/Components/EndOfLevelModal";
 import { PauseModal } from "../Menus/Components/PauseModal";
 
 
-const MAXIMUM_DISTANCE_FROM_PLAYER_TO_RENDER = 200;
-const SEGMENT_SIZE = 50;
+const MAXIMUM_DISTANCE_FROM_PLAYER_TO_RENDER = 100;
 
 export default function ThreeSceneWrapper(){
   const {state} = useLocation();
@@ -52,6 +51,7 @@ export class ThreeScene extends Component {
     this.stats = new Stats();
     this.objectsToAnimate = [];
     this.scene = new THREE.Scene();
+    this.reducedScene = new THREE.Scene();
     this.renderer = new THREE.WebGLRenderer({
       alpha: true,
       powerPreference: "high-performance",
@@ -64,6 +64,7 @@ export class ThreeScene extends Component {
     this.levelPaused = false;
     this.score = 0;
     this.time = 0;
+    this.initializedReducedScene = false;
   }
 
   async componentDidMount() {
@@ -116,6 +117,11 @@ export class ThreeScene extends Component {
     document.body.appendChild(VRButton.createButton(this.renderer));
   }
 
+  async onReceiveResponseFromSceneWorker(message){
+    this.initializedReducedScene = true;
+    this.reducedScene.children = message.data;
+  }
+
   async generateLevel() {
     this.level = new LevelFactory(this.scene, this.physicsWorld, this.endLevel);
     let updateDataLevel = await this.level.createLevelCustom(this.jsonLevel);
@@ -149,7 +155,9 @@ export class ThreeScene extends Component {
   }
 
   async addGeneralLights() {
-    this.scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+    const light = new THREE.AmbientLight(0xffffff, 0.5);
+    light.name = "AmbientLight";
+    this.scene.add(light);
   }
 
   async addPlayerCar() {
@@ -160,7 +168,7 @@ export class ThreeScene extends Component {
       new THREE.Quaternion().setFromAxisAngle( new THREE.Vector3( 0, 1, 0 ), this.jsonLevel.initial_rotation ) // Initial Rotation
     );
     await this.carLogic.carPhysics.buildAmmoPhysics();
-    let carModel = new CarModel();
+    let carModel = new CarModel(false);
     this.carLogic.carPhysics.rigidBody.threeObject = carModel;
     this.carLogic.attachObserver(carModel);
     this.carLogic.attachObserver(this.camera);
@@ -184,13 +192,9 @@ export class ThreeScene extends Component {
     document.addEventListener(
       "keydown",
       (event) => {
-        console.log(event.key);
         var keyPressed = event.key;
         if (!isNaN(keyPressed) && parseInt(keyPressed) >= 1 && parseInt(keyPressed) <= 5){
-          console.log("ENTRE IF");
           this.carLogic.removeObserver(this.camera);
-        }else{
-          console.log("ELSE");
         }
         switch (keyPressed) {
           case "1":
@@ -293,44 +297,17 @@ export class ThreeScene extends Component {
     return [maxX, maxZ];
   }
 
-  
-  generateSegmentedScenesChildren(){
-    const [maxX, maxZ] = this.getMaxSizeStreets();
-    this.segmentedScenes = [];
-    for (let i=0; i< parseInt(maxX/SEGMENT_SIZE) + 1; i++){
-      this.segmentedScenes.push([]);
-      for (let j=0; j<parseInt(maxZ/SEGMENT_SIZE) + 1; j++){
-        const segmentPosition = new THREE.Vector3(
-          i*SEGMENT_SIZE,
-          0,
-          j*SEGMENT_SIZE
-        );
-        this.segmentedScenes[i].push(this.scene.children.filter(
-          object => object.isLight || 
-                      object.name === "GREEN_FIELD" || 
-                      object.name.includes("traffic_car") ||
-                      object.name === "driverCar" ||
-                      this.vecDistance(object.position, segmentPosition) <= MAXIMUM_DISTANCE_FROM_PLAYER_TO_RENDER
-        ));
-      }
-    }
-    
-  }
-
-
-  getReducedScene() {
-    const cloneScene = new THREE.Scene();
-    if(this.segmentedScenes.length === 0){
-      this.generateSegmentedScenesChildren();
-    }
-    cloneScene.children = this.segmentedScenes
-    [
-      parseInt(this.lastPlayerPos.x/SEGMENT_SIZE)
-    ]
-    [
-      parseInt(this.lastPlayerPos.z/SEGMENT_SIZE)
-    ]
-    return cloneScene;
+  async getReducedScene(playersPosition) {
+    const newChildren = this.scene.children.filter(
+      object => (
+          object.name === "GREEN_FIELD" || 
+          object.name === "AmbientLight" ||
+          object.name === "driverCar" ||
+          this.vecDistance(object.position, playersPosition) <= MAXIMUM_DISTANCE_FROM_PLAYER_TO_RENDER
+      )
+    );
+    this.reducedScene.children = newChildren;
+    this.initializedReducedScene = true;
   }
 
   animation() {
@@ -355,10 +332,17 @@ export class ThreeScene extends Component {
         score: this.level.getScore(),
         time: this.level.getTime()
       });
-      // this.lastPlayerPos = this.carLogic.getDataToAnimate()["position"];
-      // this.lastRenderScene = this.getReducedScene();
-      // this.renderer.render(this.lastRenderScene, this.camera.getCameraInstance());
-      this.renderer.render(this.scene, this.camera.getCameraInstance());
+      const currentPos = this.carLogic.getDataToAnimate()["position"];
+      if (!this.lastPlayerPos || this.vecDistance(this.lastPlayerPos, currentPos) >= 30){
+        this.lastPlayerPos = currentPos;
+        this.getReducedScene(this.lastPlayerPos);
+      }
+      if (this.initializedReducedScene){
+        this.renderer.render(this.reducedScene, this.camera.getCameraInstance());
+      }else{
+        this.renderer.render(this.scene, this.camera.getCameraInstance());
+      }
+      
     }
     this.stats.end();
   }

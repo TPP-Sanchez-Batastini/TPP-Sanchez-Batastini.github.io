@@ -42,7 +42,6 @@ export const EndOfLevelModal = ({endLevel, score, time, minScore, levelId, timeI
 
   React.useEffect(() => {
     setOpenModal(endLevel);
-    console.log(session);
     if(endLevel && session.user){
       postEndOfLevel();
     }
