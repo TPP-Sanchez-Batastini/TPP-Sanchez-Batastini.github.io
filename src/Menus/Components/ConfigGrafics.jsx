@@ -83,10 +83,6 @@ const resolucionVR = [
   },
 ];
 
-function valueLabelFormat(marks, value) {
-  return calidadEspejos[value].label;
-}
-
 
 export const ConfigGrafics = ({ pausedLevel, pause }) => {
 
