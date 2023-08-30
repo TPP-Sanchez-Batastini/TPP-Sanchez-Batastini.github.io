@@ -12,13 +12,13 @@ export const LoginDialog = ( {openDialog, setOpenDialog} ) => {
   }
 
   return (
-    <Dialog open={openDialog} onClose={handleClose} >
-      <DialogContent style={{backgroundColor:'#68B9D2'}}>
+    <Dialog open={openDialog} onClose={handleClose} maxWidth='md' fullWidth={true}>
+      <DialogContent style={{backgroundColor:'#68B9D2'}} sx={{minHeight:"75vh", display:"flex", alignContent:"center", justifyContent:"center", alignItems:"center"}}>
         {
           login ?
-            <LoginForm setLogin={setLogin}/>
+            <LoginForm setLogin={setLogin} setOpenDialog={setOpenDialog}/>
           :
-            <SignUpForm setLogin={setLogin}/>
+            <SignUpForm setLogin={setLogin} setOpenDialog={setOpenDialog}/>
         }
       </DialogContent>
     </Dialog>
