@@ -35,7 +35,7 @@ code {
 
 .buttonMainMenu:hover{
 
-  opacity: 70% !important;
+  opacity: 0.7 !important;
   color: black;
   cursor: pointer;
 }
@@ -61,13 +61,13 @@ code {
 }
 
 .imageLevelEditor:hover{
-  opacity: 75%;
+  opacity: 0.75;
   background-color: #666464;
   cursor:pointer;
 }
 
 .imageLevelEditor.selected{
-  opacity: 75%;
+  opacity: 0.75;
   background-color: #fcb900;
 }
 
