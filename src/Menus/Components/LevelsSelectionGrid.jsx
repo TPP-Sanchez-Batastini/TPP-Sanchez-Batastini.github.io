@@ -62,7 +62,7 @@ export const LevelsSelectionGrid = () => {
                 navButtonsAlwaysVisible={true}
                 indicators={false}
                 navButtonsProps={{
-                    style: {"opacity":"40%"}
+                    style: {"opacity":"0.4"}
                 }}
                 swipe={true}
                 className={"levelsCarousel"}
