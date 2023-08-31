@@ -128,6 +128,9 @@ export default class TrafficModel extends Observer {
             const [carId, value] = entry;
             const carData = value.engine.getDataToAnimate();
             carData.carId = carId;
+            const carOffset = new THREE.Vector3(0,0,2.5).applyQuaternion(carData.rotation);
+            carData.frontPosition = carData.position.add(carOffset);
+            carData.backPosition = carData.position.sub(carOffset);
             delete carData.physicsBody;
             delete carData.wheelsData;
             trafficCars.push(carData);
@@ -135,6 +138,9 @@ export default class TrafficModel extends Observer {
         if (this.observedState){
             delete this.observedState.physicsBody;
             delete this.observedState.wheelsData;
+            const carOffset = new THREE.Vector3(0,0,2.5).applyQuaternion(this.observedState.rotation);
+            this.observedState.frontPosition = this.observedState.position.add(carOffset);
+            this.observedState.backPosition = this.observedState.position.sub(carOffset);
         }
         this.trafficWorker.postMessage({
             playersCar: this.observedState,

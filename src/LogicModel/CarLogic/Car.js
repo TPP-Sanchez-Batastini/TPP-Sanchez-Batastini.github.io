@@ -106,11 +106,17 @@ export default class Car extends Observable{
 
     
     getDataToAnimate(){
+        const dirVector = new Vector3(0,0,1).applyQuaternion(this.rotation);
+        const rightDir = new Vector3(0,0,1).applyAxisAngle(new Vector3(0,1,0), -Math.PI/2).applyQuaternion(this.rotation);
+        console.log(dirVector, rightDir, dirVector);
         return {
             "direction": this.currentDirectionTurn, 
             "velocity": this.carPhysics.getVelocity(), 
             "lastRotationWheel": this.currentTireRotation,
-            "dirVector": new Vector3(0,0,1).applyQuaternion(this.rotation),
+            "dirVector": dirVector,
+            "frontPosition": new Vector3(this.position.x + dirVector.x*2.5, this.position.y, this.position.z + dirVector.z*2.5),
+            "backPosition": new Vector3(this.position.x - dirVector.x*2.5, this.position.y, this.position.z - dirVector.z*2.5),
+            "rightDirection": rightDir,
             "position": this.position,
             "rotation": this.rotation,
             "physicsBody": this.carPhysics,
