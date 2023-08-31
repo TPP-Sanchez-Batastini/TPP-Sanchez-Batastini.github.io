@@ -7,7 +7,7 @@ const PRESS_ACCEL = 1;
 const NOT_PRESS = 0;
 const PRESS_BRAKE = 0.5;
 const MINIMA_DISTANCIA_ENTRE_AUTOS = 10;
-const UMBRAL_INICIO_TIPO_CALLE = 0.5;
+const UMBRAL_INICIO_TIPO_CALLE = 0.3;
 const STREET_SIZE = 30;
 const RIGHT = 0.48;
 const LEFT = -0.351;
@@ -107,35 +107,48 @@ const distanciaVectorial = (vectorA, vectorB) => {
 
 const isInFrontOfCar = (idealDirection, elem, car) => {
     return (
-        (Math.abs(idealDirection[0]) > 0 && Math.sign(elem.position.x - car.position.x) === idealDirection[0]) ||
-        (Math.abs(idealDirection[2]) > 0 && Math.sign(elem.position.z - car.position.z) === idealDirection[2])
+        (Math.abs(idealDirection[0]) > 0 && Math.sign(elem.backPosition.x - car.frontPosition.x) === idealDirection[0]) ||
+        (Math.abs(idealDirection[2]) > 0 && Math.sign(elem.backPosition.z - car.frontPosition.z) === idealDirection[2])
     )
 }
 
-const isOnRight = (idealDirection, elem, car) => {
+const isOnRight = (elem, car) => {
     return (
-        Math.abs(idealDirection[0]) > 0 && 
         (
-            (
-                idealDirection[0] > 0 ? 
-                    elem.position.z + DISTANCIA_CENTRO_FRENTE_AUTO >= car.position.z : 
-                    elem.position.z - DISTANCIA_CENTRO_FRENTE_AUTO <= car.position.z
-            )
-        ) ||
-        Math.abs(idealDirection[2]) > 0 && 
+            Math.sign(car.rightDirection.x) > 0 ?
+                car.frontPosition.x <= elem.backPosition.x
+            :
+                car.frontPosition.x >= elem.backPosition.x
+        ) &&
         (
-            (
-                idealDirection[2] > 0 ? 
-                    elem.position.x - DISTANCIA_CENTRO_FRENTE_AUTO <= car.position.x : 
-                    elem.position.x + DISTANCIA_CENTRO_FRENTE_AUTO >= car.position.x
-            )
+            Math.sign(car.rightDirection.z) > 0 ?
+                car.frontPosition.z <= elem.backPosition.z
+            :
+                car.frontPosition.z >= elem.backPosition.z
         )
     );
 }
 
 const arePerpendicular = (elemDirVector, carDirVector) => {
     const arcCos = productoEscalar(elemDirVector, carDirVector);
-    return Math.abs(arcCos) <= UMBRAL_DETECCION_POSIBLE_COLISION
+    return Math.abs(arcCos) <= UMBRAL_DETECCION_POSIBLE_COLISION;
+}
+
+
+const sameDirection = (elem, car) => {
+    const arcCos = productoEscalar(elem.dirVector, car.dirVector);
+    return (
+        arcCos <= MISMA_DIRECCION + UMBRAL_ESTA_DELANTE &&
+            arcCos >= MISMA_DIRECCION - UMBRAL_ESTA_DELANTE 
+    );
+}
+
+
+const areAligned = (elem, car) => {
+    return (
+        car.dirVector.x * (elem.position.x - car.position.x) > INCERTEZA_DIRECCION || 
+            car.dirVector.z * (elem.position.z - car.position.z) > INCERTEZA_DIRECCION
+    );
 }
 
 
@@ -148,19 +161,14 @@ const filterCars = (car, trafficCars) => {
     const possibleColissions = nearCars.filter(elem => {
         return (
             arePerpendicular(elem.dirVector, car.dirVector) &&
-            isOnRight(idealDirection, elem, car) &&
+            isOnRight(elem, car) &&
             isInFrontOfCar(idealDirection, elem, car)
         );
     });
     const frontCars = nearCars.filter(elem => {
-        const arcCos = productoEscalar(elem.dirVector, car.dirVector);
         return(
-            (
-                car.dirVector.x * (elem.position.x - car.position.x) > INCERTEZA_DIRECCION || 
-                    car.dirVector.z * (elem.position.z - car.position.z) > INCERTEZA_DIRECCION
-            ) &&
-            arcCos <= MISMA_DIRECCION + UMBRAL_ESTA_DELANTE &&
-            arcCos >= MISMA_DIRECCION - UMBRAL_ESTA_DELANTE &&
+            sameDirection(elem, car) &&
+            areAligned(elem, car) &&
             isInFrontOfCar(idealDirection, elem, car)
         );
     });

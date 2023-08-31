@@ -1,7 +1,7 @@
 {
   "streets": [
     {
-      "position_x": 585,
+      "position_x": 465,
       "position_y": 15,
       "rotation": 1.5707963267948966,
       "long_x": 30,
@@ -9,7 +9,7 @@
       "type": "CURVE"
     },
     {
-      "position_x": 585,
+      "position_x": 465,
       "position_y": 105,
       "rotation": 0,
       "long_x": 30,
@@ -17,7 +17,7 @@
       "type": "T_STREET"
     },
     {
-      "position_x": 585,
+      "position_x": 465,
       "position_y": 195,
       "rotation": 0,
       "long_x": 30,
@@ -25,7 +25,7 @@
       "type": "T_STREET"
     },
     {
-      "position_x": 585,
+      "position_x": 465,
       "position_y": 285,
       "rotation": 0,
       "long_x": 30,
@@ -33,7 +33,7 @@
       "type": "T_STREET"
     },
     {
-      "position_x": 585,
+      "position_x": 465,
       "position_y": 375,
       "rotation": 0,
       "long_x": 30,
@@ -41,134 +41,14 @@
       "type": "T_STREET"
     },
     {
-      "position_x": 585,
+      "position_x": 465,
       "position_y": 465,
-      "rotation": 0,
-      "long_x": 30,
-      "long_y": 30,
-      "type": "T_STREET"
-    },
-    {
-      "position_x": 585,
-      "position_y": 555,
       "rotation": 0,
       "long_x": 30,
       "long_y": 30,
       "type": "CURVE"
     },
     {
-      "position_x": 525,
-      "position_y": 15,
-      "rotation": 1.5707963267948966,
-      "long_x": 30,
-      "long_y": 30,
-      "type": "T_STREET"
-    },
-    {
-      "position_x": 525,
-      "position_y": 105,
-      "rotation": 0,
-      "long_x": 30,
-      "long_y": 30,
-      "type": "INTERSECTION"
-    },
-    {
-      "position_x": 525,
-      "position_y": 195,
-      "rotation": 0,
-      "long_x": 30,
-      "long_y": 30,
-      "type": "INTERSECTION"
-    },
-    {
-      "position_x": 525,
-      "position_y": 285,
-      "rotation": 0,
-      "long_x": 30,
-      "long_y": 30,
-      "type": "INTERSECTION"
-    },
-    {
-      "position_x": 525,
-      "position_y": 375,
-      "rotation": 0,
-      "long_x": 30,
-      "long_y": 30,
-      "type": "INTERSECTION"
-    },
-    {
-      "position_x": 525,
-      "position_y": 465,
-      "rotation": 0,
-      "long_x": 30,
-      "long_y": 30,
-      "type": "INTERSECTION"
-    },
-    {
-      "position_x": 525,
-      "position_y": 555,
-      "rotation": 4.71238898038469,
-      "long_x": 30,
-      "long_y": 30,
-      "type": "T_STREET"
-    },
-    {
-      "position_x": 465,
-      "position_y": 15,
-      "rotation": 1.5707963267948966,
-      "long_x": 30,
-      "long_y": 30,
-      "type": "T_STREET"
-    },
-    {
-      "position_x": 465,
-      "position_y": 105,
-      "rotation": 0,
-      "long_x": 30,
-      "long_y": 30,
-      "type": "INTERSECTION"
-    },
-    {
-      "position_x": 465,
-      "position_y": 195,
-      "rotation": 0,
-      "long_x": 30,
-      "long_y": 30,
-      "type": "INTERSECTION"
-    },
-    {
-      "position_x": 465,
-      "position_y": 285,
-      "rotation": 0,
-      "long_x": 30,
-      "long_y": 30,
-      "type": "INTERSECTION"
-    },
-    {
-      "position_x": 465,
-      "position_y": 375,
-      "rotation": 0,
-      "long_x": 30,
-      "long_y": 30,
-      "type": "INTERSECTION"
-    },
-    {
-      "position_x": 465,
-      "position_y": 465,
-      "rotation": 0,
-      "long_x": 30,
-      "long_y": 30,
-      "type": "INTERSECTION"
-    },
-    {
-      "position_x": 465,
-      "position_y": 555,
-      "rotation": 4.71238898038469,
-      "long_x": 30,
-      "long_y": 30,
-      "type": "T_STREET"
-    },
-    {
       "position_x": 375,
       "position_y": 15,
       "rotation": 1.5707963267948966,
@@ -211,14 +91,6 @@
     {
       "position_x": 375,
       "position_y": 465,
-      "rotation": 0,
-      "long_x": 30,
-      "long_y": 30,
-      "type": "INTERSECTION"
-    },
-    {
-      "position_x": 375,
-      "position_y": 555,
       "rotation": 4.71238898038469,
       "long_x": 30,
       "long_y": 30,
@@ -267,14 +139,6 @@
     {
       "position_x": 285,
       "position_y": 465,
-      "rotation": 0,
-      "long_x": 30,
-      "long_y": 30,
-      "type": "INTERSECTION"
-    },
-    {
-      "position_x": 285,
-      "position_y": 555,
       "rotation": 4.71238898038469,
       "long_x": 30,
       "long_y": 30,
@@ -323,14 +187,6 @@
     {
       "position_x": 195,
       "position_y": 465,
-      "rotation": 0,
-      "long_x": 30,
-      "long_y": 30,
-      "type": "INTERSECTION"
-    },
-    {
-      "position_x": 195,
-      "position_y": 555,
       "rotation": 4.71238898038469,
       "long_x": 30,
       "long_y": 30,
@@ -379,14 +235,6 @@
     {
       "position_x": 105,
       "position_y": 465,
-      "rotation": 0,
-      "long_x": 30,
-      "long_y": 30,
-      "type": "INTERSECTION"
-    },
-    {
-      "position_x": 105,
-      "position_y": 555,
       "rotation": 4.71238898038469,
       "long_x": 30,
       "long_y": 30,
@@ -435,14 +283,6 @@
     {
       "position_x": 15,
       "position_y": 465,
-      "rotation": 3.141592653589793,
-      "long_x": 30,
-      "long_y": 30,
-      "type": "T_STREET"
-    },
-    {
-      "position_x": 15,
-      "position_y": 555,
       "rotation": 4.71238898038469,
       "long_x": 30,
       "long_y": 30,
@@ -489,14 +329,6 @@
       "type": "STRAIGHT"
     },
     {
-      "position_x": 15,
-      "position_y": 510,
-      "rotation": 0,
-      "long_x": 60,
-      "long_y": 30,
-      "type": "STRAIGHT"
-    },
-    {
       "position_x": 105,
       "position_y": 60,
       "rotation": 0,
@@ -531,14 +363,6 @@
     {
       "position_x": 105,
       "position_y": 420,
-      "rotation": 0,
-      "long_x": 60,
-      "long_y": 30,
-      "type": "STRAIGHT"
-    },
-    {
-      "position_x": 105,
-      "position_y": 510,
       "rotation": 0,
       "long_x": 60,
       "long_y": 30,
@@ -585,14 +409,6 @@
       "type": "STRAIGHT"
     },
     {
-      "position_x": 195,
-      "position_y": 510,
-      "rotation": 0,
-      "long_x": 60,
-      "long_y": 30,
-      "type": "STRAIGHT"
-    },
-    {
       "position_x": 285,
       "position_y": 60,
       "rotation": 0,
@@ -627,14 +443,6 @@
     {
       "position_x": 285,
       "position_y": 420,
-      "rotation": 0,
-      "long_x": 60,
-      "long_y": 30,
-      "type": "STRAIGHT"
-    },
-    {
-      "position_x": 285,
-      "position_y": 510,
       "rotation": 0,
       "long_x": 60,
       "long_y": 30,
@@ -681,14 +489,6 @@
       "type": "STRAIGHT"
     },
     {
-      "position_x": 375,
-      "position_y": 510,
-      "rotation": 0,
-      "long_x": 60,
-      "long_y": 30,
-      "type": "STRAIGHT"
-    },
-    {
       "position_x": 465,
       "position_y": 60,
       "rotation": 0,
@@ -729,126 +529,6 @@
       "type": "STRAIGHT"
     },
     {
-      "position_x": 465,
-      "position_y": 510,
-      "rotation": 0,
-      "long_x": 60,
-      "long_y": 30,
-      "type": "STRAIGHT"
-    },
-    {
-      "position_x": 525,
-      "position_y": 60,
-      "rotation": 0,
-      "long_x": 60,
-      "long_y": 30,
-      "type": "STRAIGHT"
-    },
-    {
-      "position_x": 525,
-      "position_y": 150,
-      "rotation": 0,
-      "long_x": 60,
-      "long_y": 30,
-      "type": "STRAIGHT"
-    },
-    {
-      "position_x": 525,
-      "position_y": 240,
-      "rotation": 0,
-      "long_x": 60,
-      "long_y": 30,
-      "type": "STRAIGHT"
-    },
-    {
-      "position_x": 525,
-      "position_y": 330,
-      "rotation": 0,
-      "long_x": 60,
-      "long_y": 30,
-      "type": "STRAIGHT"
-    },
-    {
-      "position_x": 525,
-      "position_y": 420,
-      "rotation": 0,
-      "long_x": 60,
-      "long_y": 30,
-      "type": "STRAIGHT"
-    },
-    {
-      "position_x": 525,
-      "position_y": 510,
-      "rotation": 0,
-      "long_x": 60,
-      "long_y": 30,
-      "type": "STRAIGHT"
-    },
-    {
-      "position_x": 585,
-      "position_y": 60,
-      "rotation": 0,
-      "long_x": 60,
-      "long_y": 30,
-      "type": "STRAIGHT"
-    },
-    {
-      "position_x": 585,
-      "position_y": 150,
-      "rotation": 0,
-      "long_x": 60,
-      "long_y": 30,
-      "type": "STRAIGHT"
-    },
-    {
-      "position_x": 585,
-      "position_y": 240,
-      "rotation": 0,
-      "long_x": 60,
-      "long_y": 30,
-      "type": "STRAIGHT"
-    },
-    {
-      "position_x": 585,
-      "position_y": 330,
-      "rotation": 0,
-      "long_x": 60,
-      "long_y": 30,
-      "type": "STRAIGHT"
-    },
-    {
-      "position_x": 585,
-      "position_y": 420,
-      "rotation": 0,
-      "long_x": 60,
-      "long_y": 30,
-      "type": "STRAIGHT"
-    },
-    {
-      "position_x": 585,
-      "position_y": 510,
-      "rotation": 0,
-      "long_x": 60,
-      "long_y": 30,
-      "type": "STRAIGHT"
-    },
-    {
-      "position_x": 555,
-      "position_y": 15,
-      "rotation": 1.5707963267948966,
-      "long_x": 30,
-      "long_y": 30,
-      "type": "STRAIGHT"
-    },
-    {
-      "position_x": 495,
-      "position_y": 15,
-      "rotation": 1.5707963267948966,
-      "long_x": 30,
-      "long_y": 30,
-      "type": "STRAIGHT"
-    },
-    {
       "position_x": 420,
       "position_y": 15,
       "rotation": 1.5707963267948966,
@@ -886,22 +566,6 @@
       "rotation": 1.5707963267948966,
       "long_x": 30,
       "long_y": 60,
-      "type": "STRAIGHT"
-    },
-    {
-      "position_x": 555,
-      "position_y": 105,
-      "rotation": 1.5707963267948966,
-      "long_x": 30,
-      "long_y": 30,
-      "type": "STRAIGHT"
-    },
-    {
-      "position_x": 495,
-      "position_y": 105,
-      "rotation": 1.5707963267948966,
-      "long_x": 30,
-      "long_y": 30,
       "type": "STRAIGHT"
     },
     {
@@ -945,22 +609,6 @@
       "type": "STRAIGHT"
     },
     {
-      "position_x": 555,
-      "position_y": 195,
-      "rotation": 1.5707963267948966,
-      "long_x": 30,
-      "long_y": 30,
-      "type": "STRAIGHT"
-    },
-    {
-      "position_x": 495,
-      "position_y": 195,
-      "rotation": 1.5707963267948966,
-      "long_x": 30,
-      "long_y": 30,
-      "type": "STRAIGHT"
-    },
-    {
       "position_x": 420,
       "position_y": 195,
       "rotation": 1.5707963267948966,
@@ -998,22 +646,6 @@
       "rotation": 1.5707963267948966,
       "long_x": 30,
       "long_y": 60,
-      "type": "STRAIGHT"
-    },
-    {
-      "position_x": 555,
-      "position_y": 285,
-      "rotation": 1.5707963267948966,
-      "long_x": 30,
-      "long_y": 30,
-      "type": "STRAIGHT"
-    },
-    {
-      "position_x": 495,
-      "position_y": 285,
-      "rotation": 1.5707963267948966,
-      "long_x": 30,
-      "long_y": 30,
       "type": "STRAIGHT"
     },
     {
@@ -1057,22 +689,6 @@
       "type": "STRAIGHT"
     },
     {
-      "position_x": 555,
-      "position_y": 375,
-      "rotation": 1.5707963267948966,
-      "long_x": 30,
-      "long_y": 30,
-      "type": "STRAIGHT"
-    },
-    {
-      "position_x": 495,
-      "position_y": 375,
-      "rotation": 1.5707963267948966,
-      "long_x": 30,
-      "long_y": 30,
-      "type": "STRAIGHT"
-    },
-    {
       "position_x": 420,
       "position_y": 375,
       "rotation": 1.5707963267948966,
@@ -1113,22 +729,6 @@
       "type": "STRAIGHT"
     },
     {
-      "position_x": 555,
-      "position_y": 465,
-      "rotation": 1.5707963267948966,
-      "long_x": 30,
-      "long_y": 30,
-      "type": "STRAIGHT"
-    },
-    {
-      "position_x": 495,
-      "position_y": 465,
-      "rotation": 1.5707963267948966,
-      "long_x": 30,
-      "long_y": 30,
-      "type": "STRAIGHT"
-    },
-    {
       "position_x": 420,
       "position_y": 465,
       "rotation": 1.5707963267948966,
@@ -1163,62 +763,6 @@
     {
       "position_x": 60,
       "position_y": 465,
-      "rotation": 1.5707963267948966,
-      "long_x": 30,
-      "long_y": 60,
-      "type": "STRAIGHT"
-    },
-    {
-      "position_x": 555,
-      "position_y": 555,
-      "rotation": 1.5707963267948966,
-      "long_x": 30,
-      "long_y": 30,
-      "type": "STRAIGHT"
-    },
-    {
-      "position_x": 495,
-      "position_y": 555,
-      "rotation": 1.5707963267948966,
-      "long_x": 30,
-      "long_y": 30,
-      "type": "STRAIGHT"
-    },
-    {
-      "position_x": 420,
-      "position_y": 555,
-      "rotation": 1.5707963267948966,
-      "long_x": 30,
-      "long_y": 60,
-      "type": "STRAIGHT"
-    },
-    {
-      "position_x": 330,
-      "position_y": 555,
-      "rotation": 1.5707963267948966,
-      "long_x": 30,
-      "long_y": 60,
-      "type": "STRAIGHT"
-    },
-    {
-      "position_x": 240,
-      "position_y": 555,
-      "rotation": 1.5707963267948966,
-      "long_x": 30,
-      "long_y": 60,
-      "type": "STRAIGHT"
-    },
-    {
-      "position_x": 150,
-      "position_y": 555,
-      "rotation": 1.5707963267948966,
-      "long_x": 30,
-      "long_y": 60,
-      "type": "STRAIGHT"
-    },
-    {
-      "position_x": 60,
-      "position_y": 555,
       "rotation": 1.5707963267948966,
       "long_x": 30,
       "long_y": 60,
@@ -1234,5 +778,4 @@
   "minimum_to_win": null,
   "title": "Manejo Libre",
   "image": "manejo_libre.jpeg"
-
 }
