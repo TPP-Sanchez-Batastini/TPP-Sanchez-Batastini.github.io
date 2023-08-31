@@ -1,0 +1,98 @@
+{
+  "streets": [
+    {
+      "position_x": 75,
+      "position_y": 15,
+      "rotation": 1.5707963267948966,
+      "long_x": 30,
+      "long_y": 30,
+      "type": "CURVE"
+    },
+    {
+      "position_x": 75,
+      "position_y": 105,
+      "rotation": 0,
+      "long_x": 30,
+      "long_y": 30,
+      "type": "CURVE"
+    },
+    {
+      "position_x": 15,
+      "position_y": 15,
+      "rotation": 3.141592653589793,
+      "long_x": 30,
+      "long_y": 30,
+      "type": "CURVE"
+    },
+    {
+      "position_x": 15,
+      "position_y": 105,
+      "rotation": 4.71238898038469,
+      "long_x": 30,
+      "long_y": 30,
+      "type": "CURVE"
+    },
+    {
+      "position_x": 15,
+      "position_y": 60,
+      "rotation": 0,
+      "long_x": 60,
+      "long_y": 30,
+      "type": "STRAIGHT"
+    },
+    {
+      "position_x": 75,
+      "position_y": 60,
+      "rotation": 0,
+      "long_x": 60,
+      "long_y": 30,
+      "type": "STRAIGHT"
+    },
+    {
+      "position_x": 45,
+      "position_y": 15,
+      "rotation": 1.5707963267948966,
+      "long_x": 30,
+      "long_y": 30,
+      "type": "STRAIGHT"
+    },
+    {
+      "position_x": 45,
+      "position_y": 105,
+      "rotation": 1.5707963267948966,
+      "long_x": 30,
+      "long_y": 30,
+      "type": "STRAIGHT"
+    }
+  ],
+  "objects":[
+    {"position_x":10.5,"position_y":47, "rotation":0, "type":"CONE"},
+    {"position_x":10.5,"position_y":46, "rotation":0, "type":"CONE"},
+    {"position_x":10.5,"position_y":45, "rotation":0, "type":"CONE"},
+    {"position_x":10.5,"position_y":35, "rotation":0, "type":"CONE"},
+    {"position_x":10.5,"position_y":34, "rotation":0, "type":"CONE"},
+    {"position_x":10.5,"position_y":33, "rotation":0, "type":"CONE"},
+    {"position_x":9.5,"position_y":47, "rotation":0, "type":"CONE"},
+    {"position_x":9.5,"position_y":46, "rotation":0, "type":"CONE"},
+    {"position_x":9.5,"position_y":45, "rotation":0, "type":"CONE"},
+    {"position_x":9.5,"position_y":35, "rotation":0, "type":"CONE"},
+    {"position_x":9.5,"position_y":34, "rotation":0, "type":"CONE"},
+    {"position_x":9.5,"position_y":33, "rotation":0, "type":"CONE"}
+  ],
+  "checkpoints":[
+    {"position_x":12, "position_y":47, "end":false},
+    {"position_x":12, "position_y":44, "end":false},
+    {"position_x":11.5, "position_y":42, "end":false},
+    {"position_x":11, "position_y":40, "end":false},
+    {"position_x":10.5, "position_y":37, "end":false},
+    {"position_x":10.25, "position_y":40, "end":false},
+    {"position_x":10, "position_y":43, "end":true}
+  ],
+  "has_traffic": false,
+  "minimum_to_win": 4900,
+  "initial_position":[15,15],
+  "initial_rotation": 0,
+  "description": "¡En este nivel podrás practicar tu estacionamiento en paralelo!",
+  "title": "Estacionamiento en Paralelo",
+  "image": "estacionamiento.jpeg"
+}

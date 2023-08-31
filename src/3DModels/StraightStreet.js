@@ -120,6 +120,8 @@ export default class StraightStreet extends VisualEntity{
             this.threeDModel.updateMatrixWorld();
             this.threeDModel.matrixAutoUpdate = false;
             this.LONG = this.SIZE*scale;
+            this.threeDModel.LONG = this.LONG;
+            this.threeDModel.SIZE = this.SIZE;
             scene.add(this.threeDModel);
         }
         return this;

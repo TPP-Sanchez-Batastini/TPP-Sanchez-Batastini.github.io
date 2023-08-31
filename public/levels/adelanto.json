@@ -1,0 +1,136 @@
+{
+  "streets": [
+    {
+      "position_x": 75,
+      "position_y": 15,
+      "rotation": 1.5707963267948966,
+      "long_x": 30,
+      "long_y": 30,
+      "type": "CURVE"
+    },
+    {
+      "position_x": 75,
+      "position_y": 105,
+      "rotation": 0,
+      "long_x": 30,
+      "long_y": 30,
+      "type": "CURVE"
+    },
+    {
+      "position_x": 15,
+      "position_y": 15,
+      "rotation": 3.141592653589793,
+      "long_x": 30,
+      "long_y": 30,
+      "type": "CURVE"
+    },
+    {
+      "position_x": 15,
+      "position_y": 105,
+      "rotation": 4.71238898038469,
+      "long_x": 30,
+      "long_y": 30,
+      "type": "CURVE"
+    },
+    {
+      "position_x": 15,
+      "position_y": 60,
+      "rotation": 0,
+      "long_x": 60,
+      "long_y": 30,
+      "type": "STRAIGHT"
+    },
+    {
+      "position_x": 75,
+      "position_y": 60,
+      "rotation": 0,
+      "long_x": 60,
+      "long_y": 30,
+      "type": "STRAIGHT"
+    },
+    {
+      "position_x": 45,
+      "position_y": 15,
+      "rotation": 1.5707963267948966,
+      "long_x": 30,
+      "long_y": 30,
+      "type": "STRAIGHT"
+    },
+    {
+      "position_x": 45,
+      "position_y": 105,
+      "rotation": 1.5707963267948966,
+      "long_x": 30,
+      "long_y": 30,
+      "type": "STRAIGHT"
+    }
+  ],
+  "objects":[
+    {"position_x":17.5,"position_y":30, "rotation":0, "type":"CONE"},
+    {"position_x":17.5,"position_y":32.5, "rotation":0, "type":"CONE"},
+    {"position_x":17.5,"position_y":35, "rotation":0, "type":"CONE"},
+    {"position_x":17.5,"position_y":37.5, "rotation":0, "type":"CONE"},
+    {"position_x":17.5,"position_y":40, "rotation":0, "type":"CONE"},
+    {"position_x":17.5,"position_y":42.5, "rotation":0, "type":"CONE"},
+    {"position_x":17.5,"position_y":45, "rotation":0, "type":"CONE"},
+    {"position_x":17.5,"position_y":47.5, "rotation":0, "type":"CONE"},
+    {"position_x":17.5,"position_y":50, "rotation":0, "type":"CONE"},
+    {"position_x":12.5,"position_y":55, "rotation":0, "type":"CONE"},
+    {"position_x":12.5,"position_y":57.5, "rotation":0, "type":"CONE"},
+    {"position_x":12.5,"position_y":60, "rotation":0, "type":"CONE"},
+    {"position_x":12.5,"position_y":62.5, "rotation":0, "type":"CONE"},
+    {"position_x":12.5,"position_y":65, "rotation":0, "type":"CONE"},
+    {"position_x":12.5,"position_y":67.5, "rotation":0, "type":"CONE"},
+    {"position_x":12.5,"position_y":70, "rotation":0, "type":"CONE"},
+    {"position_x":17.5,"position_y":72.5, "rotation":0, "type":"CONE"},
+    {"position_x":17.5,"position_y":75, "rotation":0, "type":"CONE"},
+
+    {"position_x":72.5,"position_y":30, "rotation":0, "type":"CONE"},
+    {"position_x":72.5,"position_y":32.5, "rotation":0, "type":"CONE"},
+    {"position_x":72.5,"position_y":35, "rotation":0, "type":"CONE"},
+    {"position_x":72.5,"position_y":37.5, "rotation":0, "type":"CONE"},
+    {"position_x":72.5,"position_y":40, "rotation":0, "type":"CONE"},
+    {"position_x":72.5,"position_y":42.5, "rotation":0, "type":"CONE"},
+    {"position_x":72.5,"position_y":45, "rotation":0, "type":"CONE"},
+    {"position_x":72.5,"position_y":47.5, "rotation":0, "type":"CONE"},
+    {"position_x":72.5,"position_y":50, "rotation":0, "type":"CONE"},
+    {"position_x":72.5,"position_y":55, "rotation":0, "type":"CONE"},
+    {"position_x":77.5,"position_y":57.5, "rotation":0, "type":"CONE"},
+    {"position_x":77.5,"position_y":60, "rotation":0, "type":"CONE"},
+    {"position_x":77.5,"position_y":62.5, "rotation":0, "type":"CONE"},
+    {"position_x":77.5,"position_y":65, "rotation":0, "type":"CONE"},
+    {"position_x":72.5,"position_y":67.5, "rotation":0, "type":"CONE"},
+    {"position_x":72.5,"position_y":70, "rotation":0, "type":"CONE"},
+    {"position_x":72.5,"position_y":72.5, "rotation":0, "type":"CONE"},
+    {"position_x":72.5,"position_y":75, "rotation":0, "type":"CONE"}
+  ],
+  "checkpoints":[
+    {"position_x":12.5,"position_y":30,"end":false},
+    {"position_x":12.5,"position_y":35,"end":false},
+    {"position_x":12.5,"position_y":40,"end":false},
+    {"position_x":12.5,"position_y":45,"end":false},
+    {"position_x":15,"position_y":52.5,"end":false},
+    {"position_x":17.5,"position_y":60,"end":false},
+    {"position_x":17.5,"position_y":63,"end":false},
+    {"position_x":15,"position_y":67,"end":false},
+    {"position_x":13,"position_y":70,"end":false},
+    {"position_x":12.5,"position_y":75,"end":false},
+    {"position_x":77.5,"position_y":75,"end":false},
+    {"position_x":77.5,"position_y":70,"end":false},
+    {"position_x":75,"position_y":67,"end":false},
+    {"position_x":72.5,"position_y":63,"end":false},
+    {"position_x":72.5,"position_y":60,"end":false},
+    {"position_x":75,"position_y":52.5,"end":false},
+    {"position_x":77.5,"position_y":45,"end":false},
+    {"position_x":77.5,"position_y":40,"end":false},
+    {"position_x":77.5,"position_y":35,"end":false},
+    {"position_x":77.5,"position_y":30,"end":true}
+  ],
+  "has_traffic": false,
+  "minimum_to_win":19500,
+  "initial_position":[15,15],
+  "initial_rotation": 0,
+  "description": "¡En este nivel podrás practicar la mecánica de adelantamiento a otros autos!",
+  "title": "Adelantamiento",
+  "image": "adelanto.png"
+}

@@ -1,4 +1,4 @@
-import { Vector3, Vector4 } from 'three';
+import { Vector3, Vector4, Quaternion } from 'three';
 import Observable from '../../ObserverPattern/Observable';
 import CarPhysics from '../Physics/PhysicsTypes/CarPhysics';
 import CarEngine from './CarEngine';
@@ -6,25 +6,25 @@ import ManualBox from './ShiftBoxTypes/ManualBox';
 import SemiAutomaticBox from './ShiftBoxTypes/SemiAutomaticBox';
 
 
-const FACTOR_BRAKE_TO_FORCE = 300;
+const FACTOR_BRAKE_TO_FORCE = 180;
 export default class Car extends Observable{
 
-    constructor(physicsWorld, initialPosition, useAudio = true){
+    constructor(physicsWorld, initialPosition, useAudio = true, initialRotation = new Quaternion().identity()){
         super();
         this.carEngine = new CarEngine(useAudio);
         this.shiftBox = new SemiAutomaticBox(this.carEngine);
         this.currentDirectionTurn = 0; //in rads
         this.currentTireRotation = 0;
         this.position = new Vector3(initialPosition[0], initialPosition[1], initialPosition[2]);
-        this.rotationQuaternion = new Vector4(0,0,0,1);
+        this.rotationQuaternion = initialRotation;
         this.mass = 1000;
         this.physicsShape = new Vector3(2,1.3,5);
         this.rotation = new Vector4(0,0,0,1);
         this.inertia = new Vector3(1,0,1);
-
         this.carPhysics = new CarPhysics(this.position, this.rotationQuaternion, this.inertia, this.mass, this.physicsShape, physicsWorld, 0);
-        // this.carPhysics.buildAmmoPhysics();
-        
+        this.turnRigthLigth = false;
+        this.turnLeftLigth = false;
+
     }
 
 
@@ -54,13 +54,29 @@ export default class Car extends Observable{
     }
 
 
-    turnOnRightLight(){
-        //PRENDER EL INTERMITENTE DERECHO
+    turnRightLight(){
+        if(!this.turnRigthLigth && this.turnLeftLigth){
+            this.turnLeftLigth = false;
+        } 
+        this.turnRigthLigth = !this.turnRigthLigth;
     }
 
 
-    turnOnLeftLight(){
-        //PRENDER EL INTERMITENTE DERECHO
+    turnLeftLight(){
+        if(!this.turnLeftLigth && this.turnRigthLigth){
+            this.turnRigthLigth = false;
+        } 
+        this.turnLeftLigth = !this.turnLeftLigth;
+    }
+
+    turnParkingLight(){
+        if(this.turnLeftLigth && this.turnRigthLigth){
+            this.turnLeftLigth = !this.turnLeftLigth;
+            this.turnRigthLigth = !this.turnRigthLigth;
+        }else{
+            this.turnRigthLigth = true;
+            this.turnLeftLigth = true;
+        }
     }
 
     
@@ -90,16 +106,23 @@ export default class Car extends Observable{
 
     
     getDataToAnimate(){
+        const dirVector = new Vector3(0,0,1).applyQuaternion(this.rotation);
+        const rightDir = new Vector3(0,0,1).applyAxisAngle(new Vector3(0,1,0), -Math.PI/2).applyQuaternion(this.rotation);
         return {
             "direction": this.currentDirectionTurn, 
             "velocity": this.carPhysics.getVelocity(), 
             "lastRotationWheel": this.currentTireRotation,
-            "dirVector": new Vector3(0,0,1).applyQuaternion(this.rotation),
+            "dirVector": dirVector,
+            "frontPosition": new Vector3(this.position.x + dirVector.x*2.5, this.position.y, this.position.z + dirVector.z*2.5),
+            "backPosition": new Vector3(this.position.x - dirVector.x*2.5, this.position.y, this.position.z - dirVector.z*2.5),
+            "rightDirection": rightDir,
             "position": this.position,
             "rotation": this.rotation,
             "physicsBody": this.carPhysics,
             "wheelsData": this.wheelsData,
-            "rpm": this.getCurrentRPM()
+            "rpm": this.getCurrentRPM(),
+            "turnRigthLigth": this.turnRigthLigth,
+            "turnLeftLigth": this.turnLeftLigth,
         };
     }
 
@@ -115,7 +138,6 @@ export default class Car extends Observable{
         if(mode ===  "semi-auto"){
             this.shiftBox = new SemiAutomaticBox(this.carEngine);
         }else if(mode === "manual"){
-            //TODO: asignar boton en volante
             this.shiftBox = new ManualBox(this.carEngine);
         }
     }

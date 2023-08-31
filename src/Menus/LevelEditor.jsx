@@ -29,8 +29,8 @@ export const LevelEditor = () => {
 
   return (
     <>
-      <ItemsContext.Provider value={{lastSelectedItem, setLastSelectedItem}}>
-        <div>
+      <ItemsContext.Provider value={{lastSelectedItem, setLastSelectedItem}} >
+        <div style={{backgroundColor: "#B1E6F2", minHeight:'100vh'}} >
           <div style={{flexDirection:'row',justifyContent:'space-between', display:"flex"}}>
             <IconButton onClick={() => setOpenItems(true)} style={{height:40, margin:10}} className='header'>
               <AddIcon/>

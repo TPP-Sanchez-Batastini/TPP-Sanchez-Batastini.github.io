@@ -17,12 +17,14 @@ const SUB_FOR_CONE = -100;
 const INITIAL_SCORE = 0;
 
 export default class LevelFactory {
-  constructor(scene, physicsWorld) {
+  constructor(scene, physicsWorld, endLevel, checkpointUpdate) {
     this.scene = scene;
     this.physicsWorld = physicsWorld;
     this.levelScore = new LevelScore(INITIAL_SCORE);
     this.physicsToUpdate = [];
     this.objectsToAnimate = [];
+    this.endLevel = endLevel;
+    this.notifyCheckpointUpdate = checkpointUpdate;
     this.STREET_TYPES = {
       "STRAIGHT": this.createStreet.bind(this),
       "CURVE": this.createCurve.bind(this),
@@ -96,7 +98,7 @@ export default class LevelFactory {
 
   async createCone(position, Ammo, rotationY) {
     let cone = new TrafficCone("textures/coneTexture.jpg");
-    cone = await cone.addToScene(this.scene, "trafficCone", position, [0.5, 0.5, 0.5]);
+    cone = await cone.addToScene(this.scene, "trafficCone", position, [0.5, 1, 0.5]);
     let conePhysics = new CylinderPhysics(
       new THREE.Vector3(position[0], position[1], position[2]), //Position
       new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), rotationY),
@@ -114,7 +116,6 @@ export default class LevelFactory {
     conePhysics.rigidBody.threeObject = cone;
     conePhysics.rigidBody.onCollide = () => {
       this.levelScore.alterScore(SUB_FOR_CONE);
-      console.log("New score: ", this.levelScore.getCurrentScore());
     };
     this.physicsToUpdate.push(conePhysics);
     conePhysics.attachObserver(cone);
@@ -414,19 +415,19 @@ export default class LevelFactory {
   }
 
   async createIntersection(position, Ammo) {
-    let intersection = new Intersection("textures/CleanRoadNoBorder.jpg");
+    let intersection = new Intersection("textures/roadWithCrossWalk.jpg");
     await intersection.addToScene(this.scene, "intersection", position);
     await this.buildIntersectionPhysics(position, Ammo, intersection);
   }
 
   async createCurve(position, Ammo, rotationY) {
-    let curve = new Curve("textures/CleanRoadNoBorder.jpg");
+    let curve = new Curve("textures/roadWithCrossWalk.jpg");
     await curve.addToScene(this.scene, "curve", position, rotationY);
     await this.buildCurvePhysics(position, Ammo, curve, rotationY);
   }
 
   async createTStreet(position, Ammo, rotationY) {
-    let tStreet = new TStreet("textures/CleanRoadNoBorder.jpg");
+    let tStreet = new TStreet("textures/roadWithCrossWalk.jpg");
     await tStreet.addToScene(this.scene, "tStreet", position, rotationY);
     await this.buildTStreetPhysics(position, Ammo, tStreet, rotationY);
   }
@@ -456,13 +457,13 @@ export default class LevelFactory {
       this.physicsWorld.removeRigidBody( checkpointPhysics.rigidyBody );
       this.physicsWorld.removeCollisionObject( checkpointPhysics.rigidBody );
       this.levelScore.alterScore(SUM_FOR_CHECKPOINT);
-      console.log("New score: ", this.levelScore.getCurrentScore());
       this.scene.remove( checkpoint.threeDModel );
       const lastElemUsed = checkpoints.shift();
       if (lastElemUsed.end){
-        //TODO: Fin?
+        this.endLevel(this.levelScore.getCurrentScore(), this.levelScore.getCurrentTime() );
       } else if(checkpoints.length > 0){
         await this.createCheckpoint([checkpoints[0].position_x, 1, checkpoints[0].position_y], checkpoints);
+        this.notifyCheckpointUpdate();
       }
     };
     checkpointPhysics.attachObserver(checkpoint);
@@ -538,10 +539,12 @@ export default class LevelFactory {
         obj.type
       );
     }
-    await this.createCheckpoint(
-      [json.checkpoints[0].position_x, 1, json.checkpoints[0].position_y],
-      json.checkpoints
-    );
+    if (json.checkpoints.length > 0){
+      await this.createCheckpoint(
+        [json.checkpoints[0].position_x, 1, json.checkpoints[0].position_y],
+        json.checkpoints
+      );
+    }
     return {
       physicsToUpdate: this.physicsToUpdate,
       objectsToAnimate: this.objectsToAnimate
@@ -549,5 +552,14 @@ export default class LevelFactory {
     // json.checkpoints.forEach --> Instancio y guardo en un array
     // onCollide de un checkpoint --> saco ese de la escena y agrego uno nuevo (El que le sigue)
     // Si el checkpoint es el ultimo --> Fin de nivel? Solo si esta marcado con un bool de fin nivel o algo asi
+  }
+
+
+  getScore(){
+    return this.levelScore.getCurrentScore();
+  }
+
+  getTime(){
+    return this.levelScore.getCurrentTime();
   }
 }

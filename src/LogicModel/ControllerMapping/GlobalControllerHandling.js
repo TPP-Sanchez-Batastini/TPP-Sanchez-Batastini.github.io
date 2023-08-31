@@ -43,4 +43,13 @@ export default class GlobalControllerHandling{
     changeShiftBox(mode){
         this.car.changeShiftBox(mode);
     }
+    turnRightLight(){
+        this.car.turnRightLight();
+    }
+    turnLeftLight(){
+        this.car.turnLeftLight();
+    }
+    turnParkingLight(){
+        this.car.turnParkingLight();
+    }
 }

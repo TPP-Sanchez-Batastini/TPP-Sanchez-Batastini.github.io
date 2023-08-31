@@ -15,10 +15,12 @@ const STEERING_WHEEL_INITIAL_ROTATION_ON_X = 0.13
 const MAX_VELOCITY_SHOWN = 240;
 const MAX_RPM_SHOWN = 6000;
 
+const LIGTH_TIC = 1000;
+
 export default class CarModel extends VisualEntity{
     
     
-    constructor(){
+    constructor(isIA = true){
         //super('res/models/source/AutoConInterior.glb');
         super('res/models/source/Mercedes.glb');
         this.carModel = null;
@@ -29,22 +31,21 @@ export default class CarModel extends VisualEntity{
         this.lastSteeringRotation = 0;
         this.lastVelocityRotation = 0;
         this.lastRPMRotation = 0;
+        this.isIA = isIA;
+        this.lastTurnOff = new Date();
     }
 
 
     generateRetrovisor(){
-        //const path = new THREE.Shape();
-        //path.absellipse(0,0,0.15,0.075,0, Math.PI*2, false,0);
-        //const ellipseGeometry = new THREE.ShapeBufferGeometry( path );
         const plane = new THREE.PlaneGeometry(0.145, 0.085);
+        const graphSettings = JSON.parse(localStorage.getItem("graphic_config"));
         const retrovisor = new Reflector(
             plane,
-            //ellipseGeometry,
             {
-                textureWidth: window.innerWidth,//window.innerWidth * window.devicePixelRatio,
-                textureHeight: window.innerHeight,//window.innerHeight * window.devicePixelRatio,
+                textureWidth: window.innerWidth * graphSettings.MirrorResMultiplier,
+                textureHeight: window.innerHeight * graphSettings.MirrorResMultiplier,
                 clipBias: 0.35,
-                multisample: 4
+                multisample: graphSettings.AAEspejos
             }
         );
         retrovisor.rotateX( Math.PI-0.04 );
@@ -56,13 +57,14 @@ export default class CarModel extends VisualEntity{
 
     generateLeftMirror(){
         const leftMirrorGeometry = new THREE.PlaneGeometry(0.19, 0.10);
+        const graphSettings = JSON.parse(localStorage.getItem("graphic_config"));
         const leftMirror = new Reflector(
             leftMirrorGeometry, 
             {
-                textureWidth: window.innerWidth,//512
-                textureHeight: window.innerHeight,//512
+                textureWidth: window.innerWidth * graphSettings.MirrorResMultiplier,
+                textureHeight: window.innerHeight * graphSettings.MirrorResMultiplier,
                 clipBias: 0,
-                multisample: 4
+                multisample: graphSettings.AAEspejos
             }
         );
         let container = new Object3D();
@@ -75,14 +77,15 @@ export default class CarModel extends VisualEntity{
 
 
     generateRightMirror(){
+        const graphSettings = JSON.parse(localStorage.getItem("graphic_config"));
         const rightMirrorGeometry = new THREE.PlaneGeometry(0.19, 0.10);
         const rightMirror = new Reflector(
             rightMirrorGeometry, 
             {
-                textureWidth: window.innerWidth,
-                textureHeight: window.innerHeight,
+                textureWidth: window.innerWidth * graphSettings.MirrorResMultiplier,
+                textureHeight: window.innerHeight * graphSettings.MirrorResMultiplier,
                 clipBias: 0,
-                multisample: 4
+                multisample: graphSettings.AAEspejos
             }
         );
         let container = new Object3D();
@@ -95,10 +98,151 @@ export default class CarModel extends VisualEntity{
 
 
     generateMirrors(){
-        this.generateRetrovisor();
-        this.generateLeftMirror();
-        this.generateRightMirror();
+        const graphSettings = JSON.parse(localStorage.getItem("graphic_config"));
+        if (!this.isIA && graphSettings.CreateMirrors) {
+            this.generateRetrovisor();
+            this.generateLeftMirror();
+            this.generateRightMirror();
+        }
     }
+
+    generateSpotlights(){
+        const shouldTurnLightsOn = JSON.parse(localStorage.getItem("graphic_config")).lightsOn;
+        if(!this.isIA && shouldTurnLightsOn){
+            this.rightSpotlight = new THREE.SpotLight(0xffffff);
+            this.leftSpotlight = new THREE.SpotLight(0xffffff);
+            this.targetRight = new Object3D();
+            this.targetLeft = new Object3D();
+            this.targetRight.position.set(-0.8, 0.05, 3.0);
+            this.targetLeft.position.set(0.8, 0.05, 3.0);
+            this.rightSpotlight.position.set(-0.8, 0.3, 2.6);
+            this.leftSpotlight.position.set(0.8, 0.3, 2.6);
+            this.rightSpotlight.target = this.targetRight;
+            this.leftSpotlight.target = this.targetLeft;
+            this.leftSpotlight.castShadow = true;
+            this.rightSpotlight.castShadow = true;
+            this.rightSpotlight.shadow.mapSize.width = 1024;
+            this.leftSpotlight.shadow.mapSize.height = 1024;
+            this.rightSpotlight.shadow.camera.near = 0.1;
+            this.leftSpotlight.shadow.camera.near = 0.1;
+            this.rightSpotlight.shadow.camera.far = 2;
+            this.leftSpotlight.shadow.camera.far = 2;
+            this.rightSpotlight.shadow.camera.fov = 10;
+            this.leftSpotlight.shadow.camera.fov = 10;
+            this.rightSpotlight.intensity = 0.5;
+            this.leftSpotlight.intensity = 0.5;
+            this.rightSpotlight.angle = Math.PI/5;
+            this.leftSpotlight.angle = Math.PI/5;
+
+            this.rightSpotlight.distance = 15;
+            this.leftSpotlight.distance = 15;
+
+            this.threeDModel.add(this.leftSpotlight);
+            this.threeDModel.add(this.rightSpotlight);
+            this.threeDModel.add(this.targetLeft);
+            this.threeDModel.add(this.targetRight);
+
+        
+            this.rightTurnlight = new THREE.SpotLight(0xDB8A10);
+            this.targetTurnRight = new Object3D();
+            this.targetTurnRight.position.set(-0.85, 0.05, 3.0);
+            this.rightTurnlight.position.set(-0.8, 0.3, 2.6);
+            this.rightTurnlight.target = this.targetTurnRight;
+            this.rightTurnlight.castShadow = false;
+            this.rightTurnlight.intensity = 0;
+            this.rightTurnlight.angle = Math.PI/5;
+            this.rightTurnlight.distance = 10;
+            this.threeDModel.add(this.targetTurnRight);
+            this.threeDModel.add(this.rightTurnlight);
+            
+    
+            this.leftTurnlight = new THREE.SpotLight(0xDB8A10);
+            this.targetTurnLeft = new Object3D();
+            this.targetTurnLeft.position.set(0.85, 0.05, 3.0);
+            this.leftTurnlight.position.set(0.8, 0.3, 2.6);
+            this.leftTurnlight.target = this.targetTurnLeft;
+            this.leftTurnlight.castShadow = false;
+            this.leftTurnlight.intensity = 0;
+            this.leftTurnlight.angle = Math.PI/5;
+            this.leftTurnlight.distance = 10;
+            this.threeDModel.add(this.targetTurnLeft);
+            this.threeDModel.add(this.leftTurnlight);
+    
+    
+            this.rightTurnlightBack = new THREE.SpotLight(0xDB8A10);
+            this.targetTurnRightBack = new Object3D();
+            this.targetTurnRightBack.position.set(-0.85, 3, -3.0);
+            this.rightTurnlightBack.position.set(-0.8, 3.2, 2.6);
+            this.rightTurnlightBack.target = this.targetTurnRightBack;
+            this.rightTurnlightBack.castShadow = false;
+            this.rightTurnlightBack.intensity = 0;
+            this.rightTurnlightBack.angle = Math.PI/5;
+            this.rightTurnlightBack.distance = 10;
+            this.threeDModel.add(this.targetTurnRightBack);
+            this.threeDModel.add(this.rightTurnlightBack);
+    
+            this.leftTurnlightBack = new THREE.SpotLight(0xDB8A10);
+            this.targetTurnLeftBack = new Object3D();
+            this.targetTurnLeftBack.position.set(0.85, 3, -3.0);
+            this.leftTurnlightBack.position.set(0.8, 3.2, 2.6);
+            this.leftTurnlightBack.target = this.targetTurnLeftBack;
+            this.leftTurnlightBack.castShadow = false;
+            this.leftTurnlightBack.intensity = 0;
+            this.leftTurnlightBack.angle = Math.PI/5;
+            this.leftTurnlightBack.distance = 10;
+            this.threeDModel.add(this.targetTurnLeftBack);
+            this.threeDModel.add(this.leftTurnlightBack);
+
+        }
+
+        
+    }
+
+    turnRigth(){
+        const shouldTurnLightsOn = JSON.parse(localStorage.getItem("graphic_config")).lightsOn;
+        if (this.isIA || !shouldTurnLightsOn)
+            return;
+        let time = new Date();
+        if(this.observedState["turnRigthLigth"]  ){
+            let timePassed = time - this.lastTurnOff;
+            if( timePassed < LIGTH_TIC ){
+                this.rightTurnlight.intensity = 1;
+                this.rightTurnlightBack.intensity = 1;
+            }else if(timePassed < 2*LIGTH_TIC){
+                
+                this.rightTurnlight.intensity = 0;
+                this.rightTurnlightBack.intensity = 0;
+            }else{
+                this.lastTurnOff = new Date();
+            }
+        }else{
+            this.rightTurnlight.intensity = 0;
+            this.rightTurnlightBack.intensity = 0;
+        }
+    }
+
+    turnLeft(){
+        const shouldTurnLightsOn = JSON.parse(localStorage.getItem("graphic_config")).lightsOn;
+        if (this.isIA || !shouldTurnLightsOn)
+            return;
+        let time = new Date();
+        if(this.observedState["turnLeftLigth"]  ){
+            let timePassed = time - this.lastTurnOff;
+            if( timePassed < LIGTH_TIC ){
+                this.leftTurnlight.intensity = 1;
+                this.leftTurnlightBack.intensity = 1;
+            }else if(timePassed < 2*LIGTH_TIC){
+                this.leftTurnlight.intensity = 0;
+                this.leftTurnlightBack.intensity = 0;
+            }else{
+                this.lastTurnOff = new Date();
+            }
+        }else{
+            this.leftTurnlight.intensity = 0;
+            this.leftTurnlightBack.intensity = 0;
+        }
+    }
+
 
     async addToScene(scene, name="driverCar", hasMirrors = true){
         const models = await Models.getInstance();
@@ -115,6 +259,7 @@ export default class CarModel extends VisualEntity{
         if(hasMirrors){
             this.generateMirrors();
         }
+        this.generateSpotlights();
         return this;
     }
 
@@ -240,6 +385,8 @@ export default class CarModel extends VisualEntity{
             this.rotateWheels();
             this.rotateSteeringWheel();
             this.rotateVelocityAndRPM();
+            this.turnRigth();
+            this.turnLeft();
         }
     }
 

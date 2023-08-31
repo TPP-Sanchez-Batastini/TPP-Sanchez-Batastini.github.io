@@ -1,23 +1,30 @@
 import CarModel from "../../3DModels/CarModel";
 import Observer from "../../ObserverPattern/Observer";
 import Car from "../CarLogic/Car.js";
+import * as THREE from "three";
 
 const CLUTCH_PRESSED = 0;
 const CLUTCH_NOT_PRESSED = 1;
+const CAR_OFFSET_CONSTRUCTOR = 10;
 
 
 export default class TrafficModel extends Observer {
 
     constructor(scene, physicsWorld, streets){
         super();
-        this.SIZE_OF_TRAFFIC = 2;
+        this.SIZE_OF_TRAFFIC = 10;
         this.timeSinceLastUpdate = Date.now();
         this.trafficWorker = new Worker("./workers/TrafficWorker.js");
         this.currentTraffic = {};
         this.scene = scene;
         this.physicsWorld = physicsWorld;
         this.levelStreets = streets;
+        
         this.lastID = 0;
+        this.straightStreetIndex = 0;
+        this.straightStreets = this.levelStreets.filter(elem => elem.type === "STRAIGHT");
+        this.lastCarRotation = 0;
+        this.carOffset = 0;
         
         this.trafficWorker.onmessage = (message) => {
             this.onReceiveResponseFromWorker(message);
@@ -34,13 +41,54 @@ export default class TrafficModel extends Observer {
     }
 
 
+    getNextCarPos(){
+        if(this.lastCarRotation !== 0){
+            this.lastCarRotation = 0;
+            
+            this.straightStreetIndex += 1;
+            this.straightStreetIndex = this.straightStreetIndex % this.straightStreets.length;
+            if (this.straightStreetIndex === 0){
+                this.carOffset += CAR_OFFSET_CONSTRUCTOR;
+            }
+        }else{
+            if(this.lastID > 0){
+                this.lastCarRotation = Math.PI;
+            }
+        }
+        return {
+            pos_x_street: this.straightStreets[this.straightStreetIndex].position_x,
+            pos_y_street: this.straightStreets[this.straightStreetIndex].position_y,
+            isSide: this.straightStreets[this.straightStreetIndex].rotation > 0,
+            max_x_offset: this.straightStreets[this.straightStreetIndex].long_y,
+            max_y_offset: this.straightStreets[this.straightStreetIndex].long_x,
+            carOffset: this.carOffset,
+            rotation: this.lastCarRotation
+        }
+    }
+
+
     async generateCar(){
-        
-        let carLogic = new Car(this.physicsWorld, [18 ,2,15 + this.lastID * 5], false);
+        const positionData = this.getNextCarPos();
+        let carLogic = new Car(
+            this.physicsWorld, 
+            [
+                positionData.pos_x_street + (positionData.isSide ? positionData.carOffset-positionData.max_x_offset/2 : (positionData.rotation > 0) ? 2.5 : -2.5) ,
+                2,
+                positionData.pos_y_street + (!positionData.isSide ? positionData.carOffset-positionData.max_y_offset/2 : (positionData.rotation > 0) ? -2.5 : 2.5)
+            ], 
+            false, 
+            new THREE.Quaternion().setFromAxisAngle(
+                new THREE.Vector3(0,1,0), 
+                positionData.isSide ? Math.PI/2+positionData.rotation : positionData.rotation
+            )
+        );
         await carLogic.carPhysics.buildAmmoPhysics(); 
         
         let carModel = new CarModel();
         await carModel.addToScene(this.scene, `traffic_car_${this.lastID}`, false);
+        const carPaint = carModel.threeDModel.children.filter(child => child.name === "W222Body")[0].children[0];
+        carPaint.material = carPaint.material.clone();
+        carPaint.material.color.set(0xffffff*Math.random());
 
         carLogic.carPhysics.rigidBody.threeObject = carModel;
         carLogic.carPhysics.rigidBody.onCollide = this.onCollideWithCarOfTraffic;
@@ -80,6 +128,9 @@ export default class TrafficModel extends Observer {
             const [carId, value] = entry;
             const carData = value.engine.getDataToAnimate();
             carData.carId = carId;
+            const carOffset = new THREE.Vector3(0,0,2.5).applyQuaternion(carData.rotation);
+            carData.frontPosition = carData.position.add(carOffset);
+            carData.backPosition = carData.position.sub(carOffset);
             delete carData.physicsBody;
             delete carData.wheelsData;
             trafficCars.push(carData);
@@ -87,6 +138,9 @@ export default class TrafficModel extends Observer {
         if (this.observedState){
             delete this.observedState.physicsBody;
             delete this.observedState.wheelsData;
+            const carOffset = new THREE.Vector3(0,0,2.5).applyQuaternion(this.observedState.rotation);
+            this.observedState.frontPosition = this.observedState.position.add(carOffset);
+            this.observedState.backPosition = this.observedState.position.sub(carOffset);
         }
         this.trafficWorker.postMessage({
             playersCar: this.observedState,
