@@ -86,6 +86,9 @@ export default class TrafficModel extends Observer {
         
         let carModel = new CarModel();
         await carModel.addToScene(this.scene, `traffic_car_${this.lastID}`, false);
+        const carPaint = carModel.threeDModel.children.filter(child => child.name === "W222Body")[0].children[0];
+        carPaint.material = carPaint.material.clone();
+        carPaint.material.color.set(0xffffff*Math.random());
 
         carLogic.carPhysics.rigidBody.threeObject = carModel;
         carLogic.carPhysics.rigidBody.onCollide = this.onCollideWithCarOfTraffic;
