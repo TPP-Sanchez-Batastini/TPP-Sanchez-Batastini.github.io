@@ -345,6 +345,13 @@ class LogitechG29Controller{
     }
 
 
+    setCamera(camera){
+        this.camera = camera;
+    }
+
+    updatePauseFun(pause){
+        this.pause = pause;
+    }
 }
 
 
@@ -360,6 +367,8 @@ export default class LogitechG29ControllerSingleton{
         if (!LogitechG29ControllerSingleton.instance) {
             LogitechG29ControllerSingleton.instance = new LogitechG29Controller(carLogic,camera, pause);
         }
+        LogitechG29ControllerSingleton.instance.setCamera(camera);
+        LogitechG29ControllerSingleton.instance.updatePauseFun(pause);
         return LogitechG29ControllerSingleton.instance;
     }
 }

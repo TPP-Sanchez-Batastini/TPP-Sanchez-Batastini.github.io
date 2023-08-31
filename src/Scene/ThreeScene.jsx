@@ -193,6 +193,11 @@ export class ThreeScene extends Component {
     );
     await this.carLogic.carPhysics.buildAmmoPhysics();
     let carModel = new CarModel(false);
+    if (localStorage.getItem("controller") === "XInput"){
+      this.carLogic.changeShiftBox("semi-auto");
+    }else{
+      this.carLogic.changeShiftBox("manual");
+    }
     this.carLogic.carPhysics.rigidBody.threeObject = carModel;
     this.carLogic.attachObserver(carModel);
     this.carLogic.attachObserver(this.camera);
@@ -390,8 +395,9 @@ export class ThreeScene extends Component {
   }
 
   pauseLevel(){
-    this.levelPaused = !this.levelPaused ;
-    this.setState({...this.state, paused: this.levelPaused});
+    const newStatePause = !this.levelPaused;
+    this.levelPaused = newStatePause;
+    this.setState({...this.state, paused: newStatePause});
   }
 
   

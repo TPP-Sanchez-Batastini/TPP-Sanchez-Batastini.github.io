@@ -200,7 +200,6 @@ class XboxController{
         
         if (this.gamepad.buttons[this.buttomHome].pressed && !this.buttonPressed[this.buttomHome]) {
             this.globalControllerHandler.changeShiftBox("semi-auto");
-            this.pause();
             this.buttonPressed[this.buttomHome] = true;
         }else if(!this.gamepad.buttons[this.buttomHome].pressed){
             this.buttonPressed[this.buttomHome] = false;
@@ -220,6 +219,15 @@ class XboxController{
         this.doActionsTriggers();
         this.doActionsButtons();
     }
+
+    setCamera(camera){
+        this.camera = camera;
+    }
+
+
+    updatePauseFun(pause){
+        this.pause = pause;
+    }
 }
 
 export default class XboxControllerSingleton{
@@ -234,6 +242,8 @@ export default class XboxControllerSingleton{
         if (!XboxControllerSingleton.instance) {
             XboxControllerSingleton.instance = new XboxController(auto, camera, pause);
         }
+        XboxControllerSingleton.instance.setCamera(camera);
+        XboxControllerSingleton.instance.updatePauseFun(pause);
         return XboxControllerSingleton.instance;
     }
 }

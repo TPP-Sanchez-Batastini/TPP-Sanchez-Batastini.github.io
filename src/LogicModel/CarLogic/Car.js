@@ -108,7 +108,6 @@ export default class Car extends Observable{
     getDataToAnimate(){
         const dirVector = new Vector3(0,0,1).applyQuaternion(this.rotation);
         const rightDir = new Vector3(0,0,1).applyAxisAngle(new Vector3(0,1,0), -Math.PI/2).applyQuaternion(this.rotation);
-        console.log(dirVector, rightDir, dirVector);
         return {
             "direction": this.currentDirectionTurn, 
             "velocity": this.carPhysics.getVelocity(), 
@@ -139,7 +138,6 @@ export default class Car extends Observable{
         if(mode ===  "semi-auto"){
             this.shiftBox = new SemiAutomaticBox(this.carEngine);
         }else if(mode === "manual"){
-            //TODO: asignar boton en volante
             this.shiftBox = new ManualBox(this.carEngine);
         }
     }
