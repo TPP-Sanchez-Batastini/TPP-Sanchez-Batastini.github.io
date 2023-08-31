@@ -6,12 +6,13 @@ import { ConfigGrafics } from './ConfigGrafics';
 
 export const PauseModal = ({pausedLevel, pause}) => {
 
-  const [openModal, setOpenModal] = React.useState(pausedLevel);
+  const [openModal, setOpenModal] = React.useState(pausedLevel ? pausedLevel : false);
   const navigate = useNavigate();
   const [selectedTab, setSelectedTab] = React.useState("joystick");
 
   React.useEffect(() => {
-    setOpenModal(pausedLevel);
+    if (pausedLevel !== undefined && pausedLevel !== null)
+      setOpenModal(pausedLevel);
 
   }, [pausedLevel]);
   
@@ -27,7 +28,7 @@ export const PauseModal = ({pausedLevel, pause}) => {
   };
    
   return (
-    <Modal open = {openModal ? openModal : false}>
+    <Modal open = {openModal}>
       <Box className={"pause_menu"}>
         <h1>
           Pausa
