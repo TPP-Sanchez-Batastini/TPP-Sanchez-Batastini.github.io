@@ -7,7 +7,7 @@ const PRESS_ACCEL = 1;
 const NOT_PRESS = 0;
 const PRESS_BRAKE = 0.5;
 const MINIMA_DISTANCIA_ENTRE_AUTOS = 10;
-const UMBRAL_INICIO_TIPO_CALLE = 0.3;
+const UMBRAL_INICIO_TIPO_CALLE = 0.5;
 const STREET_SIZE = 30;
 const RIGHT = 0.48;
 const LEFT = -0.351;
@@ -105,16 +105,51 @@ const distanciaVectorial = (vectorA, vectorB) => {
 }
 
 
+const isInFrontOfCar = (idealDirection, elem, car) => {
+    return (
+        (Math.abs(idealDirection[0]) > 0 && Math.sign(elem.position.x - car.position.x) === idealDirection[0]) ||
+        (Math.abs(idealDirection[2]) > 0 && Math.sign(elem.position.z - car.position.z) === idealDirection[2])
+    )
+}
+
+const isOnRight = (idealDirection, elem, car) => {
+    return (
+        Math.abs(idealDirection[0]) > 0 && 
+        (
+            (
+                idealDirection[0] > 0 ? 
+                    elem.position.z + DISTANCIA_CENTRO_FRENTE_AUTO >= car.position.z : 
+                    elem.position.z - DISTANCIA_CENTRO_FRENTE_AUTO <= car.position.z
+            )
+        ) ||
+        Math.abs(idealDirection[2]) > 0 && 
+        (
+            (
+                idealDirection[2] > 0 ? 
+                    elem.position.x - DISTANCIA_CENTRO_FRENTE_AUTO <= car.position.x : 
+                    elem.position.x + DISTANCIA_CENTRO_FRENTE_AUTO >= car.position.x
+            )
+        )
+    );
+}
+
+const arePerpendicular = (elemDirVector, carDirVector) => {
+    const arcCos = productoEscalar(elemDirVector, carDirVector);
+    return Math.abs(arcCos) <= UMBRAL_DETECCION_POSIBLE_COLISION
+}
+
+
 const filterCars = (car, trafficCars) => {
+    const idealDirection = [round(car.dirVector.x), round(car.dirVector.y), round(car.dirVector.z)];
     const nearCars = trafficCars.filter(elem => (
         (!(elem.hasOwnProperty("carId")) ||  car.carId !== elem.carId) &&
         distanciaVectorial(elem.position, car.position) <= 15)
     );
     const possibleColissions = nearCars.filter(elem => {
-        const arcCos = productoEscalar(elem.dirVector, car.dirVector);
         return (
-            arcCos <= UMBRAL_DETECCION_POSIBLE_COLISION &&
-                arcCos >= 0
+            arePerpendicular(elem.dirVector, car.dirVector) &&
+            isOnRight(idealDirection, elem, car) &&
+            isInFrontOfCar(idealDirection, elem, car)
         );
     });
     const frontCars = nearCars.filter(elem => {
@@ -125,7 +160,8 @@ const filterCars = (car, trafficCars) => {
                     car.dirVector.z * (elem.position.z - car.position.z) > INCERTEZA_DIRECCION
             ) &&
             arcCos <= MISMA_DIRECCION + UMBRAL_ESTA_DELANTE &&
-            arcCos >= MISMA_DIRECCION - UMBRAL_ESTA_DELANTE 
+            arcCos >= MISMA_DIRECCION - UMBRAL_ESTA_DELANTE &&
+            isInFrontOfCar(idealDirection, elem, car)
         );
     });
     return {
@@ -166,12 +202,18 @@ const rectifyStraightDirection = (carDirection, carPos, streetPos) => {
         //Va transitando en eje Z, acomoda el eje X y se posiciona al centro del carril
         const sideMoveWithSign = CARRIL_OFFSET * idealDirection[0];
         const sign = ((streetPos.z + sideMoveWithSign) - frontCarPos.z) * idealDirection[0];
-        return sign * ((((streetPos.z + sideMoveWithSign) - frontCarPos.z) * idealDirection[0] / CARRIL_OFFSET)**2);
+        if (sign < 0){
+            return Math.max(sign * ((((streetPos.z + sideMoveWithSign) - frontCarPos.z) * idealDirection[0] / CARRIL_OFFSET)**2), -1);
+        }
+        return Math.min(sign * ((((streetPos.z + sideMoveWithSign) - frontCarPos.z) * idealDirection[0] / CARRIL_OFFSET)**2), 1);
     }else if (Math.abs(idealDirection[2]) === 1){
         //Va transitando en eje X, acomoda el eje Z y se posiciona al centro del carril
         const sideMoveWithSign = CARRIL_OFFSET * idealDirection[2];
         const sign = Math.sign((frontCarPos.x - (streetPos.x - sideMoveWithSign))* idealDirection[2])
-        return sign * (((frontCarPos.x - (streetPos.x - sideMoveWithSign)) * idealDirection[2] / CARRIL_OFFSET)**2);
+        if (sign < 0){
+            return Math.max(sign * (((frontCarPos.x - (streetPos.x - sideMoveWithSign)) * idealDirection[2] / CARRIL_OFFSET)**2), -1)
+        }
+        return Math.min(sign * (((frontCarPos.x - (streetPos.x - sideMoveWithSign)) * idealDirection[2] / CARRIL_OFFSET)**2), 1);
     }
     //Si está perfectamente alineado, no debe rotar.
     return 0;
