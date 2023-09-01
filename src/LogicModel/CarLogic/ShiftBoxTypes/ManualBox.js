@@ -8,7 +8,7 @@ export default class ManualBox extends ShiftBox{
             this.currentShift = newShift;
             this.carEngine.changeRPM(this.getValueForNewRPM(newShift, currentVelocity, valueClutch));
         }else{
-            throw new Error("Can't change shift if clutch is not pressed");
+            //throw new Error("Can't change shift if clutch is not pressed");
         }
     }
 

@@ -50,6 +50,9 @@ export default class CarEngine{
         if(shiftBox.shutDownEngine(valueClutch,this.currentRPM)){
             if(this.engineState instanceof TurnedOnEngine){
                 this.engineState = new TurnedOffEngine();
+                this.soundEngine.close();
+                this.soundEngine = null;
+                this.soundEngineSource = null;
             }
             
         }

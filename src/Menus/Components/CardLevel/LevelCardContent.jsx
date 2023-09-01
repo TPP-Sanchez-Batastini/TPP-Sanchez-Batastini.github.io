@@ -70,7 +70,7 @@ export const LevelCard = ({level}) => {
       fetchUserProgress();
     }
     // eslint-disable-next-line
-  }, []);
+  }, [session]);
 
   return (
     <CardContent style={{display:"flex", justifyContent:"center", alignItems:"center", flexDirection:"column", width:"100%"}}>
