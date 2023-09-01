@@ -127,10 +127,12 @@ class LogitechG29Controller{
 
 
             if(this.gamepad.axes[this.DPad] === this.valueDpadRIGHT){
-                this.camera.rotate(-1);
+                if (this.camera.rotate)
+                    this.camera.rotate(-1);
                 
             }else if (this.gamepad.axes[this.DPad] === this.valueDpadLEFT){
-                this.camera.rotate(1);
+                if (this.camera.rotate)
+                    this.camera.rotate(1);
             };
 
 
@@ -144,7 +146,8 @@ class LogitechG29Controller{
             for(let i = 0; i < this.dpadPressed.length; i++){
                 this.dpadPressed[i] = false;
             }
-            this.camera.rotate(0);
+            if (this.camera.rotate)
+                this.camera.rotate(0);
         }
     }
 

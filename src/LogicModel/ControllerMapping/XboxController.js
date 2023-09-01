@@ -80,6 +80,7 @@ class XboxController{
         if(Math.abs(this.gamepad.axes[this.yRightAxe]) >= STICK_LIMIT){
         }
         let rotation = ((this.gamepad.axes[this.xRightAxe] )**3)
+        if (this.camera.rotate)
             this.camera.rotate(-rotation);
         // if(Math.abs(this.gamepad.axes[this.xRightAxe]) >= STICK_LIMIT){
         //     let rotation = ((this.gamepad.axes[this.xRightAxe] )**3)
