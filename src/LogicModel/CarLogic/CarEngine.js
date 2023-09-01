@@ -22,6 +22,7 @@ export default class CarEngine{
             this.engineState = new TurnedOnEngine();
             if (this.useAudio){
                 new Audio('./sounds/encendido.wav').play();
+                if(this.soundEngine) this.soundEngine.close();
                 setTimeout(() => {
                     this.soundEngine = new (window.AudioContext || window.webkitAudioContext)();
                     fetch("./sounds/engine.wav").then(
