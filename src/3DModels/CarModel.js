@@ -194,9 +194,24 @@ export default class CarModel extends VisualEntity{
             this.threeDModel.add(this.leftTurnlightBack);
 
         }
-
-        
     }
+
+
+    generateDirectionalLight(scene){
+        if(!this.isIA){
+            this.dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            this.dirLight.target = this.threeDModel;
+            this.dirLight.position.set(-2, 3, 5);
+            this.dirLight.castShadow = true;
+            this.dirLight.shadow.mapSize.width = window.innerWidth; // default
+            this.dirLight.shadow.mapSize.height = window.innerHeight; // default
+            this.dirLight.shadow.camera.near = 0.5; // default
+            this.dirLight.shadow.camera.far = 50; // default
+            scene.add(this.dirLight);
+            //this.threeDModel.add(this.dirLight);
+        }
+    }
+
 
     turnRigth(){
         const shouldTurnLightsOn = JSON.parse(localStorage.getItem("graphic_config")).lightsOn;
@@ -260,6 +275,7 @@ export default class CarModel extends VisualEntity{
             this.generateMirrors();
         }
         this.generateSpotlights();
+        this.generateDirectionalLight(scene);
         return this;
     }
 
@@ -387,6 +403,13 @@ export default class CarModel extends VisualEntity{
             this.rotateVelocityAndRPM();
             this.turnRigth();
             this.turnLeft();
+            if (!this.isIA){
+                this.dirLight.position.set(
+                    this.observedState["position"].x - 2, 
+                    this.observedState["position"].y + 3, 
+                    this.observedState["position"].z + 5
+                );
+            }
         }
     }
 
