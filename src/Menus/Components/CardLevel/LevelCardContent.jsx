@@ -68,6 +68,12 @@ export const LevelCard = ({level}) => {
   React.useEffect(() => {
     if (session && session.user){
       fetchUserProgress();
+    }else{
+      setIsCompleted(false);
+      setCompletedData({
+        score: undefined,
+        time: undefined
+      });
     }
     // eslint-disable-next-line
   }, [session]);

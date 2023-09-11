@@ -42,3 +42,13 @@
     cursor: pointer;
     opacity:0.8;
 }
+
+.back_button{
+    text-align: center;
+}
+
+@media(min-width: 900px){
+    .back_button{
+        text-align: right;
+    }
+}

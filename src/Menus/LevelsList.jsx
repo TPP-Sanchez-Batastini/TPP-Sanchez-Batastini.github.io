@@ -18,7 +18,7 @@ export const LevelsList = () => {
         </Grid>
       </Grid>
       <Grid container spacing={2} rowSpacing={2} justifyContent={"center"}>
-        <Grid item xs={12} md={4} style={{textAlign:"right"}}>
+        <Grid item xs={12} md={4} className={"back_button"}>
           <Button onClick={() => {navigate("/");}} startIcon={<ArrowBackIosNewIcon />} className={"accept_button"}>
             ATR&Aacute;S
           </Button>

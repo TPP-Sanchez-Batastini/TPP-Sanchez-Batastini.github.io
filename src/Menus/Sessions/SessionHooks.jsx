@@ -19,6 +19,16 @@ export const SessionHooks = () => {
         });
     }
 
+
+    const closeSession = () => {
+        localStorage.setItem("session", null);
+        setSession({
+            user: undefined,
+            exp: undefined,
+            jwt: undefined
+        });
+    }
+
     const getUser = () => {
         return session.user ? session.user : undefined;
     }
@@ -30,6 +40,7 @@ export const SessionHooks = () => {
     return({
         setSessionWithResponse,
         getUser,
-        getJWT
+        getJWT,
+        closeSession
     })
 }
