@@ -76,15 +76,14 @@ export const SignUpForm = ({ setLogin, setOpenDialog }) => {
       if (APIResponse.status !== 200) {
         const json = await APIResponse.json();
         setLoading(false);
-        const endMSG = json.detail[0].msg ? json.detail[0].msg : json.detail;
-        let error_msg =
-          APIResponse.status + " - " + APIResponse.statusText + " - " + endMSG;
+        let error_msg = json.detail[0].msg ? json.detail[0].msg : json.detail;
+        setError([error_msg]);
         throw new Error(error_msg);
       }
       setLoading(false);
       return APIResponse.json();
     } catch (e) {
-      setLoading(false);
+      setError([""+e])
       throw new Error(e);
     }
   };
