@@ -47,16 +47,18 @@ export default class CarEngine{
 
 
     handleEngineShutdown(valueClutch,shiftBox){
-        //!this.clutchIsPressed(valueClutch) && this.currentRPM < MIN_RPM_TO_AVOID_SHUTDOWN
         if(shiftBox.shutDownEngine(valueClutch,this.currentRPM)){
             if(this.engineState instanceof TurnedOnEngine){
                 this.engineState = new TurnedOffEngine();
-                if (this.soundEngine)
-                    this.soundEngine.close();
-                this.soundEngine = null;
-                this.soundEngineSource = null;
+                setTimeout(() => {
+                    new Audio('./sounds/turnoff.wav').play();
+                    if (this.soundEngine)
+                        this.soundEngine.close();
+                    this.soundEngine = null;
+                    this.soundEngineSource = null;
+                }, 1000);
+                
             }
-            
         }
     }
 
