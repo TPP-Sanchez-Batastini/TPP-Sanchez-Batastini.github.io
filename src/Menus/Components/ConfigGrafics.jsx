@@ -126,7 +126,7 @@ export const ConfigGrafics = ({ pausedLevel, pause }) => {
 
   return (
     <Grid container direction="row" justifyContent="center" alignItems="center">
-      <Grid xs={8}>
+      <Grid item xs={12} md={8}>
         <InputLabel id="controller-label">Tipo de control</InputLabel>
         <Select
             labelId="controller-label"
@@ -140,37 +140,37 @@ export const ConfigGrafics = ({ pausedLevel, pause }) => {
             <MenuItem value={"G29"}>Volante con palanca</MenuItem>
         </Select>
       </Grid>
-      <Grid item xs={8}>
+      <Grid item xs={12} md={8}>
         <Typography id="input-slider" gutterBottom>
           Calidad Espejos
         </Typography>
         <Slider defaultValue={3} marks={calidadEspejos} max={3} onChange={(e) => {setIndexEspejos(e.target.value)}} value={indexEspejos} />
       </Grid>
-      <Grid item xs={8}>
+      <Grid item xs={12} md={8}>
         <Typography id="input-slider" gutterBottom>
           Resolución
         </Typography>
         <Slider defaultValue={3} marks={resolucion} max={3} min={1} onChange={(e) => {setIndexRes(e.target.value)}} value={indexRes} />
       </Grid>
-      <Grid item xs={8}>
+      <Grid item xs={12} md={8}>
         <Typography id="input-slider" gutterBottom>
           Resolución Vr
         </Typography>
         <Slider defaultValue={2} marks={resolucionVR} max={3} onChange={(e) => {setIndexVR(e.target.value)}} value={indexVR}/>
       </Grid>
-      <Grid item xs={8}>
+      <Grid item xs={12} md={8}>
         <Typography id="input-slider" gutterBottom>
           Distancia de visión (metros)
         </Typography>
         <Slider valueLabelDisplay="auto" defaultValue={100} max={300} value={viewDist} onChange={(e) => {setViewDist(e.target.value)}} />
       </Grid>
-      <Grid item xs={8}>
+      <Grid item xs={12} md={8}>
         <FormControlLabel
           control={<Switch label="" onChange={(e) => {setLightsOn(e.target.checked)}} value={lightsOn} />}
           label="Activar luces vehiculos"
         />
       </Grid>
-      <Grid item xs={8} md={4} style={{ textAlign: "center" }}>
+      <Grid item xs={12} sm={8} md={4} style={{ textAlign: "center" }}>
         <Box style={{ textAlign: "center", margin: "auto" }}>
           <Button onClick={submitConfig} variant="contained" color="success">
             Aplicar Cambios y Reiniciar
