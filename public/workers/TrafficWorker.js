@@ -116,16 +116,18 @@ const isInFrontOfCar = (idealDirection, elem, car) => {
 const isOnRight = (elem, car) => {
     return (
         (
-            Math.sign(car.rightDirection.x) > 0 ?
+            car.rightDirection.x === 0 || 
+            (Math.sign(car.rightDirection.x) > 0 ?
                 car.frontPosition.x <= elem.backPosition.x
             :
-                car.frontPosition.x >= elem.backPosition.x
+                car.frontPosition.x >= elem.backPosition.x)
         ) &&
         (
-            Math.sign(car.rightDirection.z) > 0 ?
+            car.rightDirection.z === 0 ||
+            (Math.sign(car.rightDirection.z) > 0 ?
                 car.frontPosition.z <= elem.backPosition.z
             :
-                car.frontPosition.z >= elem.backPosition.z
+                car.frontPosition.z >= elem.backPosition.z)
         )
     );
 }
