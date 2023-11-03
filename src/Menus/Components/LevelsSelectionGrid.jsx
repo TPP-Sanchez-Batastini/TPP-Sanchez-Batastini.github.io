@@ -57,7 +57,7 @@ export const LevelsSelectionGrid = () => {
     <Grid container justifyContent={"center"} alignItems={"center"} alignContent={"center"}>
         <Grid item xs={12} md={9} lg={6} alignContent={"center"} justifyContent={"center"} alignItems={"center"}>
             <Carousel
-                sx={{width:"100%", padding:"20px"}}
+                sx={{width:"100%", paddingTop:"20px", paddingBottom:"20px", maxWidth: "100vw"}}
                 autoPlay={false}
                 navButtonsAlwaysVisible={true}
                 indicators={false}
