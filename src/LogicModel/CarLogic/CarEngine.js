@@ -4,6 +4,7 @@ import TurnedOnEngine from './CarEngineStates/TurnedOnEngine';
 
 const MIN_RPM_TO_AVOID_SHUTDOWN = 0;//1000
 const MIN_VALUE_CLUTCH_TO_AVOID_SHUTDOWN = 0.25;
+const VOLUME_AUDIO = 0.3;
 
 export default class CarEngine{
 
@@ -21,7 +22,9 @@ export default class CarEngine{
         if(this.engineState instanceof TurnedOffEngine){
             this.engineState = new TurnedOnEngine();
             if (this.useAudio){
-                new Audio('./sounds/encendido.wav').play();
+                const audioTurnOn = new Audio('./sounds/encendido.wav');
+                audioTurnOn.volume = VOLUME_AUDIO;
+                audioTurnOn.play();
                 if(this.soundEngine) this.soundEngine.close();
                 setTimeout(() => {
                     this.soundEngine = new (window.AudioContext || window.webkitAudioContext)();
@@ -32,8 +35,12 @@ export default class CarEngine{
                         this.soundEngineSource = this.soundEngine.createBufferSource();
                         this.soundEngineSource.buffer = buffer;
                         this.soundEngineSource.loop = true;
-                        this.soundEngineSource.connect(this.soundEngine.destination);
+                        this.gainNode = this.soundEngine.createGain()
+                        this.gainNode.gain.value = VOLUME_AUDIO;
+                        this.gainNode.connect(this.soundEngine.destination);
+                        this.soundEngineSource.connect(this.gainNode);
                         this.soundEngineSource.start();
+
                     });
                 }, 1300);
             }            
@@ -51,7 +58,9 @@ export default class CarEngine{
             if(this.engineState instanceof TurnedOnEngine){
                 this.engineState = new TurnedOffEngine();
                 setTimeout(() => {
-                    new Audio('./sounds/turnoff.wav').play();
+                    const turnOffAudio = new Audio('./sounds/turnoff.wav');
+                    turnOffAudio.volume = VOLUME_AUDIO;
+                    turnOffAudio.play();
                     if (this.soundEngine)
                         this.soundEngine.close();
                     this.soundEngine = null;
