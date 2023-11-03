@@ -7,6 +7,7 @@ const PRESS_ACCEL = 1;
 const NOT_PRESS = 0;
 const PRESS_BRAKE = 0.5;
 const MINIMA_DISTANCIA_ENTRE_AUTOS = 10;
+const NEAR_CARS_UMBRAL = 20;
 const UMBRAL_INICIO_TIPO_CALLE = 0.3;
 const STREET_SIZE = 30;
 const RIGHT = 0.48;
@@ -115,16 +116,18 @@ const isInFrontOfCar = (idealDirection, elem, car) => {
 const isOnRight = (elem, car) => {
     return (
         (
-            Math.sign(car.rightDirection.x) > 0 ?
+            car.rightDirection.x === 0 || 
+            (Math.sign(car.rightDirection.x) > 0 ?
                 car.frontPosition.x <= elem.backPosition.x
             :
-                car.frontPosition.x >= elem.backPosition.x
+                car.frontPosition.x >= elem.backPosition.x)
         ) &&
         (
-            Math.sign(car.rightDirection.z) > 0 ?
+            car.rightDirection.z === 0 ||
+            (Math.sign(car.rightDirection.z) > 0 ?
                 car.frontPosition.z <= elem.backPosition.z
             :
-                car.frontPosition.z >= elem.backPosition.z
+                car.frontPosition.z >= elem.backPosition.z)
         )
     );
 }
@@ -156,7 +159,7 @@ const filterCars = (car, trafficCars) => {
     const idealDirection = [round(car.dirVector.x), round(car.dirVector.y), round(car.dirVector.z)];
     const nearCars = trafficCars.filter(elem => (
         (!(elem.hasOwnProperty("carId")) ||  car.carId !== elem.carId) &&
-        distanciaVectorial(elem.position, car.position) <= 15)
+        distanciaVectorial(elem.position, car.position) <= NEAR_CARS_UMBRAL)
     );
     const possibleColissions = nearCars.filter(elem => {
         return (
@@ -247,11 +250,15 @@ const getStreetSteering = (car, streets) => {
     const pos_x = car.position.x  % STREET_SIZE; 
 
     if(
-        pos_z <= UMBRAL_INICIO_TIPO_CALLE || pos_x <= UMBRAL_INICIO_TIPO_CALLE ||
-        pos_z >= STREET_SIZE - UMBRAL_INICIO_TIPO_CALLE || pos_x >= STREET_SIZE - UMBRAL_INICIO_TIPO_CALLE
-
+        car.lastRotationWheel !== RIGHT && car.lastRotationWheel !== LEFT
     ){
-        const shouldTurn = Math.random() < 0.5;
+        let shouldTurn = (car.lastRotationWheel === RIGHT || car.lastRotationWheel === LEFT);
+        if (
+            pos_z <= UMBRAL_INICIO_TIPO_CALLE || pos_x <= UMBRAL_INICIO_TIPO_CALLE ||
+            pos_z >= STREET_SIZE - UMBRAL_INICIO_TIPO_CALLE || pos_x >= STREET_SIZE - UMBRAL_INICIO_TIPO_CALLE
+        ){
+            shouldTurn = Math.random() < 0.5;
+        }
         if (street.type === "T_STREET"){
             const idealDirection = [round(car.dirVector.x), round(car.dirVector.y), round(car.dirVector.z)];
             const stringDir = `${idealDirection[0]},${idealDirection[1]},${idealDirection[2]}`;
