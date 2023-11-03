@@ -61,12 +61,28 @@ export class ThreeScene extends Component {
     this.score = 0;
     this.time = 0;
     this.initializedReducedScene = false;
-    this.checkpointUpdate = false;
+    this.currentCheckpoint = null;
   }
 
 
-  updateCheckpoint(){
-    this.checkpointUpdate = true;
+  updateCheckpoint(checkpoint){
+    this.previousCheckpoint = this.currentCheckpoint;
+    this.currentCheckpoint = checkpoint;
+    if(this.initializedReducedScene){
+      if (this.previousCheckpoint){
+        this.reducedScene.children.splice(this.reducedScene.children.indexOf(this.previousCheckpoint.threeDModel), 1);
+      }
+      if (checkpoint){
+        this.reducedScene.children.push(this.currentCheckpoint.threeDModel);
+      }
+    }
+    if (this.previousCheckpoint){
+      this.objectsToAnimate.splice(this.objectsToAnimate.indexOf(this.previousCheckpoint), 1);
+    }
+    if(checkpoint){
+      this.objectsToAnimate.push(this.currentCheckpoint);
+    }
+    
   }
 
   async componentDidMount() {
@@ -375,9 +391,8 @@ export class ThreeScene extends Component {
         time: this.level.getTime()
       });
       const currentPos = this.carLogic.getDataToAnimate()["position"];
-      if (!this.lastPlayerPos || this.checkpointUpdate || this.vecDistance(this.lastPlayerPos, currentPos) >= 30){
+      if (!this.lastPlayerPos || this.vecDistance(this.lastPlayerPos, currentPos) >= 30){
         this.lastPlayerPos = currentPos;
-        this.checkpointUpdate = false;
         this.getReducedScene(this.lastPlayerPos);
       }
       if (this.initializedReducedScene){

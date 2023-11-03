@@ -34,6 +34,7 @@ export default class LevelFactory {
     this.OBJECTS = {
       "CONE": this.createCone.bind(this)
     };
+    this.currentCheckpoint=0;
   }
 
   updatePhysics() {
@@ -435,6 +436,7 @@ export default class LevelFactory {
 
   async createCheckpoint(position, checkpoints){
     let checkpoint = new Checkpoint(checkpoints);
+    checkpoint.id = this.currentCheckpoint;
     let Ammo = await AmmoInstance.getInstance();
     await checkpoint.addToScene(this.scene, "checkpoint", position, [1,1,1]);
     let checkpointPhysics = new CylinderPhysics(
@@ -450,10 +452,11 @@ export default class LevelFactory {
       this.physicsWorld,
       1000
     );
-    this.physicsToUpdate.push(checkpointPhysics);
     await checkpointPhysics.buildAmmoPhysics();
     checkpointPhysics.rigidBody.threeObject = checkpoint;
     checkpointPhysics.rigidBody.onCollide = async () => {
+      if(checkpoint.id !== this.currentCheckpoint) return;
+      this.currentCheckpoint++;
       this.physicsWorld.removeRigidBody( checkpointPhysics.rigidyBody );
       this.physicsWorld.removeCollisionObject( checkpointPhysics.rigidBody );
       this.levelScore.alterScore(SUM_FOR_CHECKPOINT);
@@ -461,13 +464,14 @@ export default class LevelFactory {
       const lastElemUsed = checkpoints.shift();
       if (lastElemUsed.end){
         this.endLevel(this.levelScore.getCurrentScore(), this.levelScore.getCurrentTime() );
+        this.notifyCheckpointUpdate(null);
       } else if(checkpoints.length > 0){
         await this.createCheckpoint([checkpoints[0].position_x, 1, checkpoints[0].position_y], checkpoints);
-        this.notifyCheckpointUpdate();
       }
     };
     checkpointPhysics.attachObserver(checkpoint);
-    this.objectsToAnimate.push(checkpoint);
+    this.physicsToUpdate.push(checkpointPhysics);
+    this.notifyCheckpointUpdate(checkpoint);
   }
 
   async createLevel0() {
