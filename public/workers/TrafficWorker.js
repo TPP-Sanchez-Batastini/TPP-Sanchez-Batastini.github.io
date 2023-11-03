@@ -247,11 +247,15 @@ const getStreetSteering = (car, streets) => {
     const pos_x = car.position.x  % STREET_SIZE; 
 
     if(
-        pos_z <= UMBRAL_INICIO_TIPO_CALLE || pos_x <= UMBRAL_INICIO_TIPO_CALLE ||
-        pos_z >= STREET_SIZE - UMBRAL_INICIO_TIPO_CALLE || pos_x >= STREET_SIZE - UMBRAL_INICIO_TIPO_CALLE
-
+        car.lastRotationWheel !== RIGHT && car.lastRotationWheel !== LEFT
     ){
-        const shouldTurn = Math.random() < 0.5;
+        let shouldTurn = (car.lastRotationWheel === RIGHT || car.lastRotationWheel === LEFT);
+        if (
+            pos_z <= UMBRAL_INICIO_TIPO_CALLE || pos_x <= UMBRAL_INICIO_TIPO_CALLE ||
+            pos_z >= STREET_SIZE - UMBRAL_INICIO_TIPO_CALLE || pos_x >= STREET_SIZE - UMBRAL_INICIO_TIPO_CALLE
+        ){
+            shouldTurn = Math.random() < 0.5;
+        }
         if (street.type === "T_STREET"){
             const idealDirection = [round(car.dirVector.x), round(car.dirVector.y), round(car.dirVector.z)];
             const stringDir = `${idealDirection[0]},${idealDirection[1]},${idealDirection[2]}`;
