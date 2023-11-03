@@ -44,7 +44,7 @@ export default class CarModel extends VisualEntity{
             {
                 textureWidth: window.innerWidth * graphSettings.MirrorResMultiplier,
                 textureHeight: window.innerHeight * graphSettings.MirrorResMultiplier,
-                clipBias: 0.35,
+                clipBias: 0,
                 multisample: graphSettings.AAEspejos
             }
         );
