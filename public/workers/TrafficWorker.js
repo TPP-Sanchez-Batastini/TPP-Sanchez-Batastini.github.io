@@ -7,6 +7,7 @@ const PRESS_ACCEL = 1;
 const NOT_PRESS = 0;
 const PRESS_BRAKE = 0.5;
 const MINIMA_DISTANCIA_ENTRE_AUTOS = 10;
+const NEAR_CARS_UMBRAL = 20;
 const UMBRAL_INICIO_TIPO_CALLE = 0.3;
 const STREET_SIZE = 30;
 const RIGHT = 0.48;
@@ -156,7 +157,7 @@ const filterCars = (car, trafficCars) => {
     const idealDirection = [round(car.dirVector.x), round(car.dirVector.y), round(car.dirVector.z)];
     const nearCars = trafficCars.filter(elem => (
         (!(elem.hasOwnProperty("carId")) ||  car.carId !== elem.carId) &&
-        distanciaVectorial(elem.position, car.position) <= 15)
+        distanciaVectorial(elem.position, car.position) <= NEAR_CARS_UMBRAL)
     );
     const possibleColissions = nearCars.filter(elem => {
         return (
