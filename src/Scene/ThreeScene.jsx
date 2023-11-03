@@ -221,14 +221,17 @@ export class ThreeScene extends Component {
     document.addEventListener(
       "keydown",
       (event) => {
+        if (localStorage.getItem("VR") === "true") return;
         var keyPressed = event.key;
         if (!isNaN(keyPressed) && parseInt(keyPressed) >= 1 && parseInt(keyPressed) <= 5){
           this.carLogic.removeObserver(this.camera);
         }
+        
         switch (keyPressed) {
           case "1":
             this.camera = new Camera(this.renderer);
-            this.camera.addContainerToScene(this.reducedScene);
+            //this.camera.addContainerToScene(this.reducedScene);
+            this.reducedScene.children.push(this.camera.group);
             this.camera.addContainerToScene(this.scene);
             break;
           case "2":
