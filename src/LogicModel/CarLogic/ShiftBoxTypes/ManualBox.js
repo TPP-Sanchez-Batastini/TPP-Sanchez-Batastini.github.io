@@ -1,5 +1,5 @@
 import ShiftBox from '../ShiftBox';
-const MIN_RPM_TO_AVOID_SHUTDOWN = 1000;
+const MIN_RPM_TO_AVOID_SHUTDOWN = 800;
 export default class ManualBox extends ShiftBox{
 
     
@@ -14,6 +14,6 @@ export default class ManualBox extends ShiftBox{
 
 
     shutDownEngine(valueClutch, currentRPM){
-        return !this.clutchIsPressed(valueClutch) && currentRPM < MIN_RPM_TO_AVOID_SHUTDOWN;
+        return this.currentShift !== 0 && !this.clutchIsPressed(valueClutch) && currentRPM < MIN_RPM_TO_AVOID_SHUTDOWN;
     }
 }
