@@ -47,7 +47,38 @@ export const LevelsSelectionGrid = () => {
   }
 
   React.useEffect(() => {
-    fetchLevels();
+    const levelsEffect = [];
+    fetch("./levels/basics.json")
+    .then((response) => response.json())
+    .then((data) => {
+      levelsEffect.push(data);
+      fetch("./levels/reversa.json")
+        .then((response) => response.json())
+        .then((data) => {
+            levelsEffect.push(data);
+            fetch("./levels/adelanto.json")
+            .then((response) => response.json())
+            .then((data) => {
+                levelsEffect.push(data);
+                fetch("./levels/giro_en_u.json")
+                .then((response) => response.json())
+                .then((data) => {
+                    levelsEffect.push(data);
+                    fetch("./levels/estacionamiento.json")
+                    .then((response) => response.json())
+                    .then((data) => {
+                        levelsEffect.push(data);
+                        fetch("./levels/manejo_libre.json")
+                        .then((response) => response.json())
+                        .then((data) => {
+                            levelsEffect.push(data);
+                            setLevels(levelsEffect);
+                        });
+                    });
+                });
+            });
+        });
+    });
   }, []);
 
 

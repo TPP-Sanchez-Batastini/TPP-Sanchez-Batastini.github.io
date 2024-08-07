@@ -92,7 +92,7 @@ export const ConfigGrafics = ({ pausedLevel, pause }) => {
   const [indexVR, setIndexVR] = React.useState(2);
   const [viewDist, setViewDist] = React.useState(100);
   const [lightsOn, setLightsOn] = React.useState(true);
-  const [typeController, setTypeController] = React.useState("G29");
+  const [typeController, setTypeController] = React.useState("XInput");
 
   React.useEffect(() => {
     const currentConfig = JSON.parse(localStorage.getItem("graphic_config"));
