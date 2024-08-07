@@ -190,7 +190,7 @@ export class ThreeScene extends Component {
       }));
     }
     if (!localStorage.getItem("controller")){
-      localStorage.setItem("controller", "G29");
+      localStorage.setItem("controller", "XInput");
     }
   }
 
